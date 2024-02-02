@@ -1,74 +1,39 @@
 import numpy as np
+from typing import Callable
 from sympy import *
 
 from functionfamiliy import FunctionFamily
 
+
 x = Symbol("x")
 
-## Example problems
-def example_problem(I, number_of_functions, scale=1):
+def example_problem(I: Interval, number_of_functions: int, expr_gen: Callable[[int],Expr]):
     functions = list()
-    analytic_integrals = list()
     
-    for _ in range(number_of_functions):
-        freq = scale*np.random.uniform(-1, 1, size = None)
-        phase = np.random.uniform(-1, 1, size = None)
+    for i in range(number_of_functions):
+        functions.append(expr_gen(i))
         
-        f = cos(x*freq + phase)
-        functions.append(lambdify(x,f,"numpy"))
-        
-        ## Analytical solution for testing
-        analytic_integrals.append(integrate(f,(x,I.a,I.b)))
-        
-    return FunctionFamily(I, functions, analytic_integrals)
+    return FunctionFamily(I, functions)
 
-def singularity_problem(I, number_of_functions, scale=1):
-    functions = list()
-    analytic_integrals = list()
-    
-    for _ in range(number_of_functions):
-        c = scale*np.random.uniform(1, 2, size = None)
-        
-        f = x**(-c)
-        functions.append(lambdify(x,f,"numpy"))
-        
-        ## Analytical solution for testing
-        analytic_integrals.append(integrate(f,(x,I.a,I.b)))
-        
-    return FunctionFamily(I, functions, analytic_integrals)
+def gen_trig(i) -> Expr: 
+    freq = np.random.uniform(-1, 1, size = None)
+    phase = np.random.uniform(-1, 1, size = None)
+    f = cos(x*freq + phase)
+    return f
 
-def polynomial_problem(I, number_of_functions, degree, scale):
-    functions = list()
-    analytic_integrals = list()
-    
-    for _ in range(number_of_functions):
-        c = scale*np.random.uniform(-1, 1, size = degree)
-        f = Poly(c,x)
-        functions.append(lambdify(x,f,"numpy"))
-        
-        ## Analytical solution for testing
-        analytic_integrals.append(integrate(f,(x,I.a,I.b)))
-    return FunctionFamily(I, functions, analytic_integrals)
+def gen_sing(i) -> Expr:
+    c = np.random.uniform(1, 2, size = None)
+    f = x**(-c)
+    return f
 
-def poly_and_sing_problem(I, number_of_functions, degree, scale):
-    functions = list()
-    analytic_integrals = list()
-    
-    f = x**(-1)
-    print(f)
-    functions.append(lambdify(x,f,"numpy"))
-    
-    ## Analytical solution for testing
-    analytic_integrals.append(integrate(f,(x,I.a,I.b)))
-    
-    for _ in range(number_of_functions-1):
-        c = scale*np.random.uniform(-1, 1, size = degree)
-        f = Poly(c,x).as_expr()
-        print(f)
-        functions.append(lambdify(x,f,"numpy"))
-        
-        ## Analytical solution for testing
-        analytic_integrals.append(integrate(f,(x,I.a,I.b)))
-    return FunctionFamily(I, functions, analytic_integrals)
+def gen_poly(i) -> Expr:
+    degree = 5
+    c = np.random.uniform(-1, 1, size = degree)
+    f = Poly(c,x).as_expr()
+    return f
 
-# FunctionFamily(I, [lambda x: x**(-1.0), lambda x: 99*np.ones_like(x), lambda x: x + 3, lambda x: x**2, lambda x: x**3 - 10*x**2 + x -1])
+def gen_poly_and_sing(i):
+    if i == 0:
+        return gen_sing(i)
+    else:
+        return gen_poly(i)
