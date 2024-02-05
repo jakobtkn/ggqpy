@@ -1,6 +1,6 @@
 import numpy as np
 import scipy as sp
-from sympy import *
+from sympy import Symbol, Expr, integrate, lambdify
 
 x = Symbol("x")
 class Interval:
@@ -18,8 +18,15 @@ class Interval:
     def __str__(self):
         return "(" + str(self.a) + "," +str(self.b) + ")"
     
+    def __iter__(self):
+        yield self.a
+        yield self.b
+    
     def length(self):
         return self.b-self.a
+    
+    def is_in(self,x):
+        return np.logical_and((self.a <= x),(x <= self.b))
 
 class FunctionFamily:
     I = None
@@ -38,7 +45,7 @@ class FunctionFamily:
             self.functions.append(lambdify(x,expr,"numpy"))
     
     def target_integral(self, f: Expr) -> float:
-        return integrate(f, (x,self.I.a,self.I.b))
+        return integrate(f, (x,self.I.a, self.I.b))
     
     def generate_example_function(self, loc = 0, scale = 1) -> Expr:
         number_of_functions = len(self.sym_functions)
@@ -46,3 +53,16 @@ class FunctionFamily:
         expr = sum(np.array(self.sym_functions)*c)
         f = lambdify(x,expr,"numpy")
         return f, expr
+    
+class PiecewiseLegendre:
+    def __init__(self, poly_list, intervals) -> None:
+        self.poly_list = poly_list
+        self.intervals = intervals
+        return
+    
+    def __call__(self, x):
+        return np.piecewise(x,[I.is_in(x) for I in self.intervals], self.poly_list)
+    
+    def deriv(self):
+        deriv_poly_list = [p.deriv() for p in self.poly_list]
+        return PiecewiseLegendre(deriv_poly_list, self.intervals)

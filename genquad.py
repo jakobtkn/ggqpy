@@ -2,7 +2,7 @@ import numpy as np
 import scipy as sp
 import numpy.polynomial.legendre as legendre
 
-from functionfamiliy import FunctionFamily, Interval
+from functionfamiliy import FunctionFamily, Interval, PiecewiseLegendre
 
 def Legendre_derivative(x, I):
     n = len(x)
@@ -60,44 +60,57 @@ def adaptive_discretization(function_family, precision, k, verbose = False):
         print("Endpoints found: ", endpoints)
     
     ## Stage 3.
-    x_global = []
-    w_global = []
-    D_list = []
+    x_global = list()
+    w_global = list()
+    intervals = list()
     for (start,end) in pairwise(endpoints):
+        intervals.append(Interval(start,end))
         x,w = legendre.leggauss(2*k)
         w = w*(end-start)/2
         translate = sp.interpolate.interp1d([-1.0,1.0], [start,end])
         x_global.append(translate(x))
         w_global.append(w)
-        
-        D = Legendre_derivative(x,I)
-        D_list.append(D)
     
     x_global = np.concatenate(x_global)
     w_global = np.concatenate(w_global)
-    D_global = sp.sparse.block_diag(D_list)
     
-    return x_global, w_global, endpoints, D_global
+    return x_global, w_global, endpoints, intervals
 
-def compress_sequence_of_functions(function_family, x, w, precision):
+def compress_sequence_of_functions(function_family, x, w, precision, k, intervals):
     A = np.column_stack([phi(x)*np.sqrt(w) for phi in function_family.functions])
     Q,R,perm = sp.linalg.qr(A, pivoting=True)
-    rank = np.sum(np.abs(np.diag(R)) > precision) + 1
+    rank = np.sum(np.abs(np.diag(R)) > precision)
     ## Construct rank revealing QR s.t. sp.linalg.norm(A[:,perm] - Q[:,:k]@R[:k,:]) <= precision
     U = Q[:,:rank]*(np.sqrt(w)[:,np.newaxis])**(-1)
-    return U, A, rank
+    
+    x,w = legendre.leggauss(2*k)
+    poly_list = list()
+    for u_global in U.T:
+        u_local = np.split(u_global, len(intervals))
+        P = list()
+        
+        for u, interval in zip(u_local,intervals):
+            x,_ = legendre.leggauss(2*k)
+            coef = legendre.legfit(x, u, deg=2*k-1)
+            p = legendre.Legendre(coef,tuple(interval))
+            P.append(p)
+        poly_list.append(PiecewiseLegendre(P, intervals))
+    
+    return U, A, rank, poly_list
 
 def construct_Chevyshev_quadratures(x,w,U):
     r = U.T@w
-    (_,k) = U.shape
-    
-    B = U.T*np.sqrt(w)
+    k = len(r)
+
+    B = np.sqrt(w)*U.T
     Q,R,perm = sp.linalg.qr(B, pivoting=True)
-    z = np.linalg.solve(R[:k,:k],Q.T@r) ## No Hermetian transpose in python? For now only support real functions.
+    z = np.linalg.solve(R[:k,:k], Q.T@r) ## Assuming real
+
+    idx_cheb = perm[:k]
+    x_cheb = x[idx_cheb]
+    w_cheb = z*np.sqrt(w[idx_cheb])
     
-    x = x[perm]
-    w = z*np.sqrt(w[perm])
-    return x,w
+    return x_cheb, w_cheb, idx_cheb
 
 def point_reduction(x,w,r,D,U):
     J = (D@U).T*w

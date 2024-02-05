@@ -1,8 +1,8 @@
 import numpy as np
 from typing import Callable
-from sympy import *
+from sympy import Symbol, Expr, Poly, cos
 
-from functionfamiliy import FunctionFamily
+from functionfamiliy import FunctionFamily, Interval
 
 
 x = Symbol("x")
@@ -34,6 +34,6 @@ def gen_poly(i) -> Expr:
 
 def gen_poly_and_sing(i):
     if i == 0:
-        return gen_sing(i)
+        return x**(-1)
     else:
         return gen_poly(i)
