@@ -17,6 +17,9 @@ class Interval:
     
     def __str__(self):
         return "(" + str(self.a) + "," +str(self.b) + ")"
+    
+    def length(self):
+        return self.b-self.a
 
 class FunctionFamily:
     I = None

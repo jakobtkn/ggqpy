@@ -4,6 +4,14 @@ import numpy.polynomial.legendre as legendre
 
 from functionfamiliy import FunctionFamily, Interval
 
+def Legendre_derivative(x, I):
+    n = len(x)
+    A = np.polynomial.legendre.legder(np.eye(n),m=1)
+    V1 = np.polynomial.legendre.legvander(x,n-1)
+    V2 = np.polynomial.legendre.legvander(x,n-2)
+    D = (I.length()/2.0)*V2@A@np.linalg.inv(V1)
+    return D
+
 def pairwise(iterable):
     it = iter(iterable)
     a = next(it, None)
@@ -54,17 +62,22 @@ def adaptive_discretization(function_family, precision, k, verbose = False):
     ## Stage 3.
     x_global = []
     w_global = []
+    D_list = []
     for (start,end) in pairwise(endpoints):
         x,w = legendre.leggauss(2*k)
         w = w*(end-start)/2
         translate = sp.interpolate.interp1d([-1.0,1.0], [start,end])
         x_global.append(translate(x))
         w_global.append(w)
+        
+        D = Legendre_derivative(x,I)
+        D_list.append(D)
     
     x_global = np.concatenate(x_global)
     w_global = np.concatenate(w_global)
+    D_global = sp.sparse.block_diag(D_list)
     
-    return x_global, w_global, endpoints
+    return x_global, w_global, endpoints, D_global
 
 def compress_sequence_of_functions(function_family, x, w, precision):
     A = np.column_stack([phi(x)*np.sqrt(w) for phi in function_family.functions])
@@ -85,3 +98,7 @@ def construct_Chevyshev_quadratures(x,w,U):
     x = x[perm]
     w = z*np.sqrt(w[perm])
     return x,w
+
+def point_reduction(x,w,r,D,U):
+    J = (D@U).T*w
+    return J
