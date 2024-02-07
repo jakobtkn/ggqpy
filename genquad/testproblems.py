@@ -27,7 +27,7 @@ def gen_sing(i,rng_gen) -> Expr:
     return f
 
 def gen_poly(i,rng_gen) -> Expr:
-    degree = 5
+    degree = 11
     c = rng_gen.uniform(-1, 1, size = degree)
     f = Poly(c,x).as_expr()
     return f

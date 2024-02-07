@@ -20,7 +20,17 @@ class QuadOptimizer:
     u_list = None
     du_list = None
     r = None
-
+    step_size = 0.8
+    maxiter = int(1e3)
+    tol = 1e-8
+    args = (step_size, maxiter, tol)
+    
+    def set_parameters(self, step_size, maxiter, tol):
+        self.step_size = step_size
+        self.maxiter = maxiter
+        self.tol = tol
+        self.args = (step_size, maxiter, tol)
+    
     def jacobian(self, y):
         x, w = np.split(y, 2)
         U = np.column_stack([u(x) for u in self.u_list])
@@ -33,9 +43,9 @@ class QuadOptimizer:
         U = np.column_stack([u(x) for u in self.u_list])
         return U.T @ w - self.r
 
-    def naive_optimization(self, n, interval, args):
+    def naive_optimization(self, n, interval):
         y0 = np.concatenate([np.linspace(*interval, n), np.ones(n)])
-        y = dampened_gauss_newton(self.residual, self.jacobian, y0, *args)
+        y = dampened_gauss_newton(self.residual, self.jacobian, y0, *self.args)
         x, w = np.split(y, 2)
         return x, w
 
@@ -46,31 +56,34 @@ class QuadOptimizer:
         return
 
     def rank_remaining_nodes(self, x, w):
-        J = self.jacobian(np.concatenate([x, w]))
+        y0 = np.concatenate([x, w])
+        J = self.jacobian(y0)
+        rx = self.residual(y0)
+        
         U = np.column_stack([u(x) for u in self.u_list])
         n = len(x)
 
-        step_directions = list()
         eta = np.zeros(n)
         for k in range(len(x)):
-            Jk = J
-            Jk[:, k] = 0
-            Jk[:, n + k] = 0
+            y = np.delete(y0, (k,n+k))
+            Jk = self.jacobian(y)
+            rx = self.residual(y)
+            # d, _, _, _ = np.linalg.lstsq(
+            #     Jk, self.r, rcond=None
+            # )  # Improve by using SMW
+            
 
-            delta_r = U[k, :] * w[k]
-            delta_xk, _, _, _ = np.linalg.lstsq(
-                Jk, -delta_r, rcond=-1
-            )  # Improve by using SMW
-            eta[k] = np.linalg.norm(delta_xk)
-            step_directions.append(delta_xk)
-
+            # d = np.linalg.solve((J.T@J), J.T@rx)
+            d, _, _, _ = np.linalg.lstsq(Jk, rx, rcond=None)
+            eta[k] = np.linalg.norm(d)
+        print(sorted(eta))
         idx_sorted = np.argsort(eta)
 
         return idx_sorted
 
     def attempt_to_remove_node(self, x, w, eps_quad):
         n = len(x)
-        step_size = 0.2
+        step_size = 0.8
 
         idx_sorted = self.rank_remaining_nodes(x,w)
         for k in idx_sorted:
@@ -78,12 +91,13 @@ class QuadOptimizer:
             mask[k] = False
             y0 = np.concatenate([x[mask], w[mask]])
 
-            y = dampened_gauss_newton(self.residual, self.jacobian, y0, step_size)
+            y = dampened_gauss_newton(self.residual, self.jacobian, y0, *self.args)
             eps = np.linalg.norm(self.residual(y)) ** 2
 
             if eps < eps_quad**2:
                 x, w = np.split(y, 2)
                 return x, w, True
+            print("No improvement found")
 
         return x, w, False
 
