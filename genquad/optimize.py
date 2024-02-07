@@ -24,6 +24,7 @@ class QuadOptimizer:
     maxiter = int(1e3)
     tol = 1e-8
     args = (step_size, maxiter, tol)
+    verbose = False
     
     def set_parameters(self, step_size, maxiter, tol):
         self.step_size = step_size
@@ -76,7 +77,7 @@ class QuadOptimizer:
             # d = np.linalg.solve((J.T@J), J.T@rx)
             d, _, _, _ = np.linalg.lstsq(Jk, rx, rcond=None)
             eta[k] = np.linalg.norm(d)
-        print(sorted(eta))
+
         idx_sorted = np.argsort(eta)
 
         return idx_sorted
@@ -97,7 +98,9 @@ class QuadOptimizer:
             if eps < eps_quad**2:
                 x, w = np.split(y, 2)
                 return x, w, True
-            print("No improvement found")
+            
+            if self.verbose:
+                print("No improvement found")
 
         return x, w, False
 
