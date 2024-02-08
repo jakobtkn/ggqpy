@@ -2,10 +2,10 @@ import numpy as np
 from typing import Callable
 from sympy import Symbol, Expr, Poly, cos
 
-from genquad.functionfamiliy import FunctionFamily, Interval
+from ggqpy.functionfamiliy import FunctionFamily, Interval
 
 
-x = Symbol("x")
+x = Symbol("x", real=True)
 
 def example_problem(I: Interval, number_of_functions: int, expr_gen: Callable[[int],Expr], rng_gen = np.random.default_rng(0)):
     functions = list()

@@ -1,8 +1,8 @@
 import numpy as np
 import scipy as sp
-from sympy import Symbol, Expr, integrate, lambdify
+from sympy import Symbol, Expr, integrate, lambdify, nan
 
-x = Symbol("x")
+x = Symbol("x", real = True)
 class Interval:
     def __init__(self, start: float, end: float) -> None:
         if (start > end):
@@ -45,7 +45,12 @@ class FunctionFamily:
             self.functions.append(lambdify(x,expr,"numpy"))
     
     def target_integral(self, f: Expr) -> float:
-        return integrate(f, (x,self.I.a, self.I.b))
+        integral = integrate(f, (x,self.I.a, self.I.b))
+        
+        # if integral == nan:
+        #     integral,_ = sp.integrate.quad(lambdify(x,f,"numpy"), self.I.a, self.I.b, points=0)
+            
+        return integral
     
     def generate_example_function(self, loc = 0, scale = 1) -> Expr:
         number_of_functions = len(self.sym_functions)
