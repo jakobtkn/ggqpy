@@ -90,6 +90,7 @@ class QuadOptimizer:
             y0 = np.concatenate([x[mask], w[mask]])
 
             y = dampened_gauss_newton(self.residual, self.jacobian, y0, *self.args)
+            
             eps = np.linalg.norm(self.residual(y)) ** 2
 
             if eps < eps_quad**2:

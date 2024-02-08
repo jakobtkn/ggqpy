@@ -33,7 +33,7 @@ def compress_sequence_of_functions(function_family, x, w, precision, k, interval
 
 
 def visualise_diagonal_dropoff(A, eps_comp):
-    _, R, _ = sp.linalg.qr(A, pivoting=True)
+    _, R, _ = sp.linalg.qr(A, mode="economic", pivoting=True)
     plt.xlabel(r"$i$")
     plt.semilogy(np.abs(np.diag(R)), "-xr", label=r"$|R_{ii}|$")
     plt.axhline(eps_comp, linestyle="--", label=r"$\varepsilon_{comp}$")
