@@ -90,3 +90,19 @@ class Discretizer:
         w_global = np.concatenate(w_global)
 
         return x_global, w_global, self.endpoints, intervals
+
+    def naive_discretize2d(self, N, Ix, Iy): ## So far only -1 to 1
+        x, wx = legendre.leggauss(N)    
+        wx = wx * (Ix.b - Ix.a) / 2
+        tx = sp.interpolate.interp1d([-1.0, 1.0], [*Ix])
+        x = tx(x)
+        
+        y, wy = legendre.leggauss(N)
+        wy = wy * (Iy.b - Iy.a) / 2
+        ty = sp.interpolate.interp1d([-1.0, 1.0], [*Iy])
+        y = ty(y)        
+
+        x_gl = np.kron(x, np.ones_like(y))
+        y_gl = np.kron(np.ones_like(y),x)
+        w_gl = np.outer(wx,wy).flatten(order="C")
+        return x_gl, y_gl, w_gl, x, y

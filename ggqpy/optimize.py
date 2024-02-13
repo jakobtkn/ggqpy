@@ -1,4 +1,5 @@
 import numpy as np
+import scipy as sp
 
 
 def dampened_gauss_newton(r, jac, x0, step_size=0.3, maxiter=100, tol=1e-6):
@@ -89,7 +90,9 @@ class QuadOptimizer:
             mask[k] = False
             y0 = np.concatenate([x[mask], w[mask]])
 
-            y = dampened_gauss_newton(self.residual, self.jacobian, y0, *self.args)
+            # y = dampened_gauss_newton(self.residual, self.jacobian, y0, *self.args)
+            res = sp.optimize.least_squares(self.residual, y0, jac = self.jacobian, method="dogbox", x_scale = 1)
+            y = res.x
             
             eps = np.linalg.norm(self.residual(y)) ** 2
 

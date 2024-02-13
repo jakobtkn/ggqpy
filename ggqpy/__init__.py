@@ -6,7 +6,7 @@ from ggqpy.compress import compress_sequence_of_functions
 from ggqpy.optimize import QuadOptimizer
 
 
-def construct_Chevyshev_quadratures(x, w, U):
+def construct_Chevyshev_quadratures(eval_points: tuple, w, U):
     r = U.T @ w
     k = len(r)
 
@@ -15,10 +15,12 @@ def construct_Chevyshev_quadratures(x, w, U):
     z = np.linalg.solve(R[:k, :k], Q.conj().T @ r)
 
     idx_cheb = perm[:k]
-    x_cheb = x[idx_cheb]
+    
+    eval_points = tuple(map(lambda x: x[idx_cheb], eval_points))
+    
     w_cheb = z * np.sqrt(w[idx_cheb])
 
-    return x_cheb, w_cheb, idx_cheb
+    return eval_points, w_cheb
 
 def generalized_gaussian_quadrature(
     function_family,

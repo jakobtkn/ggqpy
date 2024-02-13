@@ -1,21 +1,32 @@
 import numpy as np
 import scipy as sp
+from numpy.typing import ArrayLike
 import numpy.polynomial.legendre as legendre
 import matplotlib.pyplot as plt
 
 from ggqpy.functionfamiliy import PiecewiseLegendre
 
 
-def compress_sequence_of_functions(function_family, x, w, precision, k, intervals):
+def construct_A_matrix(eval_points, weights, functions):
+    if type(eval_points) is not tuple:
+        eval_points = (eval_points,)
+    
+    A = np.column_stack([phi(*eval_points) * np.sqrt(weights) for phi in functions])
 
-    A = np.column_stack([phi(x) * np.sqrt(w) for phi in function_family.functions])
+    return A
+
+def compress_sequence_of_functions(functions, eval_points, weights, precision):
+    
+    ## Construct rank revealing QR s.t. sp.linalg.norm(A[:,perm] - Q[:,:k]@R[:k,:]) <= precision]
+    A = construct_A_matrix(eval_points, weights, functions)
     Q, R, _ = sp.linalg.qr(A, pivoting=True)
     rank = np.sum(np.abs(np.diag(R)) > precision)
 
-    ## Construct rank revealing QR s.t. sp.linalg.norm(A[:,perm] - Q[:,:k]@R[:k,:]) <= precision
-    U = Q[:, :rank] * (np.sqrt(w)[:, np.newaxis]) ** (-1)
+    U = Q[:, :rank] * (np.sqrt(weights)[:, np.newaxis]) ** (-1)
+    return U, rank
 
-    x, w = legendre.leggauss(2 * k)
+def interp_legendre(U, k, intervals):
+    x, _ = legendre.leggauss(2 * k)
     u_list = list()
     for u_global in U.T:
         u_local = np.split(u_global, len(intervals))
@@ -29,7 +40,7 @@ def compress_sequence_of_functions(function_family, x, w, precision, k, interval
 
         u_list.append(PiecewiseLegendre(P, intervals))
 
-    return U, A, rank, u_list
+    return u_list
 
 
 def visualise_diagonal_dropoff(A, eps_comp):
