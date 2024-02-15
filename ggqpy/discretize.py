@@ -91,27 +91,27 @@ class Discretizer:
 
         return x_global, w_global, self.endpoints, intervals
 
-    def naive_discretize2d(self, N, Ix, Iy):  ## So far only -1 to 1
+    def naive_discretize2d(self, N, M, Ix, Iy):  ## So far only -1 to 1
         x, wx = legendre.leggauss(N)
         wx = wx * (Ix.b - Ix.a) / 2
         tx = sp.interpolate.interp1d([-1.0, 1.0], [*Ix])
         x = tx(x)
 
-        y, wy = legendre.leggauss(N)
+        y, wy = legendre.leggauss(M)
         wy = wy * (Iy.b - Iy.a) / 2
         ty = sp.interpolate.interp1d([-1.0, 1.0], [*Iy])
         y = ty(y)
 
         x_gl = np.kron(x, np.ones_like(y))
         y_gl = np.kron(np.ones_like(x), y)
-        w_gl = np.outer(wx, wy).flatten(order="F")
+        w_gl = np.kron(wx, wy)
         return x_gl, y_gl, w_gl, x, y
 
     def naive_discretize2d_sphere(self, N=10, M=10):  ## So far only -1 to 1
         theta, w_theta = legendre.leggauss(N)
         t = sp.interpolate.interp1d([-1.0, 1.0], [0, np.pi])
         theta = t(theta)
-        w_theta = w_theta * np.sin(theta) * 0.5 * np.pi
+        w_theta = w_theta * 0.5 * np.pi
 
         phi = np.arange(M)*2*np.pi/M
         w_phi = np.full(shape=M, fill_value=2 * np.pi / M)

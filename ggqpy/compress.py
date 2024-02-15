@@ -19,7 +19,7 @@ def compress_sequence_of_functions(functions, eval_points, weights, precision):
     
     ## Construct rank revealing QR s.t. sp.linalg.norm(A[:,perm] - Q[:,:k]@R[:k,:]) <= precision]
     A = construct_A_matrix(eval_points, weights, functions)
-    Q, R, _ = sp.linalg.qr(A, pivoting=True)
+    Q, R, _ = sp.linalg.qr(A, pivoting=True, mode="economic")
     rank = np.sum(np.abs(np.diag(R)) > precision)
 
     U = Q[:, :rank] * (np.sqrt(weights)[:, np.newaxis]) ** (-1)
