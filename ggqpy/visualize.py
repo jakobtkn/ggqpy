@@ -7,17 +7,15 @@ def plot_points(theta,phi):
     pi = np.pi
     cos = np.cos
     sin = np.sin
-    _phi, _theta = np.mgrid[0.0:pi:100j, 0.0:2.0*pi:100j]
-    x = r*sin(_phi)*cos(_theta)
-    y = r*sin(_phi)*sin(_theta)
-    z = r*cos(_phi)
+    _theta,_phi = np.mgrid[0.0:pi:100j, 0.0:2.0*pi:100j]
+    x = r*sin(_theta)*cos(_phi)
+    y = r*sin(_theta)*sin(_phi)
+    z = r*cos(_theta)
 
-    #Import data
-    # data = np.genfromtxt('leb.txt')
-    # theta, phi, r = np.hsplit(data, 3) 
-    xx = sin(phi)*cos(theta)
-    yy = sin(phi)*sin(theta)
-    zz = cos(phi)
+    #Import data 
+    xx = sin(theta)*cos(phi)
+    yy = sin(theta)*sin(phi)
+    zz = cos(theta)
 
     #Set colours and render
     fig = plt.figure()

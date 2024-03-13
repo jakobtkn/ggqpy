@@ -33,10 +33,13 @@ class FunctionFamily:
     sym_functions = None
     functions = None
     
-    def __init__(self, I: Interval, sym_functions: list[Expr]) -> None:
+    def __init__(self, I: Interval, sym_functions: list[Expr], lambda_functions = None) -> None:
         self.I = I
-        self.sym_functions = sym_functions
-        self._gen_lambdas_from_sym_exprs()
+        if sym_functions is not None:
+            self.sym_functions = sym_functions
+            self._gen_lambdas_from_sym_exprs()
+        else:
+            self.functions = lambda_functions
         return
     
     def _gen_lambdas_from_sym_exprs(self):

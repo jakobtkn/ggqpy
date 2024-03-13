@@ -13,12 +13,6 @@ def construct_Chebyshev_quadratures(eval_points: tuple, w, U):
     B = np.sqrt(w) * U.T
     Q, R, perm = sp.linalg.qr(B, pivoting=True)
     z = np.linalg.solve(R[:k, :k], Q.T.conj() @ r)
-    # experimential
-    U = U @ np.diag(z / abs(z))
-    B = np.sqrt(w) * U.T
-    Q, R, perm = sp.linalg.qr(B, pivoting=True)
-    z = np.linalg.solve(R[:k, :k], Q.T.conj() @ r)
-    ##
 
     idx_cheb = perm[:k]
     

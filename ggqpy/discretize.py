@@ -1,7 +1,7 @@
 import numpy as np
 import scipy as sp
 import numpy.polynomial.legendre as legendre
-
+from tqdm import tqdm
 from ggqpy.functionfamiliy import Interval
 
 
@@ -65,7 +65,7 @@ class Discretizer:
         self.endpoints = [I.a, I.b]
 
         ## Stage 1.
-        for phi in function_family.functions:
+        for phi in tqdm(function_family.functions):
             self.add_endpoints(I, phi)
 
         ## Stage 2.
@@ -107,11 +107,9 @@ class Discretizer:
         w_gl = np.kron(wx, wy)
         return x_gl, y_gl, w_gl, x, y
 
-    def naive_discretize2d_sphere(self, N=10, M=10):  ## So far only -1 to 1
+    def naive_discretize2d_sphere(self, N=10, M=10):
+        ''' int_[0,2\pi] int_[-1,1] dt d\phi'''
         theta, w_theta = legendre.leggauss(N)
-        t = sp.interpolate.interp1d([-1.0, 1.0], [0, np.pi])
-        theta = t(theta)
-        w_theta = w_theta * 0.5 * np.pi
 
         phi = np.arange(M)*2*np.pi/M
         w_phi = np.full(shape=M, fill_value=2 * np.pi / M)
