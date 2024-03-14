@@ -25,7 +25,7 @@ def compress_sequence_of_functions(functions, eval_points, weights, precision):
     U = Q[:, :rank] * (np.sqrt(weights)[:, np.newaxis]) ** (-1)
     return U, rank
 
-def interp_legendre(U, k, intervals):
+def interp_legendre(U, k, endpoints, intervals):
     x, _ = legendre.leggauss(2 * k)
     u_list = list()
     for u_global in U.T:
@@ -33,13 +33,12 @@ def interp_legendre(U, k, intervals):
         P = list()
 
         for u, interval in zip(u_local, intervals):
-            x, _ = legendre.leggauss(2 * k)
-            coef = legendre.legfit(x, u, deg=2 * k - 1)
-            p = legendre.Legendre(coef, tuple(interval))
-            P.append(p)
+            x, _ = legendre.leggauss(2*k)
+            coef = np.polynomial.polynomial.polyfit(x, u, deg=2*k - 1)
+            P.append(coef)
 
-        u_list.append(PiecewiseLegendre(P, intervals))
-
+        P = np.array(P).T
+        u_list.append(sp.interpolate.PPoly(P, endpoints))
     return u_list
 
 

@@ -37,11 +37,12 @@ class QuadOptimizer:
     verbose = False
     rank = None
 
-    def __init__(self, u_list, r) -> None:
+    def __init__(self, u_list, r, verbose=False) -> None:
         self.u_list = u_list
-        self.du_list = [u.deriv() for u in u_list]
+        self.du_list = [u.derivative() for u in u_list]
         self.r = r
         self.rank = len(u_list)
+        self.verbose = verbose
         return
 
     def set_parameters(self, step_size, maxiter, tol):
@@ -55,6 +56,7 @@ class QuadOptimizer:
         U = np.column_stack([u(x) for u in self.u_list])
         dU = np.column_stack([du(x) for du in self.du_list])
         J = np.hstack([dU.T * w, U.T])
+        print(J)
         return J
 
     def residual(self, y):
