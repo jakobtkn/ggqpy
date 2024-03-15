@@ -4,7 +4,7 @@ from numpy.typing import ArrayLike
 import numpy.polynomial.legendre as legendre
 import matplotlib.pyplot as plt
 
-from ggqpy.functionfamiliy import PiecewiseLegendre
+from ggqpy.functionfamiliy import PiecewiseLegendre, PiecewiseLegendreFamily
 
 
 def construct_A_matrix(eval_points, weights, functions):
@@ -25,22 +25,24 @@ def compress_sequence_of_functions(functions, eval_points, weights, precision):
     U = Q[:, :rank] * (np.sqrt(weights)[:, np.newaxis]) ** (-1)
     return U, rank
 
-def interp_legendre(U, k, intervals):
-    x, _ = legendre.leggauss(2 * k)
+def interp_legendre(U, endpoints):
+    points_total, number_of_polynomials = U.shape
+    number_of_intervals = len(endpoints) - 1
+    points_per_interval = points_total//number_of_intervals
     u_list = list()
-    for u_global in U.T:
-        u_local = np.split(u_global, len(intervals))
-        P = list()
-
-        for u, interval in zip(u_local, intervals):
-            x, _ = legendre.leggauss(2 * k)
-            coef = legendre.legfit(x, u, deg=2 * k - 1)
-            p = legendre.Legendre(coef, tuple(interval))
-            P.append(p)
-
-        u_list.append(PiecewiseLegendre(P, intervals))
-
-    return u_list
+    
+    x, _ = legendre.leggauss(points_per_interval)
+    for n in range(number_of_polynomials):
+        piecewise_poly = list()
+        for i in range(number_of_intervals):
+            u_local = U[points_per_interval*i:points_per_interval*(i+1), n]
+            coef = np.polynomial.legendre.legfit(x, u_local, deg=points_per_interval - 1)
+            p_local = legendre.Legendre(coef, (endpoints[i], endpoints[i+1]))
+            piecewise_poly.append(p_local)
+            
+        u_list.append(PiecewiseLegendre(piecewise_poly, endpoints))
+        
+    return PiecewiseLegendreFamily(u_list,endpoints)
 
 
 def visualise_diagonal_dropoff(A, eps_comp):
