@@ -27,21 +27,20 @@ def sherman_morrison(Ainv, u, v):
 
 
 class QuadOptimizer:
-    u_list = None
-    du_list = None
+    legendre_family = None
     r = None
     step_size = 0.8
     maxiter = int(1e3)
-    tol = 1e-5
-    args = (step_size, maxiter, tol)
+    ftol = 1e-5
+    gtol = 1e-5
+    args = (step_size, maxiter, ftol)
     verbose = False
     rank = None
 
-    def __init__(self, u_list, r, verbose=False) -> None:
-        self.u_list = u_list
-        self.du_list = [u.derivative() for u in u_list]
+    def __init__(self, legendre_family, r, verbose = False) -> None:
+        self.legendre_family = legendre_family
         self.r = r
-        self.rank = len(u_list)
+        self.rank = legendre_family.number_of_functions
         self.verbose = verbose
         return
 
@@ -53,16 +52,14 @@ class QuadOptimizer:
 
     def jacobian(self, y):
         x, w = np.split(y, 2)
-        U = np.column_stack([u(x) for u in self.u_list])
-        dU = np.column_stack([du(x) for du in self.du_list])
-        J = np.hstack([dU.T * w, U.T])
-        print(J)
+        J = self.legendre_family.eval_block(x)
+        J[:,:len(x)] = J[:,:len(x)]*w
         return J
 
     def residual(self, y):
         x, w = np.split(y, 2)
-        U = np.column_stack([u(x) for u in self.u_list])
-        return U.T @ w - self.r
+        U = self.legendre_family(x)
+        return U @ w - self.r
 
     def naive_optimization(self, n, I):
         x_gl, w_gl = np.polynomial.legendre.leggauss(n)
@@ -87,7 +84,7 @@ class QuadOptimizer:
             Ak = A
             sherman_morrison(Ak, -J[:, k], J[:, k])
             sherman_morrison(Ak, -J[:, k + n], J[:, k + n])
-            
+
             Jk = J
             Jk[:, (k, n + k)] = 0
 
@@ -102,23 +99,30 @@ class QuadOptimizer:
         n = len(x)
 
         idx_sorted = self.rank_remaining_nodes(x, w)
-        for (iteration,k) in enumerate(idx_sorted):
+        for iteration, k in enumerate(idx_sorted):
             mask = np.full(n, True)
             mask[k] = False
             y0 = np.concatenate([x[mask], w[mask]])
 
             # y = dampened_gauss_newton(self.residual, self.jacobian, y0, *self.args)
             res = sp.optimize.least_squares(
-                self.residual, y0, jac=self.jacobian, method="dogbox", x_scale=1, ftol=self.tol
+                self.residual,
+                y0,
+                jac=self.jacobian,
+                method="dogbox",
+                x_scale=1,
+                ftol=self.ftol,
+                gtol=self.gtol,
+                verbose=self.verbose
             )
             y = res.x
 
             eps = np.linalg.norm(self.residual(y)) ** 2
-
+            
             if eps < eps_quad**2:
                 x, w = np.split(y, 2)
                 if self.verbose:
-                    print("Removed node ", k, "This was the ",iteration, " checked")
+                    print("Removed node ", k, "This was the ", iteration, " checked")
                 return x, w, True
 
             if self.verbose:
@@ -130,10 +134,9 @@ class QuadOptimizer:
         x = x0
         w = w0
 
-        improvement_found = True
-        while improvement_found:
+        for _ in tqdm(range(self.rank // 2)):
             x, w, improvement_found = self.attempt_to_remove_node(x, w, eps_quad)
-            if len(x) <= self.rank // 2:
+            if not improvement_found:
                 break
-
+            
         return x, w
