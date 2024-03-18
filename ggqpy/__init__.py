@@ -1,12 +1,20 @@
 import numpy as np
 import scipy as sp
 
-from ggqpy.discretize import Discretizer
-from ggqpy.compress import compress_sequence_of_functions
+from ggqpy.discretize import Discretizer, compress_sequence_of_functions
 from ggqpy.optimize import QuadOptimizer
 
 
 def construct_Chebyshev_quadratures(eval_points: tuple, w, U):
+    """
+        
+    Parameters
+    ----------
+    : 
+    Returns
+    -------
+    :
+    """
     r = U.T @ w
     k = len(r)
 
@@ -29,7 +37,15 @@ def generalized_gaussian_quadrature(
     eps_comp=1e-3,
     eps_quad=1e-3,
 ):
-
+    """
+        
+    Parameters
+    ----------
+    : 
+    Returns
+    -------
+    :
+    """
     x_disc, w_disc, endpoints, intervals = discretizer.adaptive_discretization(
         function_family
     )
@@ -49,6 +65,6 @@ def generalized_gaussian_quadrature(
     if optimizer is None:
         optimizer = QuadOptimizer(u_list, r)
 
-    x, w = optimizer.point_reduction(x_cheb, w_cheb, eps_quad)
+    x, w = optimizer.reduce_quadrature(x_cheb, w_cheb, eps_quad)
     
     return x, w

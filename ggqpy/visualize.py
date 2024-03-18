@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import scipy as sp
 
 def plot_points(theta,phi):
     # Create a sphere
@@ -32,3 +33,22 @@ def plot_points(theta,phi):
     ax.set_aspect("equal")
     plt.tight_layout()
     plt.show()
+    return
+
+
+def visualise_diagonal_dropoff(A, eps_comp):
+    """
+
+        Parameters
+        ----------
+        : 
+        Returns
+        -------
+        :
+    """
+    _, R, _ = sp.linalg.qr(A, mode="economic", pivoting=True)
+    plt.xlabel(r"$i$")
+    plt.semilogy(np.abs(np.diag(R)), "-xr", label=r"$|R_{ii}|$")
+    plt.axhline(eps_comp, linestyle="--", label=r"$\varepsilon_{comp}$")
+    plt.legend()
+    return
