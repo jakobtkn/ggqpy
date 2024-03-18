@@ -3,7 +3,7 @@ import scipy as sp
 import bisect
 from sympy import Symbol, Expr, integrate, lambdify, nan
 
-x = Symbol("x")
+x = Symbol("x", real=True)
 
 
 class Interval:

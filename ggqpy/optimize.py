@@ -32,16 +32,16 @@ class QuadOptimizer:
     step_size = 0.8
     maxiter = int(1e3)
     ftol = 1e-5
-    gtol = 1e-5
     args = (step_size, maxiter, ftol)
     verbose = False
     rank = None
 
-    def __init__(self, legendre_family, r, verbose = False) -> None:
+    def __init__(self, legendre_family, r, verbose = False, ftol = 1e-8) -> None:
         self.legendre_family = legendre_family
         self.r = r
         self.rank = legendre_family.number_of_functions
         self.verbose = verbose
+        self.ftol = ftol
         return
 
     def set_parameters(self, step_size, maxiter, tol):
@@ -111,7 +111,8 @@ class QuadOptimizer:
                 method="dogbox",
                 x_scale=1,
                 ftol=self.ftol,
-                gtol=self.gtol,
+                gtol=None,
+                xtol=None,
                 verbose=self.verbose
             )
             y = res.x
