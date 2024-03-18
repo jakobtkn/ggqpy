@@ -28,13 +28,17 @@ class Discretizer:
         self.min_length = min_length
         self.verbose = verbose
         self.interpolation_degree = interpolation_degree
+        self.x_gl, _ = legendre.leggauss(2 * self.interpolation_degree)
         return
 
     def interval_compatible(self, I, phi):
-        translate = sp.interpolate.interp1d([-1.0, 1.0], [I.a, I.b])
-        x, _ = legendre.leggauss(2 * self.interpolation_degree)
+        if I.length() < self.min_length:
+            return True
+
+        x = (I.b-I.a)*(self.x_gl + 1)/2 + I.a
+        
         alpha = legendre.legfit(
-            x, y=phi(translate(x)), deg=2 * self.interpolation_degree - 1
+            self.x_gl, y=phi(x), deg=2 * self.interpolation_degree - 1
         )  # Fit to Legendre Polynomials on [a,b]
         high_freq_sq_residuals = np.sum(abs(alpha[self.interpolation_degree :]) ** 2)
 
@@ -43,18 +47,21 @@ class Discretizer:
 
         return high_freq_sq_residuals < self.precision
 
-    def add_endpoints(self, sub_interval, phi):
-        if (
-            self.interval_compatible(sub_interval, phi)
-            or sub_interval.length() < self.min_length
-        ):
-            return
-        else:
-            midpoint = (sub_interval.a + sub_interval.b) / 2.0
-            self.endpoints.append(midpoint)
-            self.add_endpoints(Interval(sub_interval.a, midpoint), phi)
-            self.add_endpoints(Interval(midpoint, sub_interval.b), phi)
-            return
+    def add_endpoints(self, intervals, phi):
+        intervals_to_check = intervals.copy()
+        intervals_out = list()
+        
+        while intervals_to_check:
+            I = intervals_to_check.pop()
+            
+            if self.interval_compatible(I, phi):
+                intervals_out.append(I)
+            else:
+                midpoint = (I.a + I.b) / 2.0
+                intervals_to_check.append(Interval(I.a, midpoint))
+                intervals_to_check.append(Interval(midpoint, I.b))
+        
+        return intervals_out
 
     def adaptive_discretization(self, function_family):
         """
@@ -62,14 +69,14 @@ class Discretizer:
         Procedure described in "A nonlinear optimization procedure for generalized Gaussian quadratures" p.12-13
         """
         I = function_family.I
-        self.endpoints = [I.a, I.b]
+        intervals = [I]
 
         ## Stage 1.
         for phi in tqdm(function_family.functions):
-            self.add_endpoints(I, phi)
+            intervals = self.add_endpoints(intervals, phi)
 
         ## Stage 2.
-        self.endpoints = sorted(set(self.endpoints))
+        self.endpoints = sorted(set([a for (a,b) in intervals] + [I.b]))
 
         if self.verbose:
             print("Endpoints found: ", self.endpoints)
@@ -108,14 +115,14 @@ class Discretizer:
         return x_gl, y_gl, w_gl, x, y
 
     def naive_discretize2d_sphere(self, N=10, M=10):
-        ''' int_[0,2\pi] int_[-1,1] dt d\phi'''
+        """int_[0,2\pi] int_[-1,1] dt d\phi"""
         theta, w_theta = legendre.leggauss(N)
 
-        phi = np.arange(M)*2*np.pi/M
+        phi = np.arange(M) * 2 * np.pi / M
         w_phi = np.full(shape=M, fill_value=2 * np.pi / M)
 
         theta_gl = np.kron(theta, np.ones_like(phi))
         phi_gl = np.kron(np.ones_like(theta), phi)
         w_gl = np.kron(w_theta, w_phi)
-        
+
         return theta_gl, phi_gl, w_gl, theta, phi

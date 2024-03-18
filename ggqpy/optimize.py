@@ -104,7 +104,6 @@ class QuadOptimizer:
             mask[k] = False
             y0 = np.concatenate([x[mask], w[mask]])
 
-            # y = dampened_gauss_newton(self.residual, self.jacobian, y0, *self.args)
             res = sp.optimize.least_squares(
                 self.residual,
                 y0,
@@ -117,7 +116,7 @@ class QuadOptimizer:
             )
             y = res.x
 
-            eps = np.linalg.norm(self.residual(y)) ** 2
+            eps = np.sum(self.residual(y)**2)
             
             if eps < eps_quad**2:
                 x, w = np.split(y, 2)
