@@ -5,7 +5,6 @@ from sympy import Symbol, Expr, integrate, lambdify, nan
 
 x = Symbol("x", real=True)
 
-
 class Interval:
     def __init__(self, start: float, end: float) -> None:
         if start > end:
