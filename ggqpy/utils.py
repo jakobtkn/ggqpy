@@ -40,12 +40,12 @@ class Quadrature:
         self.w = w
         return
 
-    def save_as_file(self, file_name: str):
-        np.savetxt(self.file_name, np.column_stack((self.x, self.w)))
+    def save_to_file(self, file_name: str):
+        np.savetxt(file_name, np.column_stack((self.x, self.w)))
         return
 
     @classmethod
-    def from_file(cls, file_name: str):
+    def load_from_file(cls, file_name: str):
         data = np.genfromtxt(file_name)
         x, w = np.hsplit(data)
         return cls(x, w, file_name)
@@ -63,7 +63,7 @@ class FunctionFamily:
         self, I: Interval, functions_lambdas, functions_symbolic=None
     ) -> None:
         self.I = I
-        self.functions_evaluations = functions_lambdas
+        self.functions_lambdas = functions_lambdas
 
     @classmethod
     def from_symbolic(cls, I: Interval, functions_symbolic):
