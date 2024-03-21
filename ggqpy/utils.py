@@ -56,33 +56,30 @@ class Quadrature:
 
 class FunctionFamily:
     I = None
-    sym_functions = None
-    functions = None
+    functions_symbolic = None
+    functions_lambdas = None
 
     def __init__(
-        self, I: Interval, sym_functions: list[Expr], lambda_functions=None
+        self, I: Interval, functions_lambdas, functions_symbolic=None
     ) -> None:
         self.I = I
-        if sym_functions is not None:
-            self.sym_functions = sym_functions
-            self._gen_lambdas_from_sym_exprs()
-        else:
-            self.functions = lambda_functions
-        return
+        self.functions_evaluations = functions_lambdas
 
-    def _gen_lambdas_from_sym_exprs(self):
-        self.functions = list()
-        for expr in self.sym_functions:
-            self.functions.append(lambdify(x, expr, "numpy"))
+    @classmethod
+    def from_symbolic(cls, I: Interval, functions_symbolic):
+        functions_evaluations = list()
+        for expr in functions_symbolic:
+            functions_evaluations.append(lambdify(x, expr, "numpy"))
+        return cls(I, functions_evaluations, functions_symbolic)
 
     def target_integral(self, f: Expr) -> float:
         integral = integrate(f, (x, self.I.a, self.I.b))
         return integral
 
     def generate_example_function(self, loc=0, scale=1) -> Expr:
-        number_of_functions = len(self.sym_functions)
+        number_of_functions = len(self.functions_symbolic)
         c = np.random.normal(loc, scale, size=number_of_functions)
-        expr = sum(np.array(self.sym_functions) * c)
+        expr = sum(np.array(self.functions_symbolic) * c)
         f = lambdify(x, expr, "numpy")
         return f, expr
 
