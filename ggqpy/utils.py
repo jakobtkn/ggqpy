@@ -3,10 +3,6 @@ import scipy as sp
 import bisect
 from typing import Callable
 from numpy.typing import ArrayLike
-from sympy import Symbol, Expr, integrate, lambdify, nan
-
-x = Symbol("x", real=True)
-
 
 class Interval:
     def __init__(self, start: float, end: float) -> None:
@@ -14,7 +10,6 @@ class Interval:
             raise Exception("end must be greater than start")
         self.a = start
         self.b = end
-        self.translate = sp.interpolate.interp1d([-1.0, 1.0], [start, end])
         return
 
     def __repr__(self):
@@ -32,7 +27,6 @@ class Interval:
 
     def is_in(self, x):
         return np.logical_and((self.a <= x), (x <= self.b))
-
 
 class Quadrature:
     def __init__(self, x: ArrayLike, w: ArrayLike) -> None:
@@ -56,33 +50,13 @@ class Quadrature:
 
 class FunctionFamily:
     I = None
-    functions_symbolic = None
     functions_lambdas = None
 
     def __init__(
-        self, I: Interval, functions_lambdas, functions_symbolic=None
+        self, I: Interval, functions_lambdas
     ) -> None:
         self.I = I
         self.functions_lambdas = functions_lambdas
-
-    @classmethod
-    def from_symbolic(cls, I: Interval, functions_symbolic):
-        functions_evaluations = list()
-        for expr in functions_symbolic:
-            functions_evaluations.append(lambdify(x, expr, "numpy"))
-        return cls(I, functions_evaluations, functions_symbolic)
-
-    def target_integral(self, f: Expr) -> float:
-        integral = integrate(f, (x, self.I.a, self.I.b))
-        return integral
-
-    def generate_example_function(self, loc=0, scale=1) -> Expr:
-        number_of_functions = len(self.functions_symbolic)
-        c = np.random.normal(loc, scale, size=number_of_functions)
-        expr = sum(np.array(self.functions_symbolic) * c)
-        f = lambdify(x, expr, "numpy")
-        return f, expr
-
 
 class PiecewiseLegendre:
     def __init__(self, poly_list, endpoints) -> None:
