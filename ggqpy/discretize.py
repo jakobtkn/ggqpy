@@ -98,7 +98,7 @@ class Discretizer:
         intervals = [I]
 
         ## Stage 1.
-        for phi in tqdm(function_family.functions):
+        for phi in tqdm(function_family.functions_lambdas):
             intervals = self.add_endpoints(intervals, phi)
 
         ## Stage 2.
