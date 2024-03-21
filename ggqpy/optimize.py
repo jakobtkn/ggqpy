@@ -5,7 +5,7 @@ from tqdm import tqdm
 verbose = False
 if verbose:
 
-    def vprint(self, *messages):
+    def vprint(self, *messages) -> None:
         for message in messages:
             print(message)
         print()
@@ -13,7 +13,7 @@ if verbose:
 
 else:
 
-    def vprint(self, *messages):
+    def vprint(self, *messages) -> None:
         return
 
 
@@ -41,7 +41,7 @@ def dampened_gauss_newton(r, jac, x0, step_size=0.3, maxiter=100, tol=1e-6):
     return x
 
 
-def sherman_morrison(Ainv, u, v):
+def sherman_morrison(Ainv, u, v) -> None:
     """
     Finds (A + uv^T)^{-1} using a rank-1 update
 
@@ -186,10 +186,10 @@ class QuadOptimizer:
             if eps < eps_quad**2:
                 x, w = np.split(y, 2)
 
-                vprint("Node removed, a total of %d have been checked", iteration + 1)
+                vprint("Node removed, a total of %d have been checked" % iteration + 1)
                 return x, w, True
 
-            vprint("Node removed, a total of %d have been checked", iteration + 1)
+            vprint("Node removed, a total of %d have been checked" % iteration + 1)
 
         return x, w, False
 
@@ -210,14 +210,11 @@ class QuadOptimizer:
             x, w, improvement_found = self.attempt_to_remove_node(x, w, eps_quad)
             if not improvement_found:
                 vprint(
-                    "Succesfully generated a generalized Gaussian quadrature consisting of %d nodes",
-                    len(x),
+                    "Succesfully generated a generalized Gaussian quadrature consisting of %d nodes" % len(x)
                 )
                 break
 
         vprint(
-            "Broke preemptively, generated a quadrature consisting of %d nodes (dwon from %d)",
-            len(x),
-            len(x0),
+            "Broke preemptively, generated a quadrature consisting of %d nodes (dwon from %d)" % (len(x), len(x0))
         )
         return x, w
