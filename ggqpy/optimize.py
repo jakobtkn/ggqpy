@@ -186,10 +186,10 @@ class QuadOptimizer:
             if eps < eps_quad**2:
                 x, w = np.split(y, 2)
 
-                vprint("Node removed, a total of %d have been checked" % iteration + 1)
+                vprint(f"Node removed, a total of {iteration + 1} have been checked")
                 return x, w, True
 
-            vprint("Node removed, a total of %d have been checked" % iteration + 1)
+            vprint(f"Node kept, a total of {iteration + 1} have been checked")
 
         return x, w, False
 
@@ -210,11 +210,11 @@ class QuadOptimizer:
             x, w, improvement_found = self.attempt_to_remove_node(x, w, eps_quad)
             if not improvement_found:
                 vprint(
-                    "Succesfully generated a generalized Gaussian quadrature consisting of %d nodes" % len(x)
+                    f"Succesfully generated a generalized Gaussian quadrature consisting of {len(x)} nodes"
                 )
                 break
 
         vprint(
-            "Broke preemptively, generated a quadrature consisting of %d nodes (dwon from %d)" % (len(x), len(x0))
+            f"Broke preemptively, generated a quadrature consisting of {len(x)} nodes (down from {len(x0)})"
         )
         return x, w
