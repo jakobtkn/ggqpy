@@ -1,0 +1,13 @@
+name: ggqpy
+channels:
+  - conda-forge
+dependencies:
+  - python
+  - matplotlib
+  - sympy
+  - ca-certificates
+  - certifi
+  - openssl
+  - scipy
+  - tqdm
+prefix: /home/jakob/miniforge3/envs/ggqpy

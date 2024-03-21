@@ -2,8 +2,8 @@ import numpy as np
 import scipy as sp
 import numpy.polynomial.legendre as legendre
 from tqdm import tqdm
-from functionfamiliy import PiecewiseLegendre, PiecewiseLegendreFamily
-from ggqpy.functionfamiliy import Interval
+from ggqpy.utils import PiecewiseLegendre, PiecewiseLegendreFamily
+from ggqpy.utils import Interval
 
 
 def pairwise(iterable):

@@ -2,7 +2,7 @@ import numpy as np
 from typing import Callable
 from sympy import Symbol, Expr, Poly, cos
 
-from ggqpy.functionfamiliy import FunctionFamily, Interval
+from ggqpy.utils import FunctionFamily, Interval
 
 
 x = Symbol("x", real=True)

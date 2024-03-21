@@ -30,7 +30,24 @@ class Interval:
     def is_in(self, x):
         return np.logical_and((self.a <= x), (x <= self.b))
 
-
+class Quadrature:
+    def __init__(self, x, w, file_name = None) -> None:
+        self.x = x
+        self.w = w
+        self.file_name = file_name
+        pass
+    
+    def save_as_file(self):
+        np.savetxt(self.file_name, np.column_stack((self.x,self.w)))
+        return
+        
+    @classmethod
+    def from_file(cls, file_name):
+        data = np.genfromtxt(file_name)
+        x,w = np.hsplit(data)
+        return cls(x, w, file_name)
+    
+    
 class FunctionFamily:
     I = None
     sym_functions = None
