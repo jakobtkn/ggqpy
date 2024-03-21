@@ -1,6 +1,8 @@
 import numpy as np
 import scipy as sp
 import bisect
+from typing import Callable
+from numpy.typing import ArrayLike
 from sympy import Symbol, Expr, integrate, lambdify, nan
 
 x = Symbol("x", real=True)
@@ -31,7 +33,7 @@ class Interval:
         return np.logical_and((self.a <= x), (x <= self.b))
 
 class Quadrature:
-    def __init__(self, x, w, file_name = None) -> None:
+    def __init__(self, x: ArrayLike, w: ArrayLike, file_name = None) -> None:
         self.x = x
         self.w = w
         self.file_name = file_name
@@ -42,10 +44,13 @@ class Quadrature:
         return
         
     @classmethod
-    def from_file(cls, file_name):
+    def from_file(cls, file_name: str):
         data = np.genfromtxt(file_name)
         x,w = np.hsplit(data)
         return cls(x, w, file_name)
+    
+    def eval(self, f: Callable):
+        return f(self.x).w
     
     
 class FunctionFamily:
