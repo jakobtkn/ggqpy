@@ -34,10 +34,10 @@ class Discretizer:
 
     def interval_compatible(self, I, phi):
         """
-        
+
         Parameters
         ----------
-        : 
+        :
         Returns
         -------
         :
@@ -45,8 +45,8 @@ class Discretizer:
         if I.length() < self.min_length:
             return True
 
-        x = (I.b-I.a)*(self.x_gl + 1)/2 + I.a
-        
+        x = (I.b - I.a) * (self.x_gl + 1) / 2 + I.a
+
         alpha = legendre.legfit(
             self.x_gl, y=phi(x), deg=2 * self.interpolation_degree - 1
         )  # Fit to Legendre Polynomials on [a,b]
@@ -59,37 +59,37 @@ class Discretizer:
 
     def add_endpoints(self, intervals, phi):
         """
-        
+
         Parameters
         ----------
-        : 
+        :
         Returns
         -------
         :
         """
         intervals_to_check = intervals.copy()
         intervals_out = list()
-        
+
         while intervals_to_check:
             I = intervals_to_check.pop()
-            
+
             if self.interval_compatible(I, phi):
                 intervals_out.append(I)
             else:
                 midpoint = (I.a + I.b) / 2.0
                 intervals_to_check.append(Interval(I.a, midpoint))
                 intervals_to_check.append(Interval(midpoint, I.b))
-        
+
         return intervals_out
 
     def adaptive_discretization(self, function_family):
         """
         Adaptive disrectization using nested Gaussian Legendre polynomial interpolation.
         Procedure described in "A nonlinear optimization procedure for generalized Gaussian quadratures" p.12-13
-        
+
         Parameters
         ----------
-        : 
+        :
         Returns
         -------
         :
@@ -102,7 +102,7 @@ class Discretizer:
             intervals = self.add_endpoints(intervals, phi)
 
         ## Stage 2.
-        self.endpoints = sorted(set([a for (a,b) in intervals] + [I.b]))
+        self.endpoints = sorted(set([a for (a, b) in intervals] + [I.b]))
 
         if self.verbose:
             print("Endpoints found: ", self.endpoints)
@@ -126,10 +126,10 @@ class Discretizer:
 
     def naive_discretize2d(self, N, M, Ix, Iy):  ## So far only -1 to 1
         """
-        
+
         Parameters
         ----------
-        : 
+        :
         Returns
         -------
         :
@@ -152,15 +152,15 @@ class Discretizer:
     def naive_discretize2d_sphere(self, N=10, M=10):
         """
         int_[0,2\pi] int_[-1,1] dt d\phi
-        
+
         Parameters
         ----------
-        : 
+        :
         Returns
         -------
         :
         """
-        
+
         theta, w_theta = legendre.leggauss(N)
 
         phi = np.arange(M) * 2 * np.pi / M
@@ -172,8 +172,7 @@ class Discretizer:
 
         return theta_gl, phi_gl, w_gl, theta, phi
 
-
-    def interpolate_piecewise_legendre(self,U):
+    def interpolate_piecewise_legendre(self, U):
         """
         Interpolate point values as family of Piecewise Legendre polynomials.
 
@@ -186,18 +185,22 @@ class Discretizer:
         -------
         c : PiecewiseLegendreFamily
         """
-        
+
         points_total, number_of_polynomials = U.shape
         number_of_intervals = len(self.endpoints) - 1
-        points_per_interval = points_total//number_of_intervals
+        points_per_interval = points_total // number_of_intervals
         u_list = list()
         x, _ = legendre.leggauss(points_per_interval)
         for n in range(number_of_polynomials):
             piecewise_poly = list()
             for i in range(number_of_intervals):
-                u_local = U[points_per_interval*i:points_per_interval*(i+1), n]
-                coef = np.polynomial.legendre.legfit(x, u_local, deg=points_per_interval - 1)
-                p_local = legendre.Legendre(coef, (self.endpoints[i], self.endpoints[i+1]))
+                u_local = U[points_per_interval * i : points_per_interval * (i + 1), n]
+                coef = np.polynomial.legendre.legfit(
+                    x, u_local, deg=points_per_interval - 1
+                )
+                p_local = legendre.Legendre(
+                    coef, (self.endpoints[i], self.endpoints[i + 1])
+                )
                 piecewise_poly.append(p_local)
 
             u_list.append(PiecewiseLegendre(piecewise_poly, self.endpoints))
@@ -210,7 +213,7 @@ def construct_A_matrix(eval_points, weights, functions):
 
     Parameters
     ----------
-    : 
+    :
     Returns
     -------
     :
@@ -227,7 +230,7 @@ def compress_sequence_of_functions(functions, eval_points, weights, precision):
 
     Parameters
     ----------
-    : 
+    :
     Returns
     -------
     :

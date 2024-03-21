@@ -7,10 +7,10 @@ from ggqpy.optimize import QuadOptimizer
 
 def construct_Chebyshev_quadratures(eval_points: tuple, w, U):
     """
-        
+
     Parameters
     ----------
-    : 
+    :
     Returns
     -------
     :
@@ -23,12 +23,13 @@ def construct_Chebyshev_quadratures(eval_points: tuple, w, U):
     z = np.linalg.solve(R[:k, :k], Q.T.conj() @ r)
 
     idx_cheb = perm[:k]
-    
+
     eval_points = tuple(map(lambda x: x[idx_cheb], eval_points))
-    
+
     w_cheb = z * np.sqrt(w[idx_cheb])
 
     return eval_points, w_cheb
+
 
 def generalized_gaussian_quadrature(
     function_family,
@@ -38,10 +39,10 @@ def generalized_gaussian_quadrature(
     eps_quad=1e-3,
 ):
     """
-        
+
     Parameters
     ----------
-    : 
+    :
     Returns
     -------
     :
@@ -66,5 +67,5 @@ def generalized_gaussian_quadrature(
         optimizer = QuadOptimizer(u_list, r)
 
     x, w = optimizer.reduce_quadrature(x_cheb, w_cheb, eps_quad)
-    
+
     return x, w

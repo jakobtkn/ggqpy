@@ -7,6 +7,7 @@ from sympy import Symbol, Expr, integrate, lambdify, nan
 
 x = Symbol("x", real=True)
 
+
 class Interval:
     def __init__(self, start: float, end: float) -> None:
         if start > end:
@@ -32,27 +33,28 @@ class Interval:
     def is_in(self, x):
         return np.logical_and((self.a <= x), (x <= self.b))
 
+
 class Quadrature:
-    def __init__(self, x: ArrayLike, w: ArrayLike, file_name = None) -> None:
+    def __init__(self, x: ArrayLike, w: ArrayLike, file_name=None) -> None:
         self.x = x
         self.w = w
         self.file_name = file_name
         pass
-    
+
     def save_as_file(self):
-        np.savetxt(self.file_name, np.column_stack((self.x,self.w)))
+        np.savetxt(self.file_name, np.column_stack((self.x, self.w)))
         return
-        
+
     @classmethod
     def from_file(cls, file_name: str):
         data = np.genfromtxt(file_name)
-        x,w = np.hsplit(data)
+        x, w = np.hsplit(data)
         return cls(x, w, file_name)
-    
+
     def eval(self, f: Callable):
         return f(self.x).w
-    
-    
+
+
 class FunctionFamily:
     I = None
     sym_functions = None
@@ -106,6 +108,7 @@ class PiecewiseLegendre:
         deriv_poly_list = [p.deriv() for p in self.poly_list]
         return PiecewiseLegendre(deriv_poly_list, self.endpoints)
 
+
 class PiecewiseLegendreFamily:
     def __init__(self, poly_list, endpoints) -> None:
         self.number_of_functions = len(poly_list)
@@ -118,25 +121,29 @@ class PiecewiseLegendreFamily:
         return
 
     def __call__(self, x):
-        ''' Evaluates functions in list such that row k contains
-            [P_k(x)]
-        '''
-        y = np.zeros(shape = (self.number_of_functions,len(x)), dtype=float)
+        """Evaluates functions in list such that row k contains
+        [P_k(x)]
+        """
+        y = np.zeros(shape=(self.number_of_functions, len(x)), dtype=float)
         for k in range(len(x)):
             i = bisect.bisect_right(self.endpoints_bisect, x[k]) - 1
-            y[:,k] = np.array([p.poly_list[i](x[k]) for p in self.piecewise_poly_list])
+            y[:, k] = np.array([p.poly_list[i](x[k]) for p in self.piecewise_poly_list])
         return y
 
     def eval_block(self, x):
-        ''' Evaluates functions in list such that row k contains
-            [P_k(x) P_k'(x)]
-        '''
-        y = np.zeros(shape = (self.number_of_functions,2*len(x)), dtype=float)
+        """Evaluates functions in list such that row k contains
+        [P_k(x) P_k'(x)]
+        """
+        y = np.zeros(shape=(self.number_of_functions, 2 * len(x)), dtype=float)
         n = len(x)
         for k in range(n):
             i = bisect.bisect_right(self.endpoints_bisect, x[k]) - 1
-            y[:,k] = np.array([p.poly_list[i](x[k]) for p in self.piecewise_poly_deriv_list])
-            y[:,k+n] = np.array([p.poly_list[i](x[k]) for p in self.piecewise_poly_list])
+            y[:, k] = np.array(
+                [p.poly_list[i](x[k]) for p in self.piecewise_poly_deriv_list]
+            )
+            y[:, k + n] = np.array(
+                [p.poly_list[i](x[k]) for p in self.piecewise_poly_list]
+            )
         return y
 
     def deriv(self):
