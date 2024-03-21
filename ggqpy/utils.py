@@ -35,13 +35,12 @@ class Interval:
 
 
 class Quadrature:
-    def __init__(self, x: ArrayLike, w: ArrayLike, file_name=None) -> None:
+    def __init__(self, x: ArrayLike, w: ArrayLike) -> None:
         self.x = x
         self.w = w
-        self.file_name = file_name
-        pass
+        return
 
-    def save_as_file(self):
+    def save_as_file(self, file_name: str):
         np.savetxt(self.file_name, np.column_stack((self.x, self.w)))
         return
 
