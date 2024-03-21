@@ -3,6 +3,7 @@ import scipy as sp
 
 from ggqpy.discretize import Discretizer, compress_sequence_of_functions
 from ggqpy.optimize import QuadOptimizer
+from ggqpy.utils import Quadrature, FunctionFamily, Interval
 
 
 def construct_Chebyshev_quadratures(eval_points: tuple, w, U):
@@ -51,21 +52,11 @@ def generalized_gaussian_quadrature(
         function_family
     )
 
-    U_disc, A, rank, u_list = compress_sequence_of_functions(
-        function_family,
-        x_disc,
-        w_disc,
-        eps_comp,
-        discretizer.interpolation_degree,
-        intervals,
-    )
-
-    x_cheb, w_cheb, idx_cheb = construct_Chebyshev_quadratures(x_disc, w_disc, U_disc)
-
+    U_disc, rank = compress_sequence_of_functions(function_family.functions_lambdas, x_disc, w_disc, eps_comp)
+    (x_cheb,), w_cheb = construct_Chebyshev_quadratures((x_disc,), w_disc, U_disc)
     r = U_disc.T @ w_disc
-    if optimizer is None:
-        optimizer = QuadOptimizer(u_list, r)
-
+    U_family = discretizer.interpolate_piecewise_legendre(U_disc)
+    optimizer = QuadOptimizer(U_family, r)
     x, w = optimizer.reduce_quadrature(x_cheb, w_cheb, eps_quad)
 
     return x, w
