@@ -12,7 +12,6 @@ def pairwise(iterable):
 
     for b in it:
         yield (a, b)
-        a = b
 
 
 class Discretizer:
