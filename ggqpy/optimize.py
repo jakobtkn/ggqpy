@@ -2,10 +2,10 @@ import numpy as np
 import scipy as sp
 from tqdm import tqdm
 
-verbose = False
+verbose = True
 if verbose:
 
-    def vprint(self, *messages) -> None:
+    def vprint(*messages) -> None:
         for message in messages:
             print(message)
         print()
@@ -13,7 +13,7 @@ if verbose:
 
 else:
 
-    def vprint(self, *messages) -> None:
+    def vprint(*messages) -> None:
         return
 
 
@@ -78,9 +78,9 @@ class QuadOptimizer:
         -------
         :
         """
-        x, w = np.split(y, 2)
-        J = self.legendre_family.eval_block(x)
-        J[:, : len(x)] = J[:, : len(x)] * w
+        n = len(y)//2
+        J = self.legendre_family.eval_block(y[:n])
+        J[:, : n] = J[:, : n] * y[n:]
         return J
 
     def residual(self, y):
@@ -93,9 +93,9 @@ class QuadOptimizer:
         -------
         :
         """
-        x, w = np.split(y, 2)
-        U = self.legendre_family(x)
-        return U @ w - self.r
+        n = len(y)//2
+        U = self.legendre_family(y[:n])
+        return U @ y[n:] - self.r
 
     def naive_optimization(self, n, I, step_size, maxiter, ftol):
         """
@@ -168,11 +168,16 @@ class QuadOptimizer:
             mask = np.full(n, True)
             mask[k] = False
             y0 = np.concatenate([x[mask], w[mask]])
-
+            
+            a = self.legendre_family.endpoints[0]
+            b = self.legendre_family.endpoints[-1]
+            lower_bounds = np.concatenate(np.full(n,a),np.zeros(n))
+            upper_bounds = np.concatenate(np.full(n,b),np.full(n,(b-a)/n))
             res = sp.optimize.least_squares(
                 self.residual,
                 y0,
                 jac=self.jacobian,
+                bounds = (lower_bounds, upper_bounds),
                 method="dogbox",
                 x_scale=1,
                 ftol=self.ftol,
