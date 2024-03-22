@@ -1,8 +1,10 @@
 import numpy as np
 import scipy as sp
+import sympy
 import bisect
 from typing import Callable
 from numpy.typing import ArrayLike
+
 
 class Interval:
     def __init__(self, start: float, end: float) -> None:
@@ -28,6 +30,7 @@ class Interval:
     def is_in(self, x):
         return np.logical_and((self.a <= x), (x <= self.b))
 
+
 class Quadrature:
     def __init__(self, x: ArrayLike, w: ArrayLike) -> None:
         self.x = x
@@ -41,7 +44,7 @@ class Quadrature:
     @classmethod
     def load_from_file(cls, file_name: str):
         data = np.genfromtxt(file_name)
-        x, w = np.hsplit(data,2)
+        x, w = np.hsplit(data, 2)
         return cls(x, w)
 
     def eval(self, f: Callable):
@@ -51,12 +54,69 @@ class Quadrature:
 class FunctionFamily:
     I = None
     functions_lambdas = None
+    functions_symbolic = None
 
-    def __init__(
-        self, I: Interval, functions_lambdas
-    ) -> None:
+    def __init__(self, I: Interval, functions_lambdas, functions_symbolic=None) -> None:
         self.I = I
         self.functions_lambdas = functions_lambdas
+        self.functions_symbolic = functions_symbolic
+
+    @classmethod
+    def polynomials_and_singularity(
+        cls,
+        I: Interval,
+        order: int = 5,
+        number_of_polynomials: int = 100,
+        rng_gen: np.random.Generator = np.random.default_rng(0),
+    ):
+        x = sympy.Symbol("x", real=True)
+        functions_lambdas = list()
+        functions_symbolic = list()
+
+        for _ in range(number_of_polynomials):
+            c = rng_gen.integers(-10, 10, size=order)
+            f = sympy.Poly(c, x).as_expr()
+            functions_symbolic.append(f)
+
+        functions_symbolic.append(1 / x)
+
+        for fsym in functions_symbolic:
+            functions_lambdas.append(sympy.lambdify(x, fsym, "numpy"))
+
+        return cls(I, functions_lambdas, functions_symbolic)
+
+    @classmethod
+    def nystrom_integral_functions(
+        cls, number_of_discretizations=16, order=4
+    ):
+        gamma = (
+            lambda r0, theta0, u: r0
+            * np.sin(theta0)
+            / (r0 * np.sin(theta0 - theta0 * u) + np.sin(theta0 * u))
+        )
+
+        x_gl, _ = np.polynomial.legendre.leggauss(number_of_discretizations)
+
+        (amin, amax) = (1e-7, 1)
+        alphas = (amax - amin) * (x_gl + 1) / 2 + amin
+
+        (bmin, bmax) = (1e-7, np.pi)
+        betas = (bmax - bmin) * (x_gl + 1) / 2 + bmin
+
+        functions = [
+            lambda u, alpha=alpha, beta=beta: beta
+            * gamma(alpha, beta, u) ** (i + 2)
+            / (i + 2)
+            * trig(j * beta * u)
+            for trig in [np.cos,np.sin]
+            for i in range(-1, order + 1)
+            for j in range(0, 3 * (i + 1) + 2 + 1)
+            for alpha in alphas
+            for beta in betas
+        ]
+
+        return cls(Interval(0,1), functions)
+
 
 class PiecewiseLegendre:
     def __init__(self, poly_list, endpoints) -> None:
