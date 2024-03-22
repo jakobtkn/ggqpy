@@ -62,9 +62,7 @@ def main(count, order, filename):
         precision=eps_disc, min_length=min_length, interpolation_degree=30
     )
     F = generate_function_family(count,order)
-    x, w = generalized_gaussian_quadrature(
-        F, disc, eps_comp=eps_comp, eps_quad=eps_quad
-    )
+    x, w = generalized_gaussian_quadrature(F)
     quad = Quadrature(x, w)
     quad.save_to_file(filename)
 

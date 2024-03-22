@@ -34,10 +34,11 @@ def construct_Chebyshev_quadratures(eval_points: tuple, w, U):
 
 def generalized_gaussian_quadrature(
     function_family,
-    discretizer=Discretizer(),
-    optimizer=None,
-    eps_comp=1e-3,
-    eps_quad=1e-3,
+    min_length=1e-6,
+    eps_disc=1e-10,
+    eps_comp=1e-8,
+    eps_quad=1e-8,
+    interpolation_degree=30
 ):
     """
 
@@ -48,9 +49,11 @@ def generalized_gaussian_quadrature(
     -------
     :
     """
+    discretizer = Discretizer(eps_disc, min_length, interpolation_degree)
     x_disc, w_disc, endpoints, intervals = discretizer.adaptive_discretization(
         function_family
     )
+
 
     U_disc, rank = compress_sequence_of_functions(function_family.functions_lambdas, x_disc, w_disc, eps_comp)
     (x_cheb,), w_cheb = construct_Chebyshev_quadratures((x_disc,), w_disc, U_disc)
