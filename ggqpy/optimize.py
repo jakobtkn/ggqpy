@@ -2,6 +2,8 @@ import numpy as np
 import scipy as sp
 from tqdm import tqdm
 
+from ggqpy.utils import PiecewiseLegendreFamily
+
 verbose = True
 if verbose:
 
@@ -59,7 +61,7 @@ def sherman_morrison(Ainv, u, v) -> None:
 
 
 class QuadOptimizer:
-    def __init__(self, legendre_family, r, ftol=1e-8) -> None:
+    def __init__(self, legendre_family: PiecewiseLegendreFamily, r, ftol=1e-8) -> None:
         self.legendre_family = legendre_family
         self.r = r
         self.rank = legendre_family.number_of_functions
@@ -78,9 +80,9 @@ class QuadOptimizer:
         -------
         :
         """
-        n = len(y)//2
+        n = len(y) // 2
         J = self.legendre_family.eval_block(y[:n])
-        J[:, : n] = J[:, : n] * y[n:]
+        J[:, :n] = J[:, :n] * y[n:]
         return J
 
     def residual(self, y):
@@ -93,7 +95,7 @@ class QuadOptimizer:
         -------
         :
         """
-        n = len(y)//2
+        n = len(y) // 2
         U = self.legendre_family(y[:n])
         return U @ y[n:] - self.r
 
@@ -162,27 +164,29 @@ class QuadOptimizer:
         :
         """
         n = len(x)
-
+        start = self.legendre_family.endpoints[0]
+        end = self.legendre_family.endpoints[-1]
+        
+        np.clip(w, a_min=1e-16, a_max=(end-start), out=w)
         idx_sorted = self.rank_remaining_nodes(x, w)
         for iteration, k in enumerate(idx_sorted):
             mask = np.full(n, True)
             mask[k] = False
             y0 = np.concatenate([x[mask], w[mask]])
-            
-            a = self.legendre_family.endpoints[0]
-            b = self.legendre_family.endpoints[-1]
-            lower_bounds = np.concatenate(np.full(n,a),np.zeros(n))
-            upper_bounds = np.concatenate(np.full(n,b),np.full(n,(b-a)/n))
+
+            lower_bounds = np.concatenate([np.full(n - 1, start), np.full(n - 1, 1e-16)])
+            upper_bounds = np.concatenate([np.full(n - 1, end), np.full(n - 1, (end-start))])
             res = sp.optimize.least_squares(
                 self.residual,
                 y0,
                 jac=self.jacobian,
-                bounds = (lower_bounds, upper_bounds),
-                method="dogbox",
+                bounds=(lower_bounds, upper_bounds),
+                method="trf",
                 x_scale=1,
-                ftol=self.ftol,
-                gtol=None,
+                ftol=None,
+                gtol=1e-10,
                 xtol=None,
+                max_nfev=200,
                 verbose=self.verbose,
             )
             y = res.x
@@ -215,11 +219,11 @@ class QuadOptimizer:
             x, w, improvement_found = self.attempt_to_remove_node(x, w, eps_quad)
             if not improvement_found:
                 vprint(
-                    f"Succesfully generated a generalized Gaussian quadrature consisting of {len(x)} nodes"
+                    f"Broke preemptively, generated a quadrature consisting of {len(x)} nodes (down from {len(x0)})"
                 )
-                break
+                return x, w
 
         vprint(
-            f"Broke preemptively, generated a quadrature consisting of {len(x)} nodes (down from {len(x0)})"
+            f"Succesfully generated a generalized Gaussian quadrature consisting of {len(x)} nodes"
         )
         return x, w
