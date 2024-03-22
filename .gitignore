@@ -28,6 +28,7 @@ MANIFEST
 
 .venv-msc
 .vscode
+.snakemake
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
