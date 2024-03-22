@@ -36,8 +36,8 @@ def generalized_gaussian_quadrature(
     function_family,
     min_length=1e-6,
     eps_disc=1e-10,
-    eps_comp=1e-8,
-    eps_quad=1e-8,
+    eps_comp=1e-7,
+    eps_quad=1e-7,
     interpolation_degree=30
 ):
     """
