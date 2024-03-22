@@ -41,8 +41,8 @@ class Quadrature:
     @classmethod
     def load_from_file(cls, file_name: str):
         data = np.genfromtxt(file_name)
-        x, w = np.hsplit(data)
-        return cls(x, w, file_name)
+        x, w = np.hsplit(data,2)
+        return cls(x, w)
 
     def eval(self, f: Callable):
         return f(self.x).w
