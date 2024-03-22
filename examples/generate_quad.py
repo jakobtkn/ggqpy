@@ -1,4 +1,7 @@
-import click
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+import argparse
 import os
 import sys
 import scipy as sp
@@ -6,7 +9,6 @@ import scipy as sp
 sys.path.append(os.path.abspath("."))
 
 from ggqpy import *
-
 
 def generate_function_family(number_of_parameters = 16, n = 2):
     gamma = (
@@ -50,24 +52,27 @@ def generate_function_family(number_of_parameters = 16, n = 2):
     return F
 
 
-# @click.option()
-# @click.option()
-def main():
-    eps_disc = 1e-9
+def main(count, order, filename):
+    eps_disc = 1e-10
     eps_comp = eps_disc * 1e2
     eps_quad = 1e-7
     min_length = 1e-7
 
     disc = Discretizer(
-        precision=eps_disc, min_length=min_length, interpolation_degree=10
+        precision=eps_disc, min_length=min_length, interpolation_degree=30
     )
-    F = generate_function_family(4,2)
+    F = generate_function_family(count,order)
     x, w = generalized_gaussian_quadrature(
         F, disc, eps_comp=eps_comp, eps_quad=eps_quad
     )
     quad = Quadrature(x, w)
-    quad.save_to_file("quads/out.quad")
+    quad.save_to_file(filename)
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("count")
+    parser.add_argument("order")
+    parser.add_argument("filename")
+    args = parser.parse_args()
+    main(int(args.count),int(args.order),args.filename)
