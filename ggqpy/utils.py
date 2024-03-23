@@ -87,7 +87,13 @@ class FunctionFamily:
 
     @classmethod
     def nystrom_integral_functions(
-        cls, number_of_discretizations=16, order=4
+        cls,
+        number_of_discretizations=16,
+        order=4,
+        amin=1e-7,
+        amax=1.0,
+        bmin=1e-7,
+        bmax=np.pi,
     ):
         gamma = (
             lambda r0, theta0, u: r0
@@ -97,10 +103,7 @@ class FunctionFamily:
 
         x_gl, _ = np.polynomial.legendre.leggauss(number_of_discretizations)
 
-        (amin, amax) = (1e-7, 1)
         alphas = (amax - amin) * (x_gl + 1) / 2 + amin
-
-        (bmin, bmax) = (1e-7, np.pi)
         betas = (bmax - bmin) * (x_gl + 1) / 2 + bmin
 
         functions = [
@@ -108,14 +111,14 @@ class FunctionFamily:
             * gamma(alpha, beta, u) ** (i + 2)
             / (i + 2)
             * trig(j * beta * u)
-            for trig in [np.cos,np.sin]
+            for trig in [np.cos, np.sin]
             for i in range(-1, order + 1)
             for j in range(0, 3 * (i + 1) + 2 + 1)
             for alpha in alphas
             for beta in betas
         ]
 
-        return cls(Interval(0,1), functions)
+        return cls(Interval(0, 1), functions)
 
 
 class PiecewiseLegendre:
