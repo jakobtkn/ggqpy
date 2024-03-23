@@ -186,7 +186,7 @@ class QuadOptimizer:
                 ftol=None,
                 gtol=1e-10,
                 xtol=None,
-                max_nfev=200,
+                max_nfev=None,
                 verbose=self.verbose,
             )
             y = res.x
