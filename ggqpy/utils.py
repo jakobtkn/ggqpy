@@ -54,36 +54,10 @@ class Quadrature:
 class FunctionFamily:
     I = None
     functions_lambdas = None
-    functions_symbolic = None
 
-    def __init__(self, I: Interval, functions_lambdas, functions_symbolic=None) -> None:
+    def __init__(self, I: Interval, functions_lambdas) -> None:
         self.I = I
         self.functions_lambdas = functions_lambdas
-        self.functions_symbolic = functions_symbolic
-
-    @classmethod
-    def polynomials_and_singularity(
-        cls,
-        I: Interval,
-        order: int = 5,
-        number_of_polynomials: int = 100,
-        rng_gen: np.random.Generator = np.random.default_rng(0),
-    ):
-        x = sympy.Symbol("x", real=True)
-        functions_lambdas = list()
-        functions_symbolic = list()
-
-        for _ in range(number_of_polynomials):
-            c = rng_gen.integers(-10, 10, size=order)
-            f = sympy.Poly(c, x).as_expr()
-            functions_symbolic.append(f)
-
-        functions_symbolic.append(1 / x)
-
-        for fsym in functions_symbolic:
-            functions_lambdas.append(sympy.lambdify(x, fsym, "numpy"))
-
-        return cls(I, functions_lambdas, functions_symbolic)
 
     @classmethod
     def nystrom_integral_functions(
@@ -119,7 +93,48 @@ class FunctionFamily:
         ]
 
         return cls(Interval(0, 1), functions)
+    
+class FunctionFamilySymbolic(FunctionFamily):
+    x = sympy.Symbol('x', real=True)
+    functions_lambdas = list()
+    functions_symbolic = None
 
+    def __init__(self, I: Interval, functions_symbolic):
+        self.I = I
+        self.functions_symbolic = functions_symbolic
+
+        for fsym in functions_symbolic:
+            self.functions_lambdas.append(sympy.lambdify(self.x, fsym, "numpy"))
+
+    @classmethod
+    def polynomials_and_singularity(
+        cls,
+        I: Interval,
+        order: int = 5,
+        number_of_polynomials: int = 100,
+        rng_gen: np.random.Generator = np.random.default_rng(0),
+    ):
+        x = sympy.Symbol('x', real=True)
+
+        functions_symbolic = list()
+        for _ in range(number_of_polynomials):
+            c = rng_gen.integers(-10, 10, size=order)
+            f = sympy.Poly(c, x).as_expr()
+            functions_symbolic.append(f)
+
+        functions_symbolic.append(1 / x)
+
+        return cls(I, functions_symbolic)
+
+    def draw_function(self):
+        n = len(self.functions_symbolic)
+        c = np.random.randint(-10,10, size=n)
+        f_symbolic = sum(np.array(self.functions_symbolic)*c)
+        f_lambda = sympy.lambdify(self.x, f_symbolic, "numpy")
+        return f_symbolic, f_lambda
+
+    def integral(self, f):
+        return sympy.integrate(f, (self.x, self.I.a, self.I.b))
 
 class PiecewiseLegendre:
     def __init__(self, poly_list, endpoints) -> None:
