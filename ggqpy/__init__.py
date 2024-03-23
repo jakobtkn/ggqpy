@@ -1,9 +1,9 @@
 import numpy as np
 import scipy as sp
 
-from ggqpy.discretize import Discretizer, compress_sequence_of_functions
-from ggqpy.optimize import QuadOptimizer
-from ggqpy.utils import Quadrature, FunctionFamily, Interval
+from ggqpy.discretize import *
+from ggqpy.optimize import *
+from ggqpy.utils import *
 
 
 def construct_Chebyshev_quadratures(eval_points: tuple, w, U):
