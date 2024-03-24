@@ -23,12 +23,18 @@ class Interval:
     def __iter__(self):
         yield self.a
         yield self.b
+    
+    def __lt__(self, other):
+        return self.a < self.b
 
     def length(self):
         return self.b - self.a
 
     def is_in(self, x):
         return np.logical_and((self.a <= x), (x <= self.b))
+    
+    def translate(self, x):
+        return (x + 1.0)*(self.b - self.a)/2.0 + self.a
 
 
 class Quadrature:
@@ -111,7 +117,7 @@ class FunctionFamilySymbolic(FunctionFamily):
         cls,
         I: Interval,
         order: int = 5,
-        number_of_polynomials: int = 100,
+        number_of_polynomials: int = 20,
         rng_gen: np.random.Generator = np.random.default_rng(0),
     ):
         x = sympy.Symbol('x', real=True)
