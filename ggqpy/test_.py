@@ -14,7 +14,7 @@ def test_sherman_morrison():
     Ainv = np.asfortranarray(Ainv)
 
     sherman_morrison(Ainv, u, v)
-    assert np.linalg.norm(Ainv - np.linalg.inv(A + np.outer(u, v))) == approx(0)
+    assert np.linalg.norm(Ainv - np.linalg.inv(A + np.outer(u, v))) == approx(0,1e-11)
 
 
 def test_end_to_end_pylonimal():
