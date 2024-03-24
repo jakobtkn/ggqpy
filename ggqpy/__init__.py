@@ -50,7 +50,7 @@ def generalized_gaussian_quadrature(
     :
     """
     discretizer = Discretizer(eps_disc, min_length, interpolation_degree)
-    x_disc, w_disc, endpoints, intervals = discretizer.adaptive_discretization(
+    x_disc, w_disc = discretizer.adaptive_discretization(
         function_family
     )
 
