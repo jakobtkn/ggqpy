@@ -13,12 +13,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-
-    - name: Update environment
-      run: |
-        mamba env update -n my-env -f environment.yml
-        mamba install flake8 pytest pytest-cov
-        
     - name: Setup Mambaforge
       uses: conda-incubator/setup-miniconda@v2
       with:
@@ -26,6 +20,12 @@ jobs:
           miniforge-version: latest
           activate-environment: my-env
           use-mamba: true
+
+    - name: Update environment
+      run: |
+        mamba env update -n my-env -f environment.yml
+        mamba install flake8 pytest pytest-cov
+        
 
     - name: Lint with flake8
       run: |
