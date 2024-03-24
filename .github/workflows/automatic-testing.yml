@@ -9,7 +9,13 @@ on:
 jobs:
   default-shell:
     name: Default shell
+    permissions:
+      contents: read
+      pull-requests: write
+    
     runs-on: "ubuntu-latest"
+    
+    
     defaults:
       run:
         shell: bash -el {0}
