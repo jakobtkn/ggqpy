@@ -25,6 +25,7 @@ jobs:
       run: |
         mamba env update -n my-env -f environment.yml
         mamba install flake8 pytest pytest-cov
+        mamba activate my-env
         
 
     - name: Lint with flake8
