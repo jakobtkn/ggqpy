@@ -17,8 +17,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: conda-incubator/setup-miniconda@v3
         with:
-          activate-environment: anaconda-client-env
-          environment-file: etc/example-environment-caching.yml
+          activate-environment: ggqpy
+          environment-file: environment.yml
       - run: conda info
       - run: conda list
       - run: conda config --show
