@@ -101,6 +101,7 @@ class Discretizer:
             intervals = self.add_endpoints(intervals, phi)
 
         ## Stage 2.
+        self.intervals = sorted(intervals)
         self.endpoints = sorted(set([a for (a, b) in intervals] + [I.b]))
 
         if self.verbose:
@@ -109,19 +110,16 @@ class Discretizer:
         ## Stage 3.
         x_global = list()
         w_global = list()
-        intervals = list()
-        for start, end in pairwise(self.endpoints):
-            intervals.append(Interval(start, end))
+        for I in self.intervals:
             x, w = legendre.leggauss(2 * self.interpolation_degree)
-            w = w * (end - start) / 2
-            translate = sp.interpolate.interp1d([-1.0, 1.0], [start, end])
-            x_global.append(translate(x))
+            w = w * I.length() / 2
+            x_global.append(I.translate(x))
             w_global.append(w)
 
         x_global = np.concatenate(x_global)
         w_global = np.concatenate(w_global)
 
-        return x_global, w_global, self.endpoints, intervals
+        return x_global, w_global
 
     def naive_discretize2d(self, N, M, Ix, Iy):  ## So far only -1 to 1
         """
