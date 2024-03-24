@@ -18,8 +18,9 @@ def test_sherman_morrison():
 
 
 def test_end_to_end_pylonimal():
+    order = 9
     I = Interval(1e-8, 1)
-    F = FunctionFamilySymbolic.polynomials_and_singularity(I)
+    F = FunctionFamilySymbolic.polynomials_and_singularity(I, order = order, number_of_polynomials=30)
     x, w = generalized_gaussian_quadrature(
         F,
         min_length=1e-8,
@@ -34,4 +35,5 @@ def test_end_to_end_pylonimal():
     integral_numeric = f_lambda(x) @ w
     integral_analytic = F.integral(f_symbolic)
 
+    assert len(x) == (order + 1)//2
     assert integral_analytic == approx(integral_numeric)

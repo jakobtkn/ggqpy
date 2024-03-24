@@ -4,7 +4,7 @@ from tqdm import tqdm
 
 from ggqpy.utils import PiecewiseLegendreFamily
 
-verbose = True
+verbose = False
 if verbose:
 
     def vprint(*messages) -> None:
@@ -56,7 +56,11 @@ def sherman_morrison(Ainv, u, v) -> None:
     """
     assert Ainv.flags["F_CONTIGUOUS"]
     Ainvu = Ainv @ u
-    alpha = -1 / (1 + v.T @ Ainvu)
+    k = (1 + v.T @ Ainvu)
+    if abs(k) < 1e-16:
+        print("Unlikely event?")
+        return
+    alpha = -1 / k
     sp.linalg.blas.dger(alpha, Ainvu, v.T @ Ainv, a=Ainv, overwrite_a=1)
 
 
@@ -137,7 +141,6 @@ class QuadOptimizer:
 
         eta = np.zeros(n)
         for k in range(len(x)):
-            rk = J[:, n + k] * w[k]
 
             Ak = A
             sherman_morrison(Ak, -J[:, k], J[:, k])
@@ -146,6 +149,7 @@ class QuadOptimizer:
             Jk = J
             Jk[:, (k, n + k)] = 0
 
+            rk = J[:, n + k] * w[k]
             d = Jk.T @ Ak @ rk
             eta[k] = np.linalg.norm(d)
 
@@ -169,6 +173,7 @@ class QuadOptimizer:
         
         np.clip(w, a_min=1e-16, a_max=None, out=w)
         idx_sorted = self.rank_remaining_nodes(x, w)
+        # idx_sorted = range(len(x))
         for iteration, k in enumerate(idx_sorted):
             mask = np.full(n, True)
             mask[k] = False
@@ -181,7 +186,7 @@ class QuadOptimizer:
                 y0,
                 jac=self.jacobian,
                 bounds=(lower_bounds, upper_bounds),
-                method="trf",
+                method="dogbox",
                 x_scale=1,
                 ftol=None,
                 gtol=1e-10,
