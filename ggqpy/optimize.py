@@ -167,7 +167,7 @@ class QuadOptimizer:
         start = self.legendre_family.endpoints[0]
         end = self.legendre_family.endpoints[-1]
         
-        np.clip(w, a_min=1e-16, a_max=(end-start), out=w)
+        np.clip(w, a_min=1e-16, a_max=None, out=w)
         idx_sorted = self.rank_remaining_nodes(x, w)
         for iteration, k in enumerate(idx_sorted):
             mask = np.full(n, True)
@@ -175,7 +175,7 @@ class QuadOptimizer:
             y0 = np.concatenate([x[mask], w[mask]])
 
             lower_bounds = np.concatenate([np.full(n - 1, start), np.full(n - 1, 1e-16)])
-            upper_bounds = np.concatenate([np.full(n - 1, end), np.full(n - 1, (end-start))])
+            upper_bounds = np.concatenate([np.full(n - 1, end), np.full(n - 1, np.infty)])
             res = sp.optimize.least_squares(
                 self.residual,
                 y0,
@@ -186,7 +186,7 @@ class QuadOptimizer:
                 ftol=None,
                 gtol=1e-10,
                 xtol=None,
-                max_nfev=None,
+                # max_nfev=None,
                 verbose=self.verbose,
             )
             y = res.x
