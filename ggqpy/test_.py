@@ -46,12 +46,13 @@ def test_end_to_end_nystrom():
     F = FunctionFamily.nystrom_integral_functions(
         number_of_discretizations=5, order=order
     )
+    eps_quad = 1e-7
     ggq, adap, cheb = generalized_gaussian_quadrature(
         F,
         min_length=1e-8,
         eps_disc=1e-12,
         eps_comp=1e-10,
-        eps_quad=1e-7,
+        eps_quad=eps_quad,
         interpolation_degree=15,
         detailed_output=True
     )
@@ -62,4 +63,4 @@ def test_end_to_end_nystrom():
     integral_adap = adap.eval(f)
 
     assert ggq.size < cheb.size
-    assert integral_ggq == approx(integral_adap)
+    assert integral_ggq == approx(integral_adap, eps_quad)
