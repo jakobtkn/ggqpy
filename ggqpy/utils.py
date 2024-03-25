@@ -187,7 +187,8 @@ class PiecewiseLegendreFamily:
         [P_k(x)]
         """
         y = np.zeros(shape=(self.number_of_functions, len(x)), dtype=float)
-        for k in range(len(x)):
+        n = len(x)
+        for k in range(n):
             i = bisect.bisect_right(self.endpoints_bisect, x[k]) - 1
             y[:, k] = np.array([p.poly_list[i](x[k]) for p in self.piecewise_poly_list])
         return y
