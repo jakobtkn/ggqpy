@@ -14,7 +14,8 @@ def test_sherman_morrison():
     Ainv = np.asfortranarray(Ainv)
 
     sherman_morrison(Ainv, u, v)
-    assert np.linalg.norm(Ainv - np.linalg.inv(A + np.outer(u, v))) == approx(0, 1e-11)
+    
+    np.testing.assert_allclose(Ainv,np.linalg.inv(A + np.outer(u, v)))
 
 
 def test_end_to_end_polynomial():
@@ -106,5 +107,12 @@ def test_piecewisepoly_family():
     np.testing.assert_allclose(P([-0.8]),np.array([1,0,0])[:,np.newaxis])
     np.testing.assert_allclose(P([0.3]),np.array([0,1,0])[:,np.newaxis])
     np.testing.assert_allclose(P([0.5 + 1e-16]),np.array([0,0,1])[:,np.newaxis])
-    
+
+
+def test_optimization():
+    res = lambda x: x**2
+    jac = lambda x: np.array([[2*x[0],0],[0,2*x[1]]])
+    y0 = np.array([1,10])
+    y = dampened_gauss_newton(res, jac, y0, maxiter=1000, tol=1e-9)
+    np.testing.assert_allclose(y,np.array([0,0]), atol=1e-7)
     

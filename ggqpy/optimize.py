@@ -19,7 +19,7 @@ else:
         return
 
 
-def dampened_gauss_newton(r, jac, x0, step_size=0.3, maxiter=100, tol=1e-6):
+def dampened_gauss_newton(r, jac, x0, step_size=0.3, maxiter=1000, tol=1e-6):
     """
 
     Parameters
@@ -184,7 +184,7 @@ class QuadOptimizer:
                 self.residual,
                 y0,
                 jac=self.jacobian,
-                # bounds=(lower_bounds, upper_bounds),
+                bounds=(lower_bounds, upper_bounds),
                 method="trf",
                 x_scale=1,
                 ftol=None,
@@ -194,7 +194,9 @@ class QuadOptimizer:
                 verbose=self.verbose,
             )
             y = res.x
+            # y = dampened_gauss_newton(self.residual,self.jacobian,y0)
             eps = 2 * res.cost
+            # eps = np.sum(self.residual(y)**2)
 
             if eps < eps_quad**2:
                 x, w = np.split(y, 2)
