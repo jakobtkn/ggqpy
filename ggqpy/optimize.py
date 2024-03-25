@@ -4,7 +4,7 @@ from tqdm import tqdm
 
 from ggqpy.utils import PiecewiseLegendreFamily
 
-verbose = False
+verbose = True
 if verbose:
 
     def vprint(*messages) -> None:
@@ -170,23 +170,22 @@ class QuadOptimizer:
         n = len(x)
         start = self.legendre_family.endpoints[0]
         end = self.legendre_family.endpoints[-1]
+        lower_bounds = np.concatenate([np.full(n - 1, start), np.full(n - 1, 1e-16)])
+        upper_bounds = np.concatenate([np.full(n - 1, end), np.full(n - 1, np.infty)])
+        np.clip(w, a_min=2.3*1e-16, a_max=None, out=w)
         
-        np.clip(w, a_min=1e-16, a_max=None, out=w)
         idx_sorted = self.rank_remaining_nodes(x, w)
-        # idx_sorted = range(len(x))
         for iteration, k in enumerate(idx_sorted):
             mask = np.full(n, True)
             mask[k] = False
             y0 = np.concatenate([x[mask], w[mask]])
 
-            lower_bounds = np.concatenate([np.full(n - 1, start), np.full(n - 1, 1e-16)])
-            upper_bounds = np.concatenate([np.full(n - 1, end), np.full(n - 1, np.infty)])
             res = sp.optimize.least_squares(
                 self.residual,
                 y0,
                 jac=self.jacobian,
-                bounds=(lower_bounds, upper_bounds),
-                method="dogbox",
+                # bounds=(lower_bounds, upper_bounds),
+                method="trf",
                 x_scale=1,
                 ftol=None,
                 gtol=1e-10,
