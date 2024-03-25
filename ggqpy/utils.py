@@ -39,8 +39,10 @@ class Interval:
 
 class Quadrature:
     def __init__(self, x: ArrayLike, w: ArrayLike) -> None:
+        assert(len(x) == len(w))
         self.x = x
         self.w = w
+        self.size = len(x)
         return
 
     def save_to_file(self, file_name: str):

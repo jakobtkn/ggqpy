@@ -38,7 +38,8 @@ def generalized_gaussian_quadrature(
     eps_disc=1e-10,
     eps_comp=1e-7,
     eps_quad=1e-7,
-    interpolation_degree=30
+    interpolation_degree=30,
+    detailed_output=None
 ):
     """
 
@@ -61,5 +62,8 @@ def generalized_gaussian_quadrature(
     U_family = discretizer.interpolate_piecewise_legendre(U_disc)
     optimizer = QuadOptimizer(U_family, r)
     x, w = optimizer.reduce_quadrature(x_cheb, w_cheb, eps_quad)
+
+    if (detailed_output):
+        return Quadrature(x,w), Quadrature(x_disc,w_disc), Quadrature(x_cheb,w_cheb)
 
     return x, w
