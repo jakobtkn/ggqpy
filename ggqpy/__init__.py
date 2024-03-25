@@ -6,6 +6,20 @@ from ggqpy.optimize import *
 from ggqpy.utils import *
 
 
+verbose = True
+if verbose:
+
+    def vprint(*messages) -> None:
+        for message in messages:
+            print(message)
+        print()
+        return
+
+else:
+
+    def vprint(*messages) -> None:
+        return
+
 def construct_Chebyshev_quadratures(eval_points: tuple, w, U):
     """
 
@@ -33,7 +47,7 @@ def construct_Chebyshev_quadratures(eval_points: tuple, w, U):
 
 
 def generalized_gaussian_quadrature(
-    function_family,
+    function_family: FunctionFamily,
     min_length=1e-6,
     eps_disc=1e-10,
     eps_comp=1e-7,
@@ -50,13 +64,18 @@ def generalized_gaussian_quadrature(
     -------
     :
     """
+
+    vprint(f"Function family consists of {len(function_family.functions_lambdas)} functions")
     discretizer = Discretizer(eps_disc, min_length, interpolation_degree)
     x_disc, w_disc = discretizer.adaptive_discretization(
         function_family
     )
-
+    vprint(f"Adaptive discretization divided the domain into {len(discretizer.intervals)} subintervals")
 
     U_disc, rank = compress_sequence_of_functions(function_family.functions_lambdas, x_disc, w_disc, eps_comp)
+
+    vprint(f"Determined numerical rank to be {rank}")
+
     (x_cheb,), w_cheb = construct_Chebyshev_quadratures((x_disc,), w_disc, U_disc)
     r = U_disc.T @ w_disc
     U_family = discretizer.interpolate_piecewise_legendre(U_disc)
