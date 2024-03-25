@@ -100,6 +100,12 @@ class FunctionFamily:
 
         return cls(Interval(0, 1), functions)
     
+    def generate_example_function(self):
+        n = len(self.functions_symbolic)
+        c = np.random.randint(-10,10, size=n)
+        f_lambda = lambda x: np.sum(np.array([f(x) for f in self.functions_lambdas])*c)
+        return f_lambda
+    
 class FunctionFamilySymbolic(FunctionFamily):
     x = sympy.Symbol('x', real=True)
     functions_lambdas = list()
@@ -132,12 +138,12 @@ class FunctionFamilySymbolic(FunctionFamily):
 
         return cls(I, functions_symbolic)
 
-    def draw_function(self):
+    def generate_example_function(self):
         n = len(self.functions_symbolic)
         c = np.random.randint(-10,10, size=n)
         f_symbolic = sum(np.array(self.functions_symbolic)*c)
         f_lambda = sympy.lambdify(self.x, f_symbolic, "numpy")
-        return f_symbolic, f_lambda
+        return f_lambda, f_symbolic
 
     def integral(self, f):
         return sympy.integrate(f, (self.x, self.I.a, self.I.b))

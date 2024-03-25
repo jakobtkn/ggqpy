@@ -14,13 +14,15 @@ def test_sherman_morrison():
     Ainv = np.asfortranarray(Ainv)
 
     sherman_morrison(Ainv, u, v)
-    assert np.linalg.norm(Ainv - np.linalg.inv(A + np.outer(u, v))) == approx(0,1e-11)
+    assert np.linalg.norm(Ainv - np.linalg.inv(A + np.outer(u, v))) == approx(0, 1e-11)
 
 
 def test_end_to_end_pylonimal():
     order = 9
     I = Interval(1e-8, 1)
-    F = FunctionFamilySymbolic.polynomials_and_singularity(I, order = order, number_of_polynomials=30)
+    F = FunctionFamilySymbolic.polynomials_and_singularity(
+        I, order=order, number_of_polynomials=30
+    )
     x, w = generalized_gaussian_quadrature(
         F,
         min_length=1e-8,
@@ -30,10 +32,10 @@ def test_end_to_end_pylonimal():
         interpolation_degree=15,
     )
 
-    f_symbolic, f_lambda = F.draw_function()
+    f_lambda, f_symbolic = F.generate_example_function()
 
     integral_numeric = f_lambda(x) @ w
     integral_analytic = F.integral(f_symbolic)
 
-    assert len(x) == (order + 1)//2
+    assert len(x) == (order + 1) // 2
     assert integral_analytic == approx(integral_numeric)
