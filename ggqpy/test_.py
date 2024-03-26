@@ -63,30 +63,35 @@ def test_end_to_end_nystrom():
     min_length=1e-4
     eps_disc=1e-12
     eps_comp=1e-10
-    eps_quad=1e-7
+    eps_quad=1e-5
     interpolation_degree=15   
     
     discretizer = Discretizer(eps_disc, min_length, interpolation_degree)
     x_disc, w_disc = discretizer.adaptive_discretization(
         function_family
     )
+    adap = Quadrature(x_disc,w_disc)
+
+
     assert(sorted(discretizer.endpoints) == discretizer.endpoints)
-    # U_disc, rank = compress_sequence_of_functions(function_family.functions_lambdas, x_disc, w_disc, eps_comp)
+    U_disc, rank = compress_sequence_of_functions(function_family.functions_lambdas, x_disc, w_disc, eps_comp)
 
-    # (x_cheb,), w_cheb = construct_Chebyshev_quadratures((x_disc,), w_disc, U_disc)
-    # r = U_disc.T @ w_disc
-    # U_family = discretizer.interpolate_piecewise_legendre(U_disc)
-    # optimizer = QuadOptimizer(U_family, r)
-    # x, w = optimizer.reduce_quadrature(x_cheb, w_cheb, eps_quad)
+    (x_cheb,), w_cheb = construct_Chebyshev_quadratures((x_disc,), w_disc, U_disc)
+    cheb = Quadrature(x_cheb,w_cheb)
+    r = U_disc.T @ w_disc
+    U_family = discretizer.interpolate_piecewise_legendre(U_disc)
+    optimizer = QuadOptimizer(U_family, r)
+    x, w = optimizer.reduce_quadrature(x_cheb, w_cheb, eps_quad)
+    ggq = Quadrature(x,w)
 
+    f = function_family.generate_example_function()
+    integral_cheb = cheb.eval(f)
+    integral_ggq = ggq.eval(f)
+    integral_adap = adap.eval(f)
 
-    # f = function_family.generate_example_function()
-
-    # integral_ggq = ggq.eval(f)
-    # integral_adap = adap.eval(f)
-
-    # assert ggq.size < cheb.size
-    # assert integral_ggq == approx(integral_adap, eps_quad)
+    assert integral_cheb == approx(integral_adap, eps_comp)
+    assert integral_ggq == approx(integral_adap, eps_quad)
+    assert ggq.size < cheb.size
 
 
 def test_piecewisepoly():
