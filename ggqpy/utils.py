@@ -56,7 +56,7 @@ class Quadrature:
         return cls(x, w)
 
     def eval(self, f: Callable):
-        return f(self.x).w
+        return f(self.x) @ self.w
 
 
 class FunctionFamily:
@@ -103,9 +103,9 @@ class FunctionFamily:
         return cls(Interval(0, 1), functions)
     
     def generate_example_function(self):
-        n = len(self.functions_symbolic)
+        n = len(self.functions_lambdas)
         c = np.random.randint(-10,10, size=n)
-        f_lambda = lambda x: np.sum(np.array([f(x) for f in self.functions_lambdas])*c)
+        f_lambda = lambda x: c @ np.array([f(x) for f in self.functions_lambdas])
         return f_lambda
     
 class FunctionFamilySymbolic(FunctionFamily):
