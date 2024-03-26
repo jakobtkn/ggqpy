@@ -176,7 +176,7 @@ class Discretizer:
         Parameters
         ----------
         U : array_like
-            2-D array containing the point evaluations U_{ij} = u_i(x_j)
+            2-D array containing the point evaluations U_{ij} = u_j(x_i)
 
         Returns
         -------
