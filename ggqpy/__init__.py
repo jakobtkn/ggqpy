@@ -19,6 +19,7 @@ else:
     def vprint(*messages) -> None:
         return
 
+
 def construct_Chebyshev_quadratures(eval_points: tuple, w, U):
     """
 
@@ -52,7 +53,7 @@ def generalized_gaussian_quadrature(
     eps_comp=1e-7,
     eps_quad=1e-7,
     interpolation_degree=30,
-    detailed_output=None
+    detailed_output=None,
 ):
     """
 
@@ -64,14 +65,18 @@ def generalized_gaussian_quadrature(
     :
     """
 
-    vprint(f"Function family consists of {len(function_family.functions_lambdas)} functions")
-    discretizer = Discretizer(eps_disc, min_length, interpolation_degree)
-    x_disc, w_disc = discretizer.adaptive_discretization(
-        function_family
+    vprint(
+        f"Function family consists of {len(function_family.functions_lambdas)} functions"
     )
-    vprint(f"Adaptive discretization divided the domain into {len(discretizer.intervals)} subintervals")
+    discretizer = Discretizer(eps_disc, min_length, interpolation_degree)
+    x_disc, w_disc = discretizer.adaptive_discretization(function_family)
+    vprint(
+        f"Adaptive discretization divided the domain into {len(discretizer.intervals)} subintervals"
+    )
 
-    U_disc, rank = compress_sequence_of_functions(function_family.functions_lambdas, x_disc, w_disc, eps_comp)
+    U_disc, rank = compress_sequence_of_functions(
+        function_family.functions_lambdas, x_disc, w_disc, eps_comp
+    )
 
     vprint(f"Determined numerical rank to be {rank}")
 
@@ -81,7 +86,7 @@ def generalized_gaussian_quadrature(
     optimizer = QuadOptimizer(U_family, r)
     x, w = optimizer.reduce_quadrature(x_cheb, w_cheb, eps_quad)
 
-    if (detailed_output):
-        return Quadrature(x,w), Quadrature(x_disc,w_disc), Quadrature(x_cheb,w_cheb)
+    if detailed_output:
+        return Quadrature(x, w), Quadrature(x_disc, w_disc), Quadrature(x_cheb, w_cheb)
 
     return x, w

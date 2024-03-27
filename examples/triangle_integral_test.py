@@ -1,6 +1,7 @@
 import sys
 import os
 import sympy
+
 sys.path.append(os.path.abspath("."))
 from ggqpy import *
 

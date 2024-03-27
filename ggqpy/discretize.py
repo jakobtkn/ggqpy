@@ -28,7 +28,7 @@ class Discretizer:
         self.min_length = min_length
         self.verbose = verbose
         self.interpolation_degree = interpolation_degree
-        self.x_gl, _ = legendre.leggauss(2*self.interpolation_degree)
+        self.x_gl, _ = legendre.leggauss(2 * self.interpolation_degree)
         return
 
     def interval_compatible(self, I, phi):
@@ -188,7 +188,9 @@ class Discretizer:
         _, number_of_polynomials = U.shape
         piecewise_poly_list = list()
         for n in range(number_of_polynomials):
-            p = PiecewiseLegendre.interpolate_gauss_legendre_points(U[:, n],self.endpoints)
+            p = PiecewiseLegendre.interpolate_gauss_legendre_points(
+                U[:, n], self.endpoints
+            )
             piecewise_poly_list.append(p)
 
         return PiecewiseLegendreFamily(piecewise_poly_list, self.endpoints)

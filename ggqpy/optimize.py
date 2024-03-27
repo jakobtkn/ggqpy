@@ -26,8 +26,8 @@ def levenberg_marquadt(residual, jacobian, x0, maxiter=1000, tol=1e-6):
         J = jacobian(x)
         r = residual(x)
 
-        A = J.T@J
-        g = J.T@r
+        A = J.T @ J
+        g = J.T @ r
 
 
 def dampened_gauss_newton(r, jac, x0, step_size=0.3, maxiter=1000, tol=1e-6):
@@ -67,7 +67,7 @@ def sherman_morrison(Ainv, u, v) -> None:
     """
     assert Ainv.flags["F_CONTIGUOUS"]
     Ainvu = Ainv @ u
-    k = (1 + v.T @ Ainvu)
+    k = 1 + v.T @ Ainvu
     if abs(k) < 1e-16:
         print("Unlikely event?")
         return
@@ -152,7 +152,6 @@ class QuadOptimizer:
 
         eta = np.zeros(n)
         for k in range(len(x)):
-
             Ak = A
             sherman_morrison(Ak, -J[:, k], J[:, k])
             sherman_morrison(Ak, -J[:, k + n], J[:, k + n])
@@ -181,22 +180,21 @@ class QuadOptimizer:
         n = len(x)
 
         def res_lm(y):
-            residual = np.zeros(2*(n-1))
-            residual[:self.rank] = self.residual(y)
+            residual = np.zeros(2 * (n - 1))
+            residual[: self.rank] = self.residual(y)
             return residual
-        
+
         def jac_lm(y):
-            jac = np.zeros((2*(n-1),2*(n-1)))
-            jac[:self.rank,:] = self.jacobian(y)
+            jac = np.zeros((2 * (n - 1), 2 * (n - 1)))
+            jac[: self.rank, :] = self.jacobian(y)
             return jac
 
-        
         idx_sorted = self.rank_remaining_nodes(x, w)
         for iteration, k in enumerate(idx_sorted):
             mask = np.full(n, True)
             mask[k] = False
             y0 = np.concatenate([x[mask], w[mask]])
-            
+
             res = least_squares(
                 res_lm,
                 y0,

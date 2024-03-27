@@ -24,7 +24,7 @@ class Interval:
     def __iter__(self):
         yield self.a
         yield self.b
-    
+
     def __lt__(self, other):
         return self.a < other.a
 
@@ -33,14 +33,14 @@ class Interval:
 
     def is_in(self, x):
         return np.logical_and((self.a <= x), (x <= self.b))
-    
+
     def translate(self, x):
-        return (x + 1.0)*(self.b - self.a)/2.0 + self.a
+        return (x + 1.0) * (self.b - self.a) / 2.0 + self.a
 
 
 class Quadrature:
     def __init__(self, x: ArrayLike, w: ArrayLike) -> None:
-        assert(len(x) == len(w))
+        assert len(x) == len(w)
         self.x = x
         self.w = w
         self.size = len(x)
@@ -102,15 +102,16 @@ class FunctionFamily:
         ]
 
         return cls(Interval(0, 1), functions)
-    
+
     def generate_example_function(self):
         n = len(self.functions_lambdas)
-        c = np.random.randint(-10,10, size=n).astype(float)
+        c = np.random.randint(-10, 10, size=n).astype(float)
         f_lambda = lambda x: c @ np.array([f(x) for f in self.functions_lambdas])
         return f_lambda
-    
+
+
 class FunctionFamilySymbolic(FunctionFamily):
-    x = sympy.Symbol('x', real=True)
+    x = sympy.Symbol("x", real=True)
     functions_lambdas = list()
     functions_symbolic = None
 
@@ -129,7 +130,7 @@ class FunctionFamilySymbolic(FunctionFamily):
         number_of_polynomials: int = 20,
         rng_gen: np.random.Generator = np.random.default_rng(0),
     ):
-        x = sympy.Symbol('x', real=True)
+        x = sympy.Symbol("x", real=True)
 
         functions_symbolic = list()
         for _ in range(number_of_polynomials):
@@ -143,13 +144,14 @@ class FunctionFamilySymbolic(FunctionFamily):
 
     def generate_example_function(self):
         n = len(self.functions_symbolic)
-        c = np.random.randint(-10,10, size=n)
-        f_symbolic = sum(np.array(self.functions_symbolic)*c)
+        c = np.random.randint(-10, 10, size=n)
+        f_symbolic = sum(np.array(self.functions_symbolic) * c)
         f_lambda = sympy.lambdify(self.x, f_symbolic, "numpy")
         return f_lambda, f_symbolic
 
     def integral(self, f):
         return sympy.integrate(f, (self.x, self.I.a, self.I.b))
+
 
 class PiecewiseLegendre:
     def __init__(self, poly_list, endpoints) -> None:
@@ -170,10 +172,15 @@ class PiecewiseLegendre:
             interval = Interval(endpoints[i], endpoints[i + 1])
             u_local = u[points_per_interval * i : points_per_interval * (i + 1)]
 
-            p,[resid, rank, sv, rcond] = legendre.Legendre.fit(
-                interval.translate(x), u_local, domain=[*interval], deg=points_per_interval-1, rcond=1e-16, full=True
+            p, [resid, rank, sv, rcond] = legendre.Legendre.fit(
+                interval.translate(x),
+                u_local,
+                domain=[*interval],
+                deg=points_per_interval - 1,
+                rcond=1e-16,
+                full=True,
             )
-            assert (rank == points_per_interval)
+            assert rank == points_per_interval
 
             poly_list.append(p)
 
