@@ -105,7 +105,7 @@ class FunctionFamily:
     
     def generate_example_function(self):
         n = len(self.functions_lambdas)
-        c = np.random.randint(-10,10, size=n)
+        c = np.random.randint(-10,10, size=n).astype(float)
         f_lambda = lambda x: c @ np.array([f(x) for f in self.functions_lambdas])
         return f_lambda
     
@@ -156,8 +156,6 @@ class PiecewiseLegendre:
         self.poly_list = poly_list
         self.endpoints = endpoints
         self.endpoints_bisect = endpoints.copy()[1:-1]
-        # self.endpoints_bisect[0] = -np.inf
-        # self.endpoints_bisect[-1] = np.inf
         return
 
     @classmethod
