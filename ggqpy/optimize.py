@@ -1,5 +1,6 @@
 import numpy as np
 import scipy as sp
+from scipy.optimize import least_squares
 from tqdm import tqdm
 
 from ggqpy.utils import PiecewiseLegendreFamily
@@ -196,12 +197,13 @@ class QuadOptimizer:
             mask[k] = False
             y0 = np.concatenate([x[mask], w[mask]])
             
-            res = sp.optimize.least_squares(
+            res = least_squares(
                 res_lm,
                 y0,
                 jac=jac_lm,
                 method="lm",
                 x_scale="jac",
+                max_nfev=200,
                 verbose=self.verbose,
             )
             y = res.x
