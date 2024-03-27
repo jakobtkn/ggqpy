@@ -19,6 +19,16 @@ else:
         return
 
 
+def levenberg_marquadt(residual, jacobian, x0, maxiter=1000, tol=1e-6):
+    x = x0
+    for _ in range(maxiter):
+        J = jacobian(x)
+        r = residual(x)
+
+        A = J.T@J
+        g = J.T@r
+
+
 def dampened_gauss_newton(r, jac, x0, step_size=0.3, maxiter=1000, tol=1e-6):
     """
 
@@ -168,35 +178,34 @@ class QuadOptimizer:
         :
         """
         n = len(x)
-        start = self.legendre_family.endpoints[0]
-        end = self.legendre_family.endpoints[-1]
-        lower_bounds = np.concatenate([np.full(n - 1, start), np.full(n - 1, 1e-16)])
-        upper_bounds = np.concatenate([np.full(n - 1, end), np.full(n - 1, np.infty)])
-        np.clip(w, a_min=2.3*1e-16, a_max=None, out=w)
+
+        def res_lm(y):
+            residual = np.zeros(2*(n-1))
+            residual[:self.rank] = self.residual(y)
+            return residual
+        
+        def jac_lm(y):
+            jac = np.zeros((2*(n-1),2*(n-1)))
+            jac[:self.rank,:] = self.jacobian(y)
+            return jac
+
         
         idx_sorted = self.rank_remaining_nodes(x, w)
         for iteration, k in enumerate(idx_sorted):
             mask = np.full(n, True)
             mask[k] = False
             y0 = np.concatenate([x[mask], w[mask]])
-
+            
             res = sp.optimize.least_squares(
-                self.residual,
+                res_lm,
                 y0,
-                jac=self.jacobian,
-                bounds=(lower_bounds, upper_bounds),
-                method="trf",
-                x_scale=1,
-                ftol=None,
-                gtol=1e-10,
-                xtol=None,
-                # max_nfev=None,
+                jac=jac_lm,
+                method="lm",
+                x_scale="jac",
                 verbose=self.verbose,
             )
             y = res.x
-            # y = dampened_gauss_newton(self.residual,self.jacobian,y0)
             eps = 2 * res.cost
-            # eps = np.sum(self.residual(y)**2)
 
             if eps < eps_quad**2:
                 x, w = np.split(y, 2)

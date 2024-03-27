@@ -28,7 +28,7 @@ class Discretizer:
         self.min_length = min_length
         self.verbose = verbose
         self.interpolation_degree = interpolation_degree
-        self.x_gl, _ = legendre.leggauss(2 * self.interpolation_degree)
+        self.x_gl, _ = legendre.leggauss(2*self.interpolation_degree)
         return
 
     def interval_compatible(self, I, phi):
@@ -110,11 +110,13 @@ class Discretizer:
         ## Stage 3.
         x_global = list()
         w_global = list()
+        x, w = legendre.leggauss(2 * self.interpolation_degree)
         for I in self.intervals:
-            x, w = legendre.leggauss(2 * self.interpolation_degree)
-            w = w * I.length() / 2
-            x_global.append(I.translate(x))
-            w_global.append(w)
+            x_local = I.translate(x)
+            w_local = w * I.length() / 2
+
+            x_global.append(x_local)
+            w_global.append(w_local)
 
         x_global = np.concatenate(x_global)
         w_global = np.concatenate(w_global)
@@ -148,7 +150,7 @@ class Discretizer:
 
     def naive_discretize2d_sphere(self, N=10, M=10):
         """
-        int_[0,2\pi] int_[-1,1] dt d\phi
+        int_[0,2pi] int_[-1,1] dt dphi
 
         Parameters
         ----------
@@ -176,33 +178,20 @@ class Discretizer:
         Parameters
         ----------
         U : array_like
-            2-D array containing the point evaluations U_{ij} = u_i(x_j)
+            2-D array containing the point evaluations U_{ij} = u_j(x_i)
 
         Returns
         -------
         c : PiecewiseLegendreFamily
         """
 
-        points_total, number_of_polynomials = U.shape
-        number_of_intervals = len(self.endpoints) - 1
-        points_per_interval = points_total // number_of_intervals
-        u_list = list()
-        x, _ = legendre.leggauss(points_per_interval)
+        _, number_of_polynomials = U.shape
+        piecewise_poly_list = list()
         for n in range(number_of_polynomials):
-            piecewise_poly = list()
-            for i in range(number_of_intervals):
-                u_local = U[points_per_interval * i : points_per_interval * (i + 1), n]
-                coef = np.polynomial.legendre.legfit(
-                    x, u_local, deg=points_per_interval - 1
-                )
-                p_local = legendre.Legendre(
-                    coef, (self.endpoints[i], self.endpoints[i + 1])
-                )
-                piecewise_poly.append(p_local)
+            p = PiecewiseLegendre.interpolate_gauss_legendre_points(U[:, n],self.endpoints)
+            piecewise_poly_list.append(p)
 
-            u_list.append(PiecewiseLegendre(piecewise_poly, self.endpoints))
-
-        return PiecewiseLegendreFamily(u_list, self.endpoints)
+        return PiecewiseLegendreFamily(piecewise_poly_list, self.endpoints)
 
 
 def construct_A_matrix(eval_points, weights, functions):
@@ -234,7 +223,7 @@ def compress_sequence_of_functions(functions, eval_points, weights, precision):
     """
     ## Construct rank revealing QR s.t. sp.linalg.norm(A[:,perm] - Q[:,:k]@R[:k,:]) <= precision]
     A = construct_A_matrix(eval_points, weights, functions)
-    Q, R, _ = sp.linalg.qr(A, pivoting=True, mode="economic")
+    Q, R, perm = sp.linalg.qr(A, pivoting=True, mode="economic")
     rank = np.sum(np.abs(np.diag(R)) > precision)
 
     U = Q[:, :rank] * (np.sqrt(weights)[:, np.newaxis]) ** (-1)

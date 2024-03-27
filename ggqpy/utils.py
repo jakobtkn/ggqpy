@@ -2,6 +2,7 @@ import numpy as np
 import scipy as sp
 import sympy
 import bisect
+import numpy.polynomial.legendre as legendre
 from typing import Callable
 from numpy.typing import ArrayLike
 
@@ -25,7 +26,7 @@ class Interval:
         yield self.b
     
     def __lt__(self, other):
-        return self.a < self.b
+        return self.a < other.a
 
     def length(self):
         return self.b - self.a
@@ -83,7 +84,7 @@ class FunctionFamily:
             / (r0 * np.sin(theta0 - theta0 * u) + np.sin(theta0 * u))
         )
 
-        x_gl, _ = np.polynomial.legendre.leggauss(number_of_discretizations)
+        x_gl, _ = legendre.leggauss(number_of_discretizations)
 
         alphas = (amax - amin) * (x_gl + 1) / 2 + amin
         betas = (bmax - bmin) * (x_gl + 1) / 2 + bmin
@@ -154,15 +155,36 @@ class PiecewiseLegendre:
     def __init__(self, poly_list, endpoints) -> None:
         self.poly_list = poly_list
         self.endpoints = endpoints
-        self.endpoints_bisect = endpoints.copy()
-        self.endpoints_bisect[0] = -np.inf
-        self.endpoints_bisect[-1] = np.inf
+        self.endpoints_bisect = endpoints.copy()[1:-1]
+        # self.endpoints_bisect[0] = -np.inf
+        # self.endpoints_bisect[-1] = np.inf
         return
+
+    @classmethod
+    def interpolate_gauss_legendre_points(cls, u, endpoints):
+        number_of_intervals = len(endpoints) - 1
+        points_total = len(u)
+        points_per_interval = points_total // number_of_intervals
+        poly_list = list()
+
+        x, _ = legendre.leggauss(points_per_interval)
+        for i in range(number_of_intervals):
+            interval = Interval(endpoints[i], endpoints[i + 1])
+            u_local = u[points_per_interval * i : points_per_interval * (i + 1)]
+
+            p,[resid, rank, sv, rcond] = legendre.Legendre.fit(
+                interval.translate(x), u_local, domain=[*interval], deg=points_per_interval-1, rcond=1e-16, full=True
+            )
+            assert (rank == points_per_interval)
+
+            poly_list.append(p)
+
+        return cls(poly_list, endpoints)
 
     def __call__(self, x):
         y = np.zeros_like(x)
         for k in range(len(x)):
-            i = bisect.bisect_right(self.endpoints_bisect, x[k]) - 1
+            i = bisect.bisect_right(self.endpoints_bisect, x[k])
             y[k] = self.poly_list[i](x[k])
         return y
 
@@ -177,9 +199,7 @@ class PiecewiseLegendreFamily:
         self.piecewise_poly_list = poly_list
         self.piecewise_poly_deriv_list = [p.deriv() for p in poly_list]
         self.endpoints = endpoints
-        self.endpoints_bisect = endpoints.copy()
-        self.endpoints_bisect[0] = -np.inf
-        self.endpoints_bisect[-1] = np.inf
+        self.endpoints_bisect = endpoints.copy()[1:-1]
         return
 
     def __call__(self, x):
@@ -189,7 +209,7 @@ class PiecewiseLegendreFamily:
         y = np.zeros(shape=(self.number_of_functions, len(x)), dtype=float)
         n = len(x)
         for k in range(n):
-            i = bisect.bisect_right(self.endpoints_bisect, x[k]) - 1
+            i = bisect.bisect_right(self.endpoints_bisect, x[k])
             y[:, k] = np.array([p.poly_list[i](x[k]) for p in self.piecewise_poly_list])
         return y
 
@@ -200,7 +220,7 @@ class PiecewiseLegendreFamily:
         y = np.zeros(shape=(self.number_of_functions, 2 * len(x)), dtype=float)
         n = len(x)
         for k in range(n):
-            i = bisect.bisect_right(self.endpoints_bisect, x[k]) - 1
+            i = bisect.bisect_right(self.endpoints_bisect, x[k])
             y[:, k] = np.array(
                 [p.poly_list[i](x[k]) for p in self.piecewise_poly_deriv_list]
             )
