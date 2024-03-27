@@ -1,6 +1,5 @@
 import numpy as np
 import scipy as sp
-
 from ggqpy.discretize import *
 from ggqpy.optimize import *
 from ggqpy.utils import *
@@ -33,7 +32,7 @@ def construct_Chebyshev_quadratures(eval_points: tuple, w, U):
     r = U.T @ w
     k = len(r)
 
-    B = np.sqrt(w) * U.T
+    B = np.sqrt(w)[np.newaxis, :] * U.T
     Q, R, perm = sp.linalg.qr(B, pivoting=True)
     z = np.linalg.solve(R[:k, :k], Q.T.conj() @ r)
 
