@@ -1,8 +1,9 @@
-COUNTS = [2,4,8,16]
+COUNTS = [2,4,8,16,32,64,128]
+ORDERS = [4,6,8]
 
 rule all:
     input:
-        expand("quads/nystrom.{number_parameters}.{order}.quad", number_parameters=COUNTS, order=4)
+        expand("quads/nystrom.{number_parameters}.{order}.quad", number_parameters=COUNTS, order=ORDERS)
 
 rule generate_quadrature:
     input:
