@@ -201,7 +201,7 @@ class QuadOptimizer:
                 jac=jac_lm,
                 method="lm",
                 x_scale="jac",
-                max_nfev=200,
+                max_nfev=50,
                 verbose=self.verbose,
             )
             y = res.x
