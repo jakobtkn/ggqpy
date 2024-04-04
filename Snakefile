@@ -1,12 +1,12 @@
-COUNTS = [32]
-ORDERS = [4,8]
+COUNTS = [16]
+ORDERS = [4]
 
 rule all:
     input:
-        "output/triangle-test.tex",
+        "output/triangle-test.16.4.tex",
         # expand("quads/nystrom.{number_parameters}.{order}.quad", number_parameters=COUNTS, order=ORDERS)
 
-FILES = ["triangle-test.tex"]
+FILES = ["triangle-test.16.4.tex"]
 rule tex:
     input:
         expand("../report/output/{file}", file=FILES)
@@ -15,7 +15,7 @@ rule copy_file_to_tex:
     input: "output/{file}"
     output: "../report/output/{file}"
     shell:
-        "cp output/{input.file} ../report/output/{input.file}"
+        "cp output/{wildcards.file} ../report/output/{wildcards.file}"
 
 rule generate_quadrature:
     input:
@@ -27,9 +27,9 @@ rule generate_quadrature:
 ALPHAS = [0.5,0.1,1e-3,1e-9]
 rule generate_table:
     input:
-        "quads/nystrom.16.4.quad"
+        "quads/nystrom.{number_parameters}.{order}.quad"
     output:
-        "output/triangle-test.tex"
+        "output/triangle-test.{number_parameters}.{order}.tex"
     shell:
-        "python3 examples/triangle-test.py 16 4 > output/triangle-test.tex"
+        "python3 examples/triangle-test.py {wildcards.number_parameters} {wildcards.order} > output/triangle-test.{wildcards.number_parameters}.{wildcards.order}.tex"
 
