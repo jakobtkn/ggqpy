@@ -1,4 +1,4 @@
-COUNTS = [2,4,8,16,32,64,128]
+COUNTS = [32]
 ORDERS = [4,6,8]
 
 rule all:
