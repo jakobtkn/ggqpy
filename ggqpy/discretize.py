@@ -13,11 +13,10 @@ def pairwise(iterable):
     for b in it:
         yield (a, b)
 
-
 class Discretizer:
     precision = None
     min_length = None
-    verbose = None
+    verbose = True
     interpolation_degree = None
     endpoints = None
 
@@ -31,7 +30,7 @@ class Discretizer:
         self.x_gl, _ = legendre.leggauss(2 * self.interpolation_degree)
         return
 
-    def interval_compatible(self, I, phi):
+    def interval_compatible(self, I, function_family):
         """
 
         Parameters
@@ -44,42 +43,18 @@ class Discretizer:
         if I.length() < self.min_length:
             return True
 
-        x = (I.b - I.a) * (self.x_gl + 1) / 2 + I.a
+        x = (I.b - I.a) * (self.x_gl + 1.0) / 2.0 + I.a
 
+        A = np.column_stack([phi(x) for phi in function_family])
         alpha = legendre.legfit(
-            self.x_gl, y=phi(x), deg=2 * self.interpolation_degree - 1
+            self.x_gl, y=A, deg=2 * self.interpolation_degree - 1
         )  # Fit to Legendre Polynomials on [a,b]
-        high_freq_sq_residuals = np.sum(abs(alpha[self.interpolation_degree :]) ** 2)
+        high_freq_sq_residuals = np.sum(abs(alpha[self.interpolation_degree :,:]) ** 2, axis=0)
 
         if self.verbose:
             print("Residual: ", high_freq_sq_residuals, " found on interval ", I)
 
-        return high_freq_sq_residuals < self.precision
-
-    def add_endpoints(self, intervals, phi):
-        """
-
-        Parameters
-        ----------
-        :
-        Returns
-        -------
-        :
-        """
-        intervals_to_check = intervals.copy()
-        intervals_out = list()
-
-        while intervals_to_check:
-            I = intervals_to_check.pop()
-
-            if self.interval_compatible(I, phi):
-                intervals_out.append(I)
-            else:
-                midpoint = (I.a + I.b) / 2.0
-                intervals_to_check.append(Interval(I.a, midpoint))
-                intervals_to_check.append(Interval(midpoint, I.b))
-
-        return intervals_out
+        return np.all(high_freq_sq_residuals < self.precision)
 
     def adaptive_discretization(self, function_family):
         """
@@ -93,16 +68,25 @@ class Discretizer:
         -------
         :
         """
-        I = function_family.I
-        intervals = [I]
+
 
         ## Stage 1.
-        for phi in tqdm(function_family.functions_lambdas):
-            intervals = self.add_endpoints(intervals, phi)
+        intervals_to_check = [function_family.I]
+        intervals = list()
+
+        while intervals_to_check:
+            I = intervals_to_check.pop()
+
+            if self.interval_compatible(I, function_family.functions_lambdas):
+                intervals.append(I)
+            else:
+                midpoint = (I.a + I.b) / 2.0
+                intervals_to_check.append(Interval(I.a, midpoint))
+                intervals_to_check.append(Interval(midpoint, I.b))
 
         ## Stage 2.
         self.intervals = sorted(intervals)
-        self.endpoints = sorted(set([a for (a, b) in intervals] + [I.b]))
+        self.endpoints = sorted(set([a for (a, b) in intervals] + [function_family.I.b]))
 
         if self.verbose:
             print("Endpoints found: ", self.endpoints)
