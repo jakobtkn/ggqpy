@@ -113,8 +113,8 @@ def test_end_to_end_nystrom(plt):
     integral_ggq = ggq.eval(f)
     integral_adap = adap.eval(f)
 
-    assert integral_cheb == approx(integral_adap, eps_comp)
-    assert integral_ggq == approx(integral_adap, eps_quad)
+    assert integral_cheb == approx(integral_adap, abs=eps_comp)
+    assert integral_ggq == approx(integral_adap, abs=eps_quad)
     assert ggq.size < cheb.size
 
 
