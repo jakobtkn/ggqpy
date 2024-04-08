@@ -13,9 +13,9 @@ from ggqpy import *
 
 def main(count, order, filename):
     min_length = 1e-6
-    eps_disc = 1e-10
-    eps_comp = 1e-8
-    eps_quad = 1e-8
+    eps_disc = 1e-14
+    eps_comp = 1e-12
+    eps_quad = 1e-12
 
     F = FunctionFamily.nystrom_integral_functions(count, order)
     x, w = generalized_gaussian_quadrature(F, min_length, eps_disc, eps_comp, eps_quad)
