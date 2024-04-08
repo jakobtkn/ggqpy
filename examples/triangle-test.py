@@ -44,11 +44,11 @@ def main(alpha, discretization_level=16, order=8):
     quad = Quadrature.load_from_file(
         f"quads/nystrom.{discretization_level}.{order}.quad"
     )
-    quad.save_to_file("quads/test.quad")
+    print(quad.x.dtype)
 
     sum = theta0 * np.array([evaluate_integrand(x) for x in quad.x]).flatten() @ quad.w
 
-    return sum.item() - analytic_integral(alpha)
+    return abs(sum.item() - analytic_integral(alpha))
 
 
 if __name__ == "__main__":
@@ -66,9 +66,10 @@ if __name__ == "__main__":
 
     latex_table = df.to_latex(
         index=False,
-        header=["\\alpha","Absolute error"],
+        header=["$\\alpha$","Absolute error"],
         caption="Results",
         label="tab:triangle-test",
         float_format="{:.2e}".format,
+        position="centering",
     )
     print(latex_table)
