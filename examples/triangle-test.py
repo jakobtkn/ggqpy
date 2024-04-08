@@ -44,7 +44,7 @@ def main(alpha, discretization_level=16, order=8):
     quad = Quadrature.load_from_file(
         f"quads/nystrom.{discretization_level}.{order}.quad"
     )
-    print(quad.x.dtype)
+    quad.save_to_file("quads/test.quad")
 
     sum = theta0 * np.array([evaluate_integrand(x) for x in quad.x]).flatten() @ quad.w
 

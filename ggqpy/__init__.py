@@ -49,8 +49,8 @@ def construct_Chebyshev_quadratures(eval_points: tuple, w, U):
 def generalized_gaussian_quadrature(
     function_family: FunctionFamily,
     min_length=1e-6,
-    eps_disc=1e-10,
-    eps_comp=1e-7,
+    eps_disc=1e-13,
+    eps_comp=1e-13,
     eps_quad=1e-7,
     interpolation_degree=30,
     detailed_output=None,
