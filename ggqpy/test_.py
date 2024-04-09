@@ -176,9 +176,9 @@ def test_piecewisepoly_family():
     U = np.array([[1, 1, 0, 0, 0, 0], [0, 0, 1, 1, 0, 0], [0, 0, 0, 0, 1, 1]]).T
     P = discretize.interpolate_piecewise_legendre(U)
 
-    np.testing.assert_allclose(P([-0.8]), np.array([1, 0, 0])[:, np.newaxis])
-    np.testing.assert_allclose(P([0.3]), np.array([0, 1, 0])[:, np.newaxis])
-    np.testing.assert_allclose(P([0.5 + 1e-16]), np.array([0, 0, 1])[:, np.newaxis])
+    np.testing.assert_allclose(P(np.array([-0.8])), np.array([1, 0, 0])[:, np.newaxis])
+    np.testing.assert_allclose(P(np.array([0.3])), np.array([0, 1, 0])[:, np.newaxis])
+    np.testing.assert_allclose(P(np.array([0.5 + 1e-16])), np.array([0, 0, 1])[:, np.newaxis])
 
 
 def test_piecewisepoly_family_2(plt):
