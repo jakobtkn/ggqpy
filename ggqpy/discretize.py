@@ -2,8 +2,7 @@ import numpy as np
 import scipy as sp
 import numpy.polynomial.legendre as legendre
 from tqdm import tqdm
-from ggqpy.utils import PiecewiseLegendre, PiecewiseLegendreFamily
-from ggqpy.utils import Interval
+from ggqpy.utils import PiecewiseLegendre, PiecewiseLegendreFamily, Interval, FunctionFamily
 
 
 def pairwise(iterable):
@@ -30,7 +29,7 @@ class Discretizer:
         self.x_gl, _ = legendre.leggauss(2 * self.interpolation_degree)
         return
 
-    def interval_compatible(self, I, function_family):
+    def interval_compatible(self, I: Interval, function_family: FunctionFamily):
         """
 
         Parameters
@@ -45,16 +44,20 @@ class Discretizer:
 
         x = (I.b - I.a) * (self.x_gl + 1.0) / 2.0 + I.a
 
-        A = np.column_stack([phi(x) for phi in function_family])
+        A = np.column_stack([phi(x) for phi in function_family.functions_lambdas])
         alpha = legendre.legfit(
             self.x_gl, y=A, deg=2 * self.interpolation_degree - 1
         )  # Fit to Legendre Polynomials on [a,b]
-        high_freq_sq_residuals = np.sum(abs(alpha[self.interpolation_degree :,:]) ** 2, axis=0)
+
+        high_freq_sq_residuals = np.sqrt(np.sum(abs(alpha[self.interpolation_degree :,:]) ** 2, axis=0))
+        interval_weight = I.length()/function_family.I.length()
+
+        is_compatible = np.all(high_freq_sq_residuals*interval_weight < self.precision)
 
         if self.verbose:
             print("Residual: ", high_freq_sq_residuals, " found on interval ", I)
 
-        return np.all(high_freq_sq_residuals < self.precision)
+        return is_compatible
 
     def adaptive_discretization(self, function_family):
         """
@@ -77,7 +80,7 @@ class Discretizer:
         while intervals_to_check:
             I = intervals_to_check.pop()
 
-            if self.interval_compatible(I, function_family.functions_lambdas):
+            if self.interval_compatible(I, function_family):
                 intervals.append(I)
             else:
                 midpoint = (I.a + I.b) / 2.0
