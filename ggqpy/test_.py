@@ -2,7 +2,7 @@ import numpy as np
 import sympy
 from pytest import approx
 from ggqpy import *
-
+np.seterr(all="raise")
 
 def test_interval():
     I = Interval(0.3, 0.4)
@@ -27,16 +27,17 @@ def test_sherman_morrison():
 
 def test_end_to_end_polynomial():
     order = 9
-    I = Interval(1e-8, 1)
+    I = Interval(1e-8, 1-1e-5)
     function_family = FunctionFamilySymbolic.polynomials_and_singularity(
         I, order=order, number_of_polynomials=40
     )
 
-    min_length = 1e-8
+    min_length = 1e-9
     eps_disc = 1e-12
     eps_comp = 1e-10
-    eps_quad = 1e-7
-    interpolation_degree = 15
+    eps_quad = 1e-8
+    interpolation_degree = 30
+
 
     discretizer = Discretizer(eps_disc, min_length, interpolation_degree)
     x_disc, w_disc = discretizer.adaptive_discretization(function_family)
@@ -53,6 +54,8 @@ def test_end_to_end_polynomial():
     optimizer = QuadOptimizer(U_family, r)
     x, w = optimizer.reduce_quadrature(x_cheb, w_cheb, eps_quad)
 
+
+    ## EXAMPLE FUNCTION
     f_lambda, f_symbolic = function_family.generate_example_function()
 
     integral_numeric = f_lambda(x) @ w
@@ -61,9 +64,15 @@ def test_end_to_end_polynomial():
     assert len(x) == (order + 1) // 2
     assert integral_analytic == approx(integral_numeric)
 
+    ## SINGULARITY
     symx = sympy.Symbol("x", real=True)
-    f = 1 / symx
-    assert (1 / x) @ w == approx(function_family.integral(f))
+    f = sympy.ln(symx)
+    integral_f = function_family.integral(f)
+    print(integral_f)
+    assert type(function_family) == FunctionFamilySymbolic
+    assert approx((np.log(x_disc)) @ w_disc, abs=eps_disc) == integral_f
+    assert (np.log(x_cheb)) @ w_cheb == approx(integral_f, abs=(eps_disc + eps_comp))
+    assert (np.log(x)) @ w == approx(integral_f, abs=(eps_disc + eps_comp + eps_quad))
 
 
 def test_end_to_end_nystrom(plt):
@@ -72,11 +81,11 @@ def test_end_to_end_nystrom(plt):
         number_of_discretizations=8, order=order
     )
 
-    min_length = 1e-5
-    eps_disc = 1e-12
+    min_length = 1e-7
+    eps_disc = 1e-10
     eps_comp = 1e-10
     eps_quad = 1e-8
-    interpolation_degree = 15
+    interpolation_degree = 30
 
     discretizer = Discretizer(eps_disc, min_length, interpolation_degree)
     x_disc, w_disc = discretizer.adaptive_discretization(function_family)
@@ -106,6 +115,7 @@ def test_end_to_end_nystrom(plt):
     np.testing.assert_allclose(U_family(x_disc), U_disc.T)
     optimizer = QuadOptimizer(U_family, r)
     x, w = optimizer.reduce_quadrature(x_cheb, w_cheb, eps_quad)
+    np.clip(x, *function_family.I, out=x)
     ggq = Quadrature(x, w)
 
     f = function_family.generate_example_function()
