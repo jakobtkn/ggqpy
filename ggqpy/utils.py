@@ -84,10 +84,13 @@ class FunctionFamily:
             / (r0 * np.sin(theta0 - theta0 * u) + np.sin(theta0 * u))
         )
 
-        x_gl, _ = legendre.leggauss(number_of_discretizations)
-
-        alphas = (amax - amin) * (x_gl + 1) / 2 + amin
-        betas = (bmax - bmin) * (x_gl + 1) / 2 + bmin
+        if number_of_discretizations != 1:
+            x_gl, _ = legendre.leggauss(number_of_discretizations)
+            alphas = (amax - amin) * (x_gl + 1) / 2 + amin
+            betas = (bmax - bmin) * (x_gl + 1) / 2 + bmin
+        else:
+            alphas = [0.5]
+            betas = [np.pi/2]
 
         functions = [
             lambda u, alpha=alpha, beta=beta: beta
@@ -125,8 +128,8 @@ class FunctionFamilySymbolic(FunctionFamily):
     @classmethod
     def polynomials_and_singularity(
         cls,
-        I: Interval,
-        order: int = 5,
+        I: Interval = Interval(1e-8,1),
+        order: int = 9,
         number_of_polynomials: int = 20,
         rng_gen: np.random.Generator = np.random.default_rng(0),
     ):
@@ -138,7 +141,7 @@ class FunctionFamilySymbolic(FunctionFamily):
             f = sympy.Poly(c, x).as_expr()
             functions_symbolic.append(f)
 
-        functions_symbolic.append(1 / x)
+        functions_symbolic.append(sympy.ln(x))
 
         return cls(I, functions_symbolic)
 
@@ -172,16 +175,14 @@ class PiecewiseLegendre:
             interval = Interval(endpoints[i], endpoints[i + 1])
             u_local = u[points_per_interval * i : points_per_interval * (i + 1)]
 
-            p, [resid, rank, sv, rcond] = legendre.Legendre.fit(
+            p = legendre.Legendre.fit(
                 interval.translate(x),
                 u_local,
                 domain=[*interval],
+                window=[-1,1],
                 deg=points_per_interval - 1,
-                rcond=1e-16,
-                full=True,
+                rcond=1e-16
             )
-            assert rank == points_per_interval
-
             poly_list.append(p)
 
         return cls(poly_list, endpoints)
@@ -211,8 +212,9 @@ class PiecewiseLegendreFamily:
         """Evaluates functions in list such that row k contains
         [P_k(x)]
         """
-        y = np.zeros(shape=(self.number_of_functions, len(x)), dtype=float)
+        np.clip(x, self.endpoints[0], self.endpoints[-1], out=x)
         n = len(x)
+        y = np.zeros(shape=(self.number_of_functions, len(x)), dtype=float)
         for k in range(n):
             i = bisect.bisect_right(self.endpoints_bisect, x[k])
             y[:, k] = np.array([p.poly_list[i](x[k]) for p in self.piecewise_poly_list])
@@ -222,8 +224,9 @@ class PiecewiseLegendreFamily:
         """Evaluates functions in list such that row k contains
         [P_k(x) P_k'(x)]
         """
-        y = np.zeros(shape=(self.number_of_functions, 2 * len(x)), dtype=float)
+        np.clip(x, self.endpoints[0], self.endpoints[-1], out=x)
         n = len(x)
+        y = np.zeros(shape=(self.number_of_functions, 2 * len(x)), dtype=float)
         for k in range(n):
             i = bisect.bisect_right(self.endpoints_bisect, x[k])
             y[:, k] = np.array(
