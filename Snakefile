@@ -1,8 +1,6 @@
-COUNTS = [16]
-ORDERS = [4]
-
 rule all:
     input:
+        "output/triangle-test.1.4.tex",
         "output/triangle-test.16.4.tex",
         "output/triangle-test.16.8.tex",
         # expand("quads/nystrom.{number_parameters}.{order}.quad", number_parameters=COUNTS, order=ORDERS)
