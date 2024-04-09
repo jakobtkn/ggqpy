@@ -12,12 +12,12 @@ from ggqpy import *
 
 
 def main(count, order, filename):
-    min_length = 1e-6
+    min_length = 1e-10
     eps_disc = 1e-14
     eps_comp = 1e-12
     eps_quad = 1e-12
 
-    F = FunctionFamily.nystrom_integral_functions(count, order)
+    F = FunctionFamily.nystrom_integral_functions(count, order, amin=0.3, amax=0.9, bmin=np.pi/4, bmax=3*np.pi/4)
     x, w = generalized_gaussian_quadrature(F, min_length, eps_disc, eps_comp, eps_quad)
     quad = Quadrature(x, w)
     quad.save_to_file(filename)
