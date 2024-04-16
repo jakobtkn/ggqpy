@@ -42,7 +42,7 @@ def test_conformal_mapping():
     drho = lambda x: np.array([[0, 0], [1, 0], [0, 2 * x[1]]])
     x0 = np.array([2.0, 1.0])
 
-    A, affine = ensure_conformal_mapping(drho, x0)
+    affine, affine_inverse = ensure_conformal_mapping(drho, x0)
 
     np.testing.assert_allclose(affine(np.array([0, 0])), x0)
 
