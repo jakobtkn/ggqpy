@@ -50,6 +50,15 @@ def main(alpha, discretization_level=16, order=8):
 
     return abs(sum.item() - analytic_integral(alpha))
 
+def main(alpha, discretization_level=16, order=8):
+    r0 = alpha
+    theta0 = np.pi / 2
+    f = lambda r, theta: np.cos(2 * theta)
+    r,theta,w = quad_on_standard_triangle(r0, theta0)
+
+    return abs(f(r,theta)@w - analytic_integral(alpha))
+
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
