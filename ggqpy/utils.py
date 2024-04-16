@@ -68,7 +68,7 @@ class Quadrature:
         return f(self.x) @ self.w
     
     def __iter__(self):
-        for node in zip(self.x,self.y):
+        for node in zip(self.x,self.w):
             yield node
 
 class FunctionFamily:
