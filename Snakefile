@@ -1,11 +1,11 @@
 rule all:
     input:
-        "output/triangle-test.1.4.tex",
-        "output/triangle-test.16.4.tex",
-        "output/triangle-test.16.8.tex",
+        "output/experiment_triangle.1.4.tex",
+        "output/experiment_triangle.16.4.tex",
+        "output/experiment_triangle.16.8.tex",
         # expand("quads/nystrom.{number_parameters}.{order}.quad", number_parameters=COUNTS, order=ORDERS)
 
-FILES = ["triangle-test.16.4.tex"]
+FILES = ["experiment_triangle.16.4.tex"]
 rule tex:
     input:
         expand("../report/output/{file}", file=FILES)
@@ -28,7 +28,7 @@ rule generate_table:
     input:
         "quads/nystrom.{number_parameters}.{order}.quad"
     output:
-        "output/triangle-test.{number_parameters}.{order}.tex"
+        "output/experiment_triangle.{number_parameters}.{order}.tex"
     shell:
-        "python3 examples/triangle-test.py {wildcards.number_parameters} {wildcards.order} > output/triangle-test.{wildcards.number_parameters}.{wildcards.order}.tex"
+        "python3 examples/experiment_triangle.py {wildcards.number_parameters} {wildcards.order} > output/experiment_triangle.{wildcards.number_parameters}.{wildcards.order}.tex"
 
