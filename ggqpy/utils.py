@@ -84,16 +84,12 @@ class FunctionFamily:
             / (r0 * np.sin(theta0 - theta0 * u) + np.sin(theta0 * u))
         )
 
-        if number_of_discretizations != 1:
-            x_gl, _ = legendre.leggauss(number_of_discretizations)
-            alphas = (amax - amin) * (x_gl + 1) / 2 + amin
-            betas = (bmax - bmin) * (x_gl + 1) / 2 + bmin
-        else:
-            alphas = [0.5]
-            betas = [np.pi/2]
+        x_gl, _ = legendre.leggauss(number_of_discretizations)
+        alphas = (amax - amin) * (x_gl + 1) / 2 + amin
+        betas = (bmax - bmin) * (x_gl + 1) / 2 + bmin
 
         functions = [
-            lambda u, alpha=alpha, beta=beta: beta
+            lambda u, alpha=alpha, beta=beta, i=i, j=j, trig=trig: beta
             * gamma(alpha, beta, u) ** (i + 2)
             / (i + 2)
             * trig(j * beta * u)
@@ -105,7 +101,7 @@ class FunctionFamily:
         ]
 
         return cls(Interval(0, 1), functions)
-
+    
     def generate_example_function(self):
         n = len(self.functions_lambdas)
         c = np.random.randint(-10, 10, size=n).astype(float)
