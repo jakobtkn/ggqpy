@@ -56,9 +56,20 @@ class Quadrature:
         x, w = np.hsplit(data, 2)
         return cls(x, w)
 
+
+    @classmethod
+    def gauss_legendre_on_interval(cls, order: int, interval: Interval):
+        x_gl,w_gl = np.polynomial.legendre.leggauss(order)
+        x = interval.translate(x_gl)
+        w = (w_gl/2.0)*interval.length()
+        return cls(x,w)
+
     def eval(self, f: Callable):
         return f(self.x) @ self.w
-
+    
+    def __iter__(self):
+        for node in zip(self.x,self.y):
+            yield node
 
 class FunctionFamily:
     I = None
