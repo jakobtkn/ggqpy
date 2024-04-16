@@ -35,7 +35,7 @@ def ensure_conformal_mapping(jacobian, x0):
     affine = lambda x: B @ x + b
     affine_inverse = lambda x: Binv @ (x - b)
 
-    return B, affine_inverse
+    return affine, affine_inverse
 
 
 def standard_radial_triangle_transform(a, b):
@@ -108,6 +108,10 @@ class Rectangle:
         self.x = np.array([a[0], b[0], c[0], d[0]])
         self.y = np.array([a[1], b[1], c[1], d[1]])
 
+    def __iter__(self):
+        for v in self.vertices:
+            yield v
+
     def split_into_triangles_around_point(self, x0: tuple):
 
         for p, q in pairwise(self.vertices + [self.vertices[0]]):
@@ -142,6 +146,40 @@ class Triangle:
     def __eq__(self, other: Triangle) -> bool:
         return len(set(self.vertices + other.vertices)) == 3
 
+def load_ggq_quad(r0,theta0):
+    ###!!! pick correct ###
+    order = 4
+    quad = Quadrature.load_from_file(
+        f"quads/nystrom.{16}.{order}.quad"
+    )
+    return quad, order
 
-def singular_integral_quad(rho, drho, x0):
-    B, affine = ensure_conformal_mapping(drho, x0)
+def quad_on_standard_triangle(r0, theta0):
+    gamma = (
+        lambda u: r0
+        * np.sin(theta0)
+        / (r0 * np.sin(theta0 - theta0 * u) + np.sin(theta0 * u))
+    )
+
+    ggq, order = load_ggq_quad(r0, theta0)
+    uu = ggq.x
+    w_global = list()
+    theta_global = list()
+
+    for (u,w) in ggq:
+        gammau = gamma(u)
+        gl = Quadrature.gauss_legendre_on_interval(order, Interval(0,gammau))
+        
+        w_global.append(np.linalg.kron(w, gl.w))
+        u_global.append()
+
+    w = np.linalg.kron(ggq.w, w)
+    theta = u*theta0
+
+def singular_integral_quad(rho, drho, x0, simplex):
+    B, affine, inverse_affine = ensure_conformal_mapping(drho, x0)  
+    R = Rectangle(inverse_affine(*simplex))
+
+    for T in [*R.split_into_triangles_around_point(x0)]:
+        scale, angle, A, Ainv, det = standard_radial_triangle_transform(T.vertices[1], T.vertices[2])
+        T0 = Triangle((0,0),(1,0), (scale*np.cos(angle), scale*np.sin(angle)))
