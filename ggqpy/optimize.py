@@ -5,7 +5,7 @@ from tqdm import tqdm
 
 from ggqpy.utils import PiecewiseLegendreFamily
 
-verbose = True
+verbose = False
 if verbose:
 
     def vprint(*messages) -> None:
