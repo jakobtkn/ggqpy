@@ -55,3 +55,12 @@ def test_geometry():
         Triangle((0, 0),(1, 1),(-1, 1)),
         Triangle((0, 0),(-1, 1),(-1, -1)),
     ]
+
+from examples.experiment_triangle import analytic_integral
+
+def test_quad_on_standard_triangle():
+    r,theta,w = quad_on_standard_triangle(0.5, np.pi/2)
+    print(np.shape(r), np.shape(theta), np.shape(w))
+    assert len(r) == len(theta) == len(w)
+    f = lambda r, theta: np.cos(2 * theta)
+    assert f(r,theta)@w == approx(analytic_integral(0.5))

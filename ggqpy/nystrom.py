@@ -162,19 +162,22 @@ def quad_on_standard_triangle(r0, theta0):
     )
 
     ggq, order = load_ggq_quad(r0, theta0)
-    uu = ggq.x
     w_global = list()
     theta_global = list()
+    r_global = list()
 
-    for (u,w) in ggq:
+    for (u,w) in [*ggq]:
         gammau = gamma(u)
         gl = Quadrature.gauss_legendre_on_interval(order, Interval(0,gammau))
         
-        w_global.append(np.linalg.kron(w, gl.w))
-        u_global.append()
+        w_global.append(w*gl.w*theta0)
+        r_global.append(gl.x)
+        theta_global.append(np.full_like(gl.x, u*theta0))
 
-    w = np.linalg.kron(ggq.w, w)
-    theta = u*theta0
+    r = np.concatenate(r_global)
+    theta = np.concatenate(theta_global)
+    w = np.concatenate(w_global)
+    return r,theta,w
 
 def singular_integral_quad(rho, drho, x0, simplex):
     B, affine, inverse_affine = ensure_conformal_mapping(drho, x0)  
