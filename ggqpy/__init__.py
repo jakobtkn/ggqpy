@@ -3,6 +3,7 @@ import scipy as sp
 from ggqpy.discretize import *
 from ggqpy.optimize import *
 from ggqpy.utils import *
+from ggqpy.nystrom import *
 
 
 verbose = True
