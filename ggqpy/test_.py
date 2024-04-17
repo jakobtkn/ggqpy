@@ -2,7 +2,9 @@ import numpy as np
 import sympy
 from pytest import approx
 from ggqpy import *
+
 np.seterr(all="raise")
+
 
 def test_interval():
     I = Interval(0.3, 0.4)
@@ -27,7 +29,7 @@ def test_sherman_morrison():
 
 def test_end_to_end_polynomial():
     order = 9
-    I = Interval(1e-8, 1-1e-5)
+    I = Interval(1e-8, 1 - 1e-5)
     function_family = FunctionFamilySymbolic.polynomials_and_singularity(
         I, order=order, number_of_polynomials=40
     )
@@ -37,7 +39,6 @@ def test_end_to_end_polynomial():
     eps_comp = 1e-10
     eps_quad = 1e-8
     interpolation_degree = 30
-
 
     discretizer = Discretizer(eps_disc, min_length, interpolation_degree)
     x_disc, w_disc = discretizer.adaptive_discretization(function_family)
@@ -53,7 +54,6 @@ def test_end_to_end_polynomial():
 
     optimizer = QuadOptimizer(U_family, r)
     x, w = optimizer.reduce_quadrature(x_cheb, w_cheb, eps_quad)
-
 
     ## EXAMPLE FUNCTION
     f_lambda, f_symbolic = function_family.generate_example_function()
@@ -178,7 +178,9 @@ def test_piecewisepoly_family():
 
     np.testing.assert_allclose(P(np.array([-0.8])), np.array([1, 0, 0])[:, np.newaxis])
     np.testing.assert_allclose(P(np.array([0.3])), np.array([0, 1, 0])[:, np.newaxis])
-    np.testing.assert_allclose(P(np.array([0.5 + 1e-16])), np.array([0, 0, 1])[:, np.newaxis])
+    np.testing.assert_allclose(
+        P(np.array([0.5 + 1e-16])), np.array([0, 0, 1])[:, np.newaxis]
+    )
 
 
 def test_piecewisepoly_family_2(plt):

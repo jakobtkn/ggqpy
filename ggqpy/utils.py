@@ -56,20 +56,20 @@ class Quadrature:
         x, w = np.hsplit(data, 2)
         return cls(x, w)
 
-
     @classmethod
     def gauss_legendre_on_interval(cls, order: int, interval: Interval):
-        x_gl,w_gl = np.polynomial.legendre.leggauss(order)
+        x_gl, w_gl = np.polynomial.legendre.leggauss(order)
         x = interval.translate(x_gl)
-        w = (w_gl/2.0)*interval.length()
-        return cls(x,w)
+        w = (w_gl / 2.0) * interval.length()
+        return cls(x, w)
 
     def eval(self, f: Callable):
         return f(self.x) @ self.w
-    
+
     def __iter__(self):
-        for node in zip(self.x,self.w):
+        for node in zip(self.x, self.w):
             yield node
+
 
 class FunctionFamily:
     I = None
@@ -112,7 +112,7 @@ class FunctionFamily:
         ]
 
         return cls(Interval(0, 1), functions)
-    
+
     def generate_example_function(self):
         n = len(self.functions_lambdas)
         c = np.random.randint(-10, 10, size=n).astype(float)
@@ -135,7 +135,7 @@ class FunctionFamilySymbolic(FunctionFamily):
     @classmethod
     def polynomials_and_singularity(
         cls,
-        I: Interval = Interval(1e-8,1),
+        I: Interval = Interval(1e-8, 1),
         order: int = 9,
         number_of_polynomials: int = 20,
         rng_gen: np.random.Generator = np.random.default_rng(0),
@@ -186,9 +186,9 @@ class PiecewiseLegendre:
                 interval.translate(x),
                 u_local,
                 domain=[*interval],
-                window=[-1,1],
+                window=[-1, 1],
                 deg=points_per_interval - 1,
-                rcond=1e-16
+                rcond=1e-16,
             )
             poly_list.append(p)
 

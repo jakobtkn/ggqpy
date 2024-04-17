@@ -81,8 +81,8 @@ def standard_radial_triangle_transform(a, b):
     scale = np.linalg.norm(x)
 
     if angle < 0.0:
-        Ainv[:,1] = -Ainv[:,1]
-        A[1,:] = -A[1,:]
+        Ainv[:, 1] = -Ainv[:, 1]
+        A[1, :] = -A[1, :]
         angle = -angle
 
     return scale, angle, A, Ainv, det
@@ -109,7 +109,6 @@ class Rectangle:
             yield v
 
     def split_into_triangles_around_point(self, x0: tuple):
-
         for p, q in pairwise(self.vertices + [self.vertices[0]]):
             yield Triangle(x0, p, q)
 
@@ -202,7 +201,7 @@ def singular_integral_quad(drho, x0, simplex):
     y_list = list()
     w_list = list()
 
-    for T in [*R.split_into_triangles_around_point((0,0))]:
+    for T in [*R.split_into_triangles_around_point((0, 0))]:
         scale, angle, A, Ainv, det = standard_radial_triangle_transform(
             T.vertices[1], T.vertices[2]
         )

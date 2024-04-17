@@ -2,7 +2,12 @@ import numpy as np
 import scipy as sp
 import numpy.polynomial.legendre as legendre
 from tqdm import tqdm
-from ggqpy.utils import PiecewiseLegendre, PiecewiseLegendreFamily, Interval, FunctionFamily
+from ggqpy.utils import (
+    PiecewiseLegendre,
+    PiecewiseLegendreFamily,
+    Interval,
+    FunctionFamily,
+)
 
 
 def pairwise(iterable):
@@ -11,6 +16,7 @@ def pairwise(iterable):
 
     for b in it:
         yield (a, b)
+
 
 class Discretizer:
     precision = None
@@ -49,10 +55,14 @@ class Discretizer:
             self.x_gl, y=A, deg=2 * self.interpolation_degree - 1
         )  # Fit to Legendre Polynomials on [a,b]
 
-        high_freq_sq_residuals = np.sqrt(np.sum(abs(alpha[self.interpolation_degree :,:]) ** 2, axis=0))
-        interval_weight = I.length()/function_family.I.length()
+        high_freq_sq_residuals = np.sqrt(
+            np.sum(abs(alpha[self.interpolation_degree :, :]) ** 2, axis=0)
+        )
+        interval_weight = I.length() / function_family.I.length()
 
-        is_compatible = np.all(high_freq_sq_residuals*interval_weight < self.precision)
+        is_compatible = np.all(
+            high_freq_sq_residuals * interval_weight < self.precision
+        )
 
         if self.verbose:
             print("Residual: ", high_freq_sq_residuals, " found on interval ", I)
@@ -72,7 +82,6 @@ class Discretizer:
         :
         """
 
-
         ## Stage 1.
         intervals_to_check = [function_family.I]
         intervals = list()
@@ -89,7 +98,9 @@ class Discretizer:
 
         ## Stage 2.
         self.intervals = sorted(intervals)
-        self.endpoints = sorted(set([a for (a, b) in intervals] + [function_family.I.b]))
+        self.endpoints = sorted(
+            set([a for (a, b) in intervals] + [function_family.I.b])
+        )
 
         if self.verbose:
             print("Endpoints found: ", self.endpoints)

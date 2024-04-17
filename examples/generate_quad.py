@@ -22,7 +22,7 @@ def main(count, order, filename):
     quad = Quadrature(x, w)
     quad.save_to_file(filename)
 
- 
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("count", default=16)

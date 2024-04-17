@@ -3,6 +3,7 @@ import pandas as pd
 import os
 import sympy
 import argparse
+
 sys.path.append(os.path.abspath("."))
 from ggqpy import *
 
@@ -50,14 +51,14 @@ def main(alpha, discretization_level=16, order=8):
 
     return abs(sum.item() - analytic_integral(alpha))
 
+
 def main(alpha, discretization_level=16, order=8):
     r0 = alpha
     theta0 = np.pi / 2
     f = lambda r, theta: np.cos(2 * theta)
-    r,theta,w = quad_on_standard_triangle(r0, theta0)
+    r, theta, w = quad_on_standard_triangle(r0, theta0)
 
-    return abs(f(r,theta)@w - analytic_integral(alpha))
-
+    return abs(f(r, theta) @ w - analytic_integral(alpha))
 
 
 if __name__ == "__main__":
@@ -65,7 +66,6 @@ if __name__ == "__main__":
     parser.add_argument("count", default=16)
     parser.add_argument("order", default=4)
     args = parser.parse_args()
-
 
     alpha = [0.5, 1e-4, 1e-7]
     error = list()
@@ -75,7 +75,7 @@ if __name__ == "__main__":
 
     latex_table = df.to_latex(
         index=False,
-        header=["$\\alpha$","Absolute error"],
+        header=["$\\alpha$", "Absolute error"],
         caption="Results",
         label="tab:triangle-test",
         float_format="{:.2e}".format,
