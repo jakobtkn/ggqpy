@@ -98,6 +98,17 @@ def test_singular_integral(plt):
     plt.xlim(-1, 1)
     plt.ylim(-1, 1)
 
+def test_singular_integral_2(plt):
+    drho = lambda x: np.array([[0, 0], [1, 0+ x[0]], [0, 2 * x[1] + x[0]]])
+    x0 = np.array([-0.1, 0.5])
+    simplex = Rectangle((-1, -1), (-1, 1), (1, 1), (1, -1))
+    x, y, w = singular_integral_quad(drho, x0, simplex)
+    plt.figure()
+    plt.scatter(x, y, marker="x")
+    plt.scatter(x0[0], x0[1], c="r")
+    plt.xlim(-1, 1)
+    plt.ylim(-1, 1)
+
 
 def test_node_placement(plt):
     drho = lambda x: np.array([[0, 0], [1, 0], [0, 2 * x[1]]])
@@ -107,10 +118,7 @@ def test_node_placement(plt):
     B, Binv = ensure_conformal_mapping(drho, x0)
     R = Rectangle(*[Binv @ (np.array(v) - x0) for v in iter(simplex)])
 
-    x_list = list()
-    y_list = list()
-    w_list = list()
-    T, T2, T3, T4 = [*R.split_into_triangles_around_point(np.array([0, 0]))]
+    T, _, _, _ = [*R.split_into_triangles_around_point(np.array([0, 0]))]
 
     scale, angle, A, Ainv, det = standard_radial_triangle_transform(
         T.vertices[1], T.vertices[2]
@@ -137,9 +145,9 @@ def test_node_placement(plt):
     plt.title("T")
     for x, y in [*T]:
         plt.scatter(x, y, c="r")
-    # plt.scatter(np.hsplit(np.row_stack([*T]),2))
+        
     for x, y in zip((Ainv @ v)[0, :], (Ainv @ v)[1, :]):
         plt.scatter(x, y, c="b")
-        # assert T.is_in((x,y))
+        assert T.is_in((x,y))
 
     v = B @ (Ainv @ v) + x0[:, np.newaxis]
