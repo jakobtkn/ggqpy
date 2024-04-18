@@ -4,10 +4,9 @@ import os
 import sympy
 import argparse
 
-from ggqpy.quad import Quadrature
-
 sys.path.append(os.path.abspath("."))
 from ggqpy import *
+from ggqpy.quad import Quadrature
 
 
 def analytic_integral(alpha):
