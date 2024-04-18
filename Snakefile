@@ -8,7 +8,7 @@ nTHETA = len(THETA)
 
 rule all:
     input:
-        "output/experiment_triangle.1.4.tex",
+        "output/experiment_triangle.4.tex",
 
 rule make_config:
     input:
@@ -34,7 +34,7 @@ rule generate_table:
     output:
         "output/experiment_triangle.{order}.tex"
     shell:
-        "python3 examples/experiment_triangle.py {wildcards.number_parameters} {wildcards.order} > output/experiment_triangle.{wildcards.number_parameters}.{wildcards.order}.tex"
+        "python3 examples/experiment_triangle.py {wildcards.order} > output/experiment_triangle.{wildcards.order}.tex"
 
 
 FILES = ["experiment_triangle.16.4.tex"]

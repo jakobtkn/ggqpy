@@ -78,8 +78,6 @@ def test_geometry():
 
 
 from examples.experiment_triangle import analytic_integral
-
-
 def test_quad_on_standard_triangle():
     r, theta, w = quad_on_standard_triangle(0.5, np.pi / 2)
     assert len(r) == len(theta) == len(w)

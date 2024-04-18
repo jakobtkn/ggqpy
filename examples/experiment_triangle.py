@@ -26,7 +26,7 @@ def analytic_integral(alpha):
 
     return integral
 
-def main(alpha, discretization_level=16, order=8):
+def main(alpha, order):
     r0 = alpha
     theta0 = np.pi / 2
     f = lambda r, theta: np.cos(2 * theta)
@@ -37,14 +37,13 @@ def main(alpha, discretization_level=16, order=8):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("count", default=16)
     parser.add_argument("order", default=4)
     args = parser.parse_args()
 
-    alpha = [0.5, 1e-4, 1e-7]
+    alpha = [0.5, 1e-4, 1e-5]
     error = list()
     for a in alpha:
-        error.append(main(a, int(args.count), int(args.order)))
+        error.append(main(a, int(args.order)))
     df = pd.DataFrame(dict(alpha=alpha, error=error))
 
     latex_table = df.to_latex(

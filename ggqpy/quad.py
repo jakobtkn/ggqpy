@@ -55,13 +55,17 @@ class SingularTriangleQuadrature:
 
         self.quadratures = dict()
         for filepath in glob.glob(quad_folder + "*.quad"):
-            r0_index = filepath[0]
-            theta0_index = filepath[2]
+            
+            ## Extract indices from filename
+            r0_index = int(filepath[-8])
+            theta0_index = int(filepath[-6])
+            
             self.quadratures[(r0_index,theta0_index)] = Quadrature.load_from_file(filepath)
 
     def get_quad(self, r0, theta0):
-        r0_index = bisect.bisect(self.breakpoints["r0"], r0)
-        theta0_index = bisect.bisect(self.breakpoints["theta0"], theta0)
+        r0_index = bisect.bisect(self.breakpoints["r0"], r0) - 1
+        theta0_index = bisect.bisect(self.breakpoints["theta0"], theta0) - 1
+
 
         assert (r0_index,theta0_index) in self.quadratures
         
