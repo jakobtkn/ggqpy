@@ -6,12 +6,15 @@ import os
 import sys
 import scipy as sp
 
+from ggqpy.quad import Quadrature
+
 sys.path.append(os.path.abspath("."))
 
+import numpy as np
 from ggqpy import *
 
 
-def main(count, order, filename):
+def generate_quad(count, order, filename):
     min_length = 1e-10
     eps_disc = 1e-14
     eps_comp = 1e-12
@@ -22,11 +25,15 @@ def main(count, order, filename):
     quad = Quadrature(x, w)
     quad.save_to_file(filename)
 
-
+ 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("count", default=16)
     parser.add_argument("order", default=4)
+    parser.add_argument("r_interval")
+    parser.add_argument("theta_interval")
+
+    intervals = np.load("quad/nystrom/config.npz")
+
     parser.add_argument("filename", default="quads/out.quad")
     args = parser.parse_args()
-    main(int(args.count), int(args.order), args.filename)
+    generate_quad(int(args.count), int(args.order), args.filename)

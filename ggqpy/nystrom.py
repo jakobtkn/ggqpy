@@ -2,6 +2,7 @@ from __future__ import annotations
 import numpy as np
 from numpy.typing import NDArray
 from itertools import pairwise
+from ggqpy.quad import Quadrature
 from ggqpy.utils import *
 
 
@@ -220,3 +221,9 @@ def singular_integral_quad(drho, x0, simplex):
     y = np.concatenate(y_list)
 
     return x, y, w
+
+r0_breakpoints = [1e-6,1e-5,1e-4,1e-3,1e-2,1e-1,0.2,0.4,0.7,0.8,1.0]
+theta0_breakpoints = [1e-6,1e-5,1e-4,1e-3,1e-2,1e-1,0.25,0.5,1.0,1.5,3.0, 3.14, np.pi]
+r0_intervals = pairwise(r0_breakpoints)
+theta0_intervals = pairwise(theta0_breakpoints)
+

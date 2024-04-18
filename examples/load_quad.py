@@ -1,6 +1,8 @@
 import sys
 import os
 
+from ggqpy.quad import Quadrature
+
 sys.path.append(os.path.abspath("."))
 from ggqpy import *
 

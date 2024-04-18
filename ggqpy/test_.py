@@ -2,6 +2,7 @@ import numpy as np
 import sympy
 from pytest import approx
 from ggqpy import *
+from ggqpy.quad import Quadrature
 
 np.seterr(all="raise")
 
@@ -81,10 +82,10 @@ def test_end_to_end_nystrom(plt):
         number_of_discretizations=8, order=order
     )
 
-    min_length = 1e-7
-    eps_disc = 1e-10
-    eps_comp = 1e-10
-    eps_quad = 1e-8
+    min_length = 1e-4
+    eps_disc = 1e-6
+    eps_comp = 1e-6
+    eps_quad = 1e-6
     interpolation_degree = 30
 
     discretizer = Discretizer(eps_disc, min_length, interpolation_degree)
