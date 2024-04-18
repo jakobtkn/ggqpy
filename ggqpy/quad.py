@@ -2,7 +2,8 @@ from ggqpy.utils import Interval
 from itertools import pairwise
 from numpy.typing import ArrayLike
 import numpy as np
-
+import glob
+import bisect
 
 from typing import Callable
 
@@ -39,10 +40,29 @@ class Quadrature:
         for node in zip(self.x, self.w):
             yield node
 
-class SingularTriangleQuadrature():
-    r0_breakpoints = [1e-6,1e-5,1e-4,1e-3,1e-2,1e-1,0.2,0.4,0.7,0.8,1.0]
-    theta0_breakpoints = [1e-6,1e-5,1e-4,1e-3,1e-2,1e-1,0.25,0.5,1.0,1.5,3.0, 3.14, np.pi]
-    r0_intervals = pairwise(r0_breakpoints)
-    theta0_intervals = pairwise(theta0_breakpoints)
-    
-    def __init__(self, quad_folder = "quads/nystrom"):
+
+class SingularTriangleQuadrature:
+    def __init__(self, quad_folder="quads/nystrom/"):
+        self.breakpoints = {
+            "r0": np.loadtxt(quad_folder + "r_breakpoints"),
+            "theta0": np.loadtxt(quad_folder + "theta_breakpoints"),
+        }
+        self.intervals = {
+            "r0": pairwise(self.breakpoints["r0"]),
+            "theta0": pairwise(self.breakpoints["theta0"]),
+        }
+
+        self.quadratures = dict()
+        for filepath in glob.glob(quad_folder + "*.quad"):
+            r0_index = filepath[0]
+            theta0_index = filepath[2]
+            self.quadratures[(r0_index,theta0_index)] = Quadrature.load_from_file(filepath)
+
+    def get_quad(self, r0, theta0):
+        r0_index = bisect.bisect(self.breakpoints["r0"], r0)
+        theta0_index = bisect.bisect(self.breakpoints["theta0"], theta0)
+
+        try:
+            return self.quadratures[(r0_index,theta0_index)]
+        except KeyError:
+            print(f"Quadrature ({r0_index},{theta0_index}) does not exist!")
