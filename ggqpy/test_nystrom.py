@@ -151,6 +151,3 @@ def test_node_placement(plt):
         assert T.is_in((x,y))
 
     v = B @ (Ainv @ v) + x0[:, np.newaxis]
-
-def test_quad():
-    np.savetxt("quads/nystrom/config",(r0_breakpoints,theta0_breakpoints))

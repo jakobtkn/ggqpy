@@ -2,7 +2,7 @@ from __future__ import annotations
 import numpy as np
 from numpy.typing import NDArray
 from itertools import pairwise
-from ggqpy.quad import Quadrature
+from ggqpy.quad import *
 from ggqpy.utils import *
 
 
@@ -160,29 +160,21 @@ class Triangle:
 
         return a >= 0 and b >= 0 and c >= 0
 
-
-def load_ggq_quad(r0, theta0):
-    #TODO: Load correct quadrature
-    order = 4
-    quad = Quadrature.load_from_file(f"quads/nystrom.{16}.{order}.quad")
-    return quad, order
-
-
 def quad_on_standard_triangle(r0, theta0):
     gamma = (
         lambda u: r0
         * np.sin(theta0)
         / (r0 * np.sin(theta0 - theta0 * u) + np.sin(theta0 * u))
     )
-
-    ggq, order = load_ggq_quad(r0, theta0)
+    quad_generator = SingularTriangleQuadrature()
+    ggq = quad_generator.get_quad(r0, theta0)
     w_global = list()
     theta_global = list()
     r_global = list()
 
     for u, w in [*ggq]:
         gammau = gamma(u)
-        gl = Quadrature.gauss_legendre_on_interval(order, Interval(0, gammau))
+        gl = Quadrature.gauss_legendre_on_interval(quad_generator.order, Interval(0, gammau))
 
         w_global.append(w * gl.w * theta0)
         r_global.append(gl.x)
@@ -221,9 +213,3 @@ def singular_integral_quad(drho, x0, simplex):
     y = np.concatenate(y_list)
 
     return x, y, w
-
-r0_breakpoints = [1e-6,1e-5,1e-4,1e-3,1e-2,1e-1,0.2,0.4,0.7,0.8,1.0]
-theta0_breakpoints = [1e-6,1e-5,1e-4,1e-3,1e-2,1e-1,0.25,0.5,1.0,1.5,3.0, 3.14, np.pi]
-r0_intervals = pairwise(r0_breakpoints)
-theta0_intervals = pairwise(theta0_breakpoints)
-

@@ -42,10 +42,11 @@ class Quadrature:
 
 
 class SingularTriangleQuadrature:
-    def __init__(self, quad_folder="quads/nystrom/"):
+    def __init__(self, quad_folder="quads/nystrom.4/", order = 4):
+        self.order = 4
         self.breakpoints = {
-            "r0": np.loadtxt(quad_folder + "r_breakpoints"),
-            "theta0": np.loadtxt(quad_folder + "theta_breakpoints"),
+            "r0": np.loadtxt(quad_folder + "breakpoints_r"),
+            "theta0": np.loadtxt(quad_folder + "breakpoints_theta"),
         }
         self.intervals = {
             "r0": pairwise(self.breakpoints["r0"]),
@@ -62,7 +63,6 @@ class SingularTriangleQuadrature:
         r0_index = bisect.bisect(self.breakpoints["r0"], r0)
         theta0_index = bisect.bisect(self.breakpoints["theta0"], theta0)
 
-        try:
-            return self.quadratures[(r0_index,theta0_index)]
-        except KeyError:
-            print(f"Quadrature ({r0_index},{theta0_index}) does not exist!")
+        assert (r0_index,theta0_index) in self.quadratures
+        
+        return self.quadratures[(r0_index,theta0_index)]
