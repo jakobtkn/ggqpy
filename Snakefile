@@ -1,29 +1,44 @@
+R = [1e-6,0.4, 0.08, 1.0]
+THETA = [1e-6,1.5, 2.5, 3.14159265359]
+nR = len(R)
+nTHETA = len(THETA)
+
 rule all:
     input:
-        "output/experiment_triangle.1.4.tex",
-        "output/experiment_triangle.16.4.tex",
-        "output/experiment_triangle.16.8.tex",
-        # expand("quads/nystrom.{number_parameters}.{order}.quad", number_parameters=COUNTS, order=ORDERS)
+        # "output/experiment_triangle.1.4.tex",
+        # "output/experiment_triangle.16.4.tex",
+        # "output/experiment_triangle.16.8.tex",
+        expand("quads/nystrom.4/{r0_index}.{theta0_index}.quad", r0_index=range(nR-1), theta0_index=range(nTHETA-1))
 
 
 
-R = [1e-6,1e-5,1e-4,1e-3,1e-2,1e-1,0.2,0.4,0.7,0.8,1.0]
-THETA = [1e-6,1e-5,1e-4,1e-3,1e-2,1e-1,0.25,0.5,1.0,1.5,3.0, 3.14, 3.14159265359]
+# R = [1e-6,1e-5,1e-4,1e-3,1e-2,1e-1,0.2,0.4,0.7,0.8,1.0]
+# THETA = [1e-6,1e-5,1e-4,1e-3,1e-2,1e-1,0.25,0.5,1.0,1.5,3.0, 3.14, 3.14159265359]
 
 rule make_config:
     input:
     output:
-        "quads/nystrom/breakpoints_r",
-        "quads/nystrom/breakpoints_theta"
+        "quads/nystrom.4/breakpoints_r",
+        "quads/nystrom.4/breakpoints_theta"
     shell:
-        "echo {R} > quads/nystrom/breakpoints_r | echo {THETA} > quads/nystrom/breakpoints_theta"
+        "echo {R} > quads/nystrom.4/breakpoints_r | echo {THETA} > quads/nystrom.4/breakpoints_theta"
 
-rule generate_quadrature:
+rule generate_nystrom_quadrature:
     input:
+        "quads/nystrom.{order}/breakpoints_r",
+        "quads/nystrom.{order}/breakpoints_theta"
     output:
-        "quads/nystrom.{number_parameters}.{order}.quad"
+        "quads/nystrom.{order}/{r0_index}.{theta0_index}.quad"
     shell:
-        "python3 examples/generate_quad.py {wildcards.number_parameters} {wildcards.order} quads/nystrom.{wildcards.number_parameters}.{wildcards.order}.quad"
+        "python3 examples/generate_nystrom_quad.py {wildcards.order} {wildcards.r0_index} {wildcards.theta0_index} quads/nystrom.{wildcards.order}/{wildcards.r0_index}.{wildcards.theta0_index}.quad"
+
+
+# rule generate_quadrature:
+#     input:
+#     output:
+#         "quads/nystrom.{number_parameters}.{order}.quad"
+#     shell:
+#         "python3 examples/generate_quad.py {wildcards.number_parameters} {wildcards.order} quads/nystrom.{wildcards.number_parameters}.{wildcards.order}.quad"
 
 ALPHAS = [0.5,0.1,1e-3,1e-9]
 rule generate_table:
