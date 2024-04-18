@@ -162,7 +162,7 @@ class Triangle:
 
 
 def load_ggq_quad(r0, theta0):
-    ###!!! pick correct ###
+    #TODO: Load correct quadrature
     order = 4
     quad = Quadrature.load_from_file(f"quads/nystrom.{16}.{order}.quad")
     return quad, order
@@ -215,7 +215,7 @@ def singular_integral_quad(drho, x0, simplex):
 
         x_list.append(v[0, :])
         y_list.append(v[1, :])
-        w_list.append(w)
+        w_list.append(w/scale**2) # TODO: Verify this is the correct scaling
 
     x = np.concatenate(x_list)
     y = np.concatenate(y_list)
