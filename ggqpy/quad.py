@@ -4,6 +4,7 @@ from numpy.typing import ArrayLike
 import numpy as np
 import glob
 import bisect
+import re
 
 from typing import Callable
 
@@ -57,9 +58,12 @@ class SingularTriangleQuadrature:
         for filepath in glob.glob(quad_folder + "*.quad"):
             
             ## Extract indices from filename
-            r0_index = int(filepath[-8])
-            theta0_index = int(filepath[-6])
+            pattern = r'\d+'
+            parameters = re.findall(pattern, filepath)
             
+            r0_index = int(parameters[1])
+            theta0_index = int(parameters[2])
+
             self.quadratures[(r0_index,theta0_index)] = Quadrature.load_from_file(filepath)
 
     def get_quad(self, r0, theta0):
