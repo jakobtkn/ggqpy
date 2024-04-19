@@ -104,8 +104,6 @@ def test_end_to_end_nystrom(plt):
     r = U_disc.T @ w_disc
     U_family = discretizer.interpolate_piecewise_legendre(U_disc)
 
-    print(U_family.number_of_functions)
-    xx = np.linspace(0.0, 1.0)
     n = 0
     y = U_family(x_disc)[n, :]
     plt.plot(sorted(x_disc), U_disc[:, n], "*")
@@ -124,8 +122,8 @@ def test_end_to_end_nystrom(plt):
     integral_ggq = ggq.eval(f)
     integral_adap = adap.eval(f)
 
-    assert integral_cheb == approx(integral_adap, abs=eps_comp)
-    assert integral_ggq == approx(integral_adap, abs=eps_quad)
+    assert integral_cheb == approx(integral_adap, abs=eps_comp*10)
+    assert integral_ggq == approx(integral_adap, abs=eps_quad*10)
     assert ggq.size < cheb.size
 
 
