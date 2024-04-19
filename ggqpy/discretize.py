@@ -49,14 +49,18 @@ class Discretizer:
             return True
 
         x = (I.b - I.a) * (self.x_gl + 1.0) / 2.0 + I.a
-
+        testing_degree = 2 * self.interpolation_degree - 1
         A = np.column_stack([phi(x) for phi in function_family.functions_lambdas])
+        
         alpha = legendre.legfit(
-            self.x_gl, y=A, deg=2 * self.interpolation_degree - 1
+            self.x_gl, y=A, deg=testing_degree
         )  # Fit to Legendre Polynomials on [a,b]
 
+        normalization_factor = np.sqrt((2*np.arange(testing_degree + 1) +1) / 2)
+        alpha_normalized = alpha*normalization_factor[:,np.newaxis]
+
         high_freq_sq_residuals = np.sqrt(
-            np.sum(abs(alpha[self.interpolation_degree :, :]) ** 2, axis=0)
+            np.sum(abs(alpha_normalized[self.interpolation_degree :, :]) ** 2, axis=0)
         )
         interval_weight = I.length() / function_family.I.length()
 
