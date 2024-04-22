@@ -68,7 +68,10 @@ class SingularTriangleQuadrature:
 
     def get_quad(self, r0, theta0):
         r0_index = bisect.bisect(self.breakpoints["r0"], r0) - 1
+        r0_index = np.clip(r0_index, 0, len([*self.intervals["r0"]]) - 1 )
+
         theta0_index = bisect.bisect(self.breakpoints["theta0"], theta0) - 1
+        theta0_index = np.clip(theta0_index, 0, len([*self.intervals["theta0"]]) - 1 )
 
 
         assert (r0_index,theta0_index) in self.quadratures
