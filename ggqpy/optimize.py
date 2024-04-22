@@ -209,7 +209,7 @@ class QuadOptimizer:
 
             if eps < eps_quad**2:
                 x, w = np.split(y, 2)
-
+                
                 vprint(f"Node removed, a total of {iteration + 1} have been checked")
                 return x, w, True
 
@@ -238,6 +238,11 @@ class QuadOptimizer:
                 )
                 return x, w
 
+
+        idx = np.argsort(x)
+        x = x[idx]
+        w = w[idx]
+        
         vprint(
             f"Succesfully generated a generalized Gaussian quadrature consisting of {len(x)} nodes"
         )
