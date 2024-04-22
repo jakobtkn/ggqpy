@@ -45,6 +45,7 @@ def test_radial_transform():
     b = (-20, 2.0)
     alpha, phi, A, Ainv, det = standard_radial_triangle_transform(a, b)
 
+    assert det == approx(abs(np.linalg.det(A)))
     np.testing.assert_allclose(A @ Ainv, np.identity(2), atol=1e-8)
     np.testing.assert_allclose(A @ b, np.array([1, 0]), atol=1e-15)
     np.testing.assert_allclose(
@@ -85,7 +86,20 @@ def test_quad_on_standard_triangle():
     assert f(r, theta) @ w == approx(analytic_integral(0.5))
 
 
-def test_singular_integral(plt):
+def test_singular_integral_0(plt):
+    drho = lambda x: np.array([[1, 0], [0, 1], [0, 0]])
+    x0 = np.array([0.5, 0.0])
+    simplex = Rectangle((-1, -1), (-1, 1), (1, 1), (1, -1))
+    x, y, w = singular_integral_quad(drho, x0, simplex)
+
+    plt.figure()
+    plt.title(f"Nodes = {len(x)}")
+    fig, ax = plt.subplots(subplot_kw=dict(projection='3d'))
+    ax.stem(x, y, w)
+
+    assert np.sum(np.sqrt((x-x0[0])**2 + (y-x0[1])**2)*w) == approx(4.0)
+
+def test_singular_integral_1(plt):
     drho = lambda x: np.array([[0, 0], [1, 0], [0, 2 * x[1]]])
     x0 = np.array([0.5, 0.5])
     simplex = Rectangle((-1, -1), (1, -1), (1, 1), (-1, 1))
@@ -110,17 +124,18 @@ def test_singular_integral_2(plt):
     plt.ylim(-1, 1)
 
 def test_singular_integral_3(plt):
-    drho = lambda x: np.array([[100, 0], [0, 1], [0, 0]])
+    drho = lambda x: np.array([[2, 0], [0, 1], [0, 0]])
     x0 = np.array([-0.9, 0.8])
     simplex = Rectangle((-1, -1), (-1, 1), (1, 1), (1, -1))
     x, y, w = singular_integral_quad(drho, x0, simplex)
+    assert np.sum(np.sqrt((2*x-2*x0[0])**2 + (y-x0[1])**2)*w) == approx(8.0)
+
     plt.figure()
     plt.title(f"Nodes = {len(x)}")
     plt.scatter(x, y, marker="x")
     plt.scatter(x0[0], x0[1], c="r")
     plt.xlim(-1, 1)
     plt.ylim(-1, 1)
-
 
 def test_node_placement(plt):
     drho = lambda x: np.array([[0, 0], [1, 0], [0, 2 * x[1]]])
