@@ -207,9 +207,10 @@ def singular_integral_quad(drho, x0, simplex):
 
         x_list.append(v[0, :])
         y_list.append(v[1, :])
-        w_list.append(w/scale**2) # TODO: Verify this is the correct scaling
+        w_list.append(w/np.sqrt(det))
 
     x = np.concatenate(x_list)
     y = np.concatenate(y_list)
+    w = np.concatenate(w_list)
 
     return x, y, w
