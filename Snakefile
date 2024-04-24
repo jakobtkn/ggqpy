@@ -32,7 +32,7 @@ rule generate_table:
     input:
         "quads/nystrom.{order}/breakpoints_r",
         "quads/nystrom.{order}/breakpoints_theta",
-        expand("quads/nystrom.{order}/{r0_index}.{theta0_index}.quad", r0_index=range(nR-1), theta0_index=range(nTHETA-1), order=wildcards.order),
+        expand("quads/nystrom.{order}/{r0_index}.{theta0_index}.quad", r0_index=range(nR-1), theta0_index=range(nTHETA-1), allow_missing=True),
     output:
         "output/experiment_triangle.{order}.tex"
     shell:
