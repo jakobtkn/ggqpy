@@ -43,8 +43,9 @@ class Quadrature:
 
 
 class SingularTriangleQuadrature:
-    def __init__(self, quad_folder="quads/nystrom.4/", order = 4):
-        self.order = 4
+    def __init__(self, order = 4):
+        self.order = order
+        quad_folder=f"quads/nystrom.{order}/"
         self.breakpoints = {
             "r0": np.loadtxt(quad_folder + "breakpoints_r"),
             "theta0": np.loadtxt(quad_folder + "breakpoints_theta"),
