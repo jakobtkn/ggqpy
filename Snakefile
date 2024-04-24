@@ -16,7 +16,7 @@ rule make_config:
         "quads/nystrom.{order}/breakpoints_r",
         "quads/nystrom.{order}/breakpoints_theta"
     shell:
-        "mkdir quads/nystrom.{wildcards.order} | echo {R} > quads/nystrom.{wildcards.order}/breakpoints_r | echo {THETA} > quads/nystrom.{wildcards.order}/breakpoints_theta"
+        "mkdir -p quads/nystrom.{wildcards.order} | echo {R} > quads/nystrom.{wildcards.order}/breakpoints_r | echo {THETA} > quads/nystrom.{wildcards.order}/breakpoints_theta"
 
 rule generate_nystrom_quadrature:
     input:
