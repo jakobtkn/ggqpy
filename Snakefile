@@ -7,14 +7,16 @@ nTHETA = len(THETA)
 rule all:
     input:
         "output/experiment_triangle.4.tex",
+        "output/experiment_triangle.8.tex",
+        "output/experiment_triangle.16.tex",
 
 rule make_config:
     input:
     output:
-        "quads/nystrom.4/breakpoints_r",
-        "quads/nystrom.4/breakpoints_theta"
+        "quads/nystrom.{order}/breakpoints_r",
+        "quads/nystrom.{order}/breakpoints_theta"
     shell:
-        "echo {R} > quads/nystrom.4/breakpoints_r | echo {THETA} > quads/nystrom.4/breakpoints_theta"
+        "mkdir quads/nystrom.{wildcards.order} | echo {R} > quads/nystrom.{wildcards.order}/breakpoints_r | echo {THETA} > quads/nystrom.{wildcards.order}/breakpoints_theta"
 
 rule generate_nystrom_quadrature:
     input:
