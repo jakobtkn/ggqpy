@@ -30,7 +30,7 @@ rule generate_nystrom_quadrature:
 ALPHAS = [0.5,0.1,1e-3,1e-9]
 rule generate_table:
     input:
-        expand("quads/nystrom.4/{r0_index}.{theta0_index}.quad", r0_index=range(nR-1), theta0_index=range(nTHETA-1)),
+        expand("quads/nystrom.{order}/{r0_index}.{theta0_index}.quad", r0_index=range(nR-1), theta0_index=range(nTHETA-1)),
     output:
         "output/experiment_triangle.{order}.tex"
     shell:
