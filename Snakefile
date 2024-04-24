@@ -32,7 +32,7 @@ rule generate_table:
     input:
         expand("quads/nystrom.{order}/{r0_index}.{theta0_index}.quad", r0_index=range(nR-1), theta0_index=range(nTHETA-1)),
     output:
-        "output/experiment_triangle.{order}.tex"
+        "output/experiment_triangle.{wildcards.order}.tex"
     shell:
         "python3 examples/experiment_triangle.py {wildcards.order} > output/experiment_triangle.{wildcards.order}.tex"
 
