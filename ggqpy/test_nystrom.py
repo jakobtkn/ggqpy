@@ -59,7 +59,7 @@ def test_radial_transform():
 
 def test_conformal_mapping():
     rho = lambda x: np.array(1, x[0], x[1] ** 2)
-    drho = lambda x: np.array([[0, 0], [1, 0], [0, 2 * x[1]]])
+    drho = lambda s, t: np.array([[0, 0], [1, 0], [0, 2 * t]])
     x0 = np.array([2.0, 1.0])
 
     B, Binv = ensure_conformal_mapping(drho, x0)
@@ -79,28 +79,31 @@ def test_geometry():
 
 
 from examples.experiment_triangle import analytic_integral
+
+
 def test_quad_on_standard_triangle():
-    r, theta, w = quad_on_standard_triangle(0.5, np.pi / 2)
+    r, theta, w = quad_on_standard_triangle(4, 0.5, np.pi / 2)
     assert len(r) == len(theta) == len(w)
-    f = lambda r, theta: np.cos(2 * theta)
+    f = lambda r, theta: np.cos(2 * theta)/r
     assert f(r, theta) @ w == approx(analytic_integral(0.5))
 
 
 def test_singular_integral_0(plt):
-    drho = lambda x: np.array([[1, 0], [0, 1], [0, 0]])
+    drho = lambda s, t: np.array([[1, 0], [0, 1], [0, 0]])
     x0 = np.array([0.5, 0.0])
     simplex = Rectangle((-1, -1), (-1, 1), (1, 1), (1, -1))
     x, y, w = singular_integral_quad(drho, x0, simplex)
 
     plt.figure()
     plt.title(f"Nodes = {len(x)}")
-    fig, ax = plt.subplots(subplot_kw=dict(projection='3d'))
+    fig, ax = plt.subplots(subplot_kw=dict(projection="3d"))
     ax.stem(x, y, w)
 
-    assert np.sum(np.sqrt((x-x0[0])**2 + (y-x0[1])**2)*w) == approx(4.0)
+    assert np.sum(w) == approx(4.0)
+
 
 def test_singular_integral_1(plt):
-    drho = lambda x: np.array([[0, 0], [1, 0], [0, 2 * x[1]]])
+    drho = lambda s, t: np.array([[0, 0], [1, 0], [0, 2 * t]])
     x0 = np.array([0.5, 0.5])
     simplex = Rectangle((-1, -1), (1, -1), (1, 1), (-1, 1))
     x, y, w = singular_integral_quad(drho, x0, simplex)
@@ -111,8 +114,9 @@ def test_singular_integral_1(plt):
     plt.xlim(-1, 1)
     plt.ylim(-1, 1)
 
+
 def test_singular_integral_2(plt):
-    drho = lambda x: np.array([[0, 0], [1, 0+ x[0]], [0, 2 * x[1] + x[0]]])
+    drho = lambda s, t: np.array([[0, 0], [1, 0 + s], [0, 2 * t + s]])
     x0 = np.array([-0.1, 0.5])
     simplex = Rectangle((-1, -1), (-1, 1), (1, 1), (1, -1))
     x, y, w = singular_integral_quad(drho, x0, simplex)
@@ -123,13 +127,20 @@ def test_singular_integral_2(plt):
     plt.xlim(-1, 1)
     plt.ylim(-1, 1)
 
+
 def test_singular_integral_3(plt):
-    drho = lambda x: np.array([[2, 0], [0, 1], [0, 0]])
-    x0 = np.array([-0.9, 0.8])
+    a = 4.0
+    b = 2.0
+    drho = lambda s, t: np.array([[a, 0], [0, b], [0, 0]])
+    rho = lambda s,t: np.array([a*s,b*t,0])
+    x0 = np.array([-0.0, 0.8])
+
+    B, Binv = ensure_conformal_mapping(drho,x0)
     simplex = Rectangle((-1, -1), (-1, 1), (1, 1), (1, -1))
     x, y, w = singular_integral_quad(drho, x0, simplex)
-    assert np.sum(np.sqrt((2*x-2*x0[0])**2 + (y-x0[1])**2)*w) == approx(8.0)
-
+    assert np.sum(w) == approx(4.0*a*b)
+    print(np.linalg.norm(np.column_stack([rho(s,t) for s,t in zip(x,y)]), axis = 0))
+    assert np.sum(w[np.linalg.norm(np.column_stack([rho(s,t) for s,t in zip(x,y)]), axis = 0) < 2]) == approx(4*np.pi, abs = 1.0)
     plt.figure()
     plt.title(f"Nodes = {len(x)}")
     plt.scatter(x, y, marker="x")
@@ -137,8 +148,9 @@ def test_singular_integral_3(plt):
     plt.xlim(-1, 1)
     plt.ylim(-1, 1)
 
+
 def test_node_placement(plt):
-    drho = lambda x: np.array([[0, 0], [1, 0], [0, 2 * x[1]]])
+    drho = lambda s, t: np.array([[0, 0], [1, 0], [0, 2 * t]])
     x0 = np.array([0.5, 0.5])
     simplex = Rectangle((-1, -1), (1, -1), (1, 1), (-1, 1))
 
@@ -151,7 +163,7 @@ def test_node_placement(plt):
         T.vertices[1], T.vertices[2]
     )
     T0 = Triangle((0, 0), (1, 0), (scale * np.cos(angle), scale * np.sin(angle)))
-    r, theta, w = quad_on_standard_triangle(scale, angle)
+    r, theta, w = quad_on_standard_triangle(4, scale, angle)
     x_local = np.cos(theta) * r
     y_local = np.sin(theta) * r
 
@@ -175,6 +187,6 @@ def test_node_placement(plt):
 
     for x, y in zip((Ainv @ v)[0, :], (Ainv @ v)[1, :]):
         plt.scatter(x, y, c="b")
-        assert T.is_in((x,y))
+        assert T.is_in((x, y))
 
     v = B @ (Ainv @ v) + x0[:, np.newaxis]

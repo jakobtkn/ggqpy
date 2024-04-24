@@ -22,7 +22,7 @@ def ensure_conformal_mapping(jacobian, x0):
     A: affinemapping matrix
     transform: Mapping from reference triangle.
     """
-    J = jacobian(x0)
+    J = jacobian(x0[0], x0[1])
 
     _, s, Vh = np.linalg.svd(J, full_matrices=False)
     V = Vh.T
@@ -160,13 +160,14 @@ class Triangle:
 
         return a >= 0 and b >= 0 and c >= 0
 
-def quad_on_standard_triangle(r0, theta0):
+
+def quad_on_standard_triangle(order, r0, theta0):
     gamma = (
         lambda u: r0
         * np.sin(theta0)
         / (r0 * np.sin(theta0 - theta0 * u) + np.sin(theta0 * u))
     )
-    quad_generator = SingularTriangleQuadrature()
+    quad_generator = SingularTriangleQuadrature(order)
     ggq = quad_generator.get_quad(r0, theta0)
     w_global = list()
     theta_global = list()
@@ -174,9 +175,11 @@ def quad_on_standard_triangle(r0, theta0):
 
     for u, w in [*ggq]:
         gammau = gamma(u)
-        gl = Quadrature.gauss_legendre_on_interval(quad_generator.order, Interval(0, gammau))
+        gl = Quadrature.gauss_legendre_on_interval(
+            quad_generator.order, Interval(0, gammau)
+        )
 
-        w_global.append(w * gl.w * theta0)
+        w_global.append(w * gl.w * theta0 * gl.x)
         r_global.append(gl.x)
         theta_global.append(np.full_like(gl.x, u * theta0))
 
@@ -187,6 +190,7 @@ def quad_on_standard_triangle(r0, theta0):
 
 
 def singular_integral_quad(drho, x0, simplex):
+    order = 4
     B, Binv = ensure_conformal_mapping(drho, x0)
     R = Rectangle(*[Binv @ (np.array(v) - x0) for v in iter(simplex)])
 
@@ -195,10 +199,10 @@ def singular_integral_quad(drho, x0, simplex):
     w_list = list()
 
     for T in [*R.split_into_triangles_around_point((0, 0))]:
-        scale, angle, A, Ainv, det = standard_radial_triangle_transform(
+        scale, angle, A, Ainv, detA = standard_radial_triangle_transform(
             T.vertices[1], T.vertices[2]
         )
-        r, theta, w = quad_on_standard_triangle(scale, angle)
+        r, theta, w = quad_on_standard_triangle(order, scale, angle)
         x_local = np.cos(theta) * r
         y_local = np.sin(theta) * r
 
@@ -207,7 +211,7 @@ def singular_integral_quad(drho, x0, simplex):
 
         x_list.append(v[0, :])
         y_list.append(v[1, :])
-        w_list.append(w/np.sqrt(det))
+        w_list.append(w / detA)
 
     x = np.concatenate(x_list)
     y = np.concatenate(y_list)
