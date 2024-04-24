@@ -30,9 +30,11 @@ rule generate_nystrom_quadrature:
 ALPHAS = [0.5,0.1,1e-3,1e-9]
 rule generate_table:
     input:
+        "quads/nystrom.{order}/breakpoints_r",
+        "quads/nystrom.{order}/breakpoints_theta",
         expand("quads/nystrom.{order}/{r0_index}.{theta0_index}.quad", r0_index=range(nR-1), theta0_index=range(nTHETA-1)),
     output:
-        "output/experiment_triangle.{wildcards.order}.tex"
+        "output/experiment_triangle.{order}.tex"
     shell:
         "python3 examples/experiment_triangle.py {wildcards.order} > output/experiment_triangle.{wildcards.order}.tex"
 
