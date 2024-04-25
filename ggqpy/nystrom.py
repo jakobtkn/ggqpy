@@ -4,6 +4,7 @@ from numpy.typing import NDArray
 from itertools import pairwise
 from ggqpy.quad import *
 from ggqpy.utils import *
+from numpy.polynomial.legendre import leggauss, legvander2d
 
 
 def ensure_conformal_mapping(jacobian, x0):
@@ -193,11 +194,11 @@ def singular_integral_quad(drho, x0, simplex):
     order = 4
     B, Binv = ensure_conformal_mapping(drho, x0)
     R = Rectangle(*[Binv @ (np.array(v) - x0) for v in iter(simplex)])
-
     x_list = list()
     y_list = list()
     w_list = list()
 
+    detB = abs(np.linalg.det(B))
     for T in [*R.split_into_triangles_around_point((0, 0))]:
         scale, angle, A, Ainv, detA = standard_radial_triangle_transform(
             T.vertices[1], T.vertices[2]
@@ -211,10 +212,11 @@ def singular_integral_quad(drho, x0, simplex):
 
         x_list.append(v[0, :])
         y_list.append(v[1, :])
-        w_list.append(w / detA)
+        w_list.append((w / detA) * detB)
 
     x = np.concatenate(x_list)
     y = np.concatenate(y_list)
     w = np.concatenate(w_list)
 
     return x, y, w
+

@@ -1,4 +1,5 @@
 import numpy as np
+from numpy.polynomial.legendre import leggauss
 import sympy
 from pytest import approx
 from ggqpy import *
@@ -103,7 +104,7 @@ def test_singular_integral_0(plt):
 
 
 def test_singular_integral_1(plt):
-    drho = lambda s, t: np.array([[0, 0], [1, 0], [0, 2 * t]])
+    drho = lambda s, t: np.array([[0, 0], [1, 0], [0, 3 * t]])
     x0 = np.array([0.5, 0.5])
     simplex = Rectangle((-1, -1), (1, -1), (1, 1), (-1, 1))
     x, y, w = singular_integral_quad(drho, x0, simplex)
@@ -131,16 +132,26 @@ def test_singular_integral_2(plt):
 def test_singular_integral_3(plt):
     a = 4.0
     b = 2.0
-    drho = lambda s, t: np.array([[a, 0], [0, b], [0, 0]])
-    rho = lambda s,t: np.array([a*s,b*t,0])
+    # drho = lambda s, t: np.array([[a, 0], [0, b], [0, 0]])
+
+    theta = 0.8
+    R = np.array([[1,0,0],[0,np.cos(theta), -np.sin(theta)],[0,np.sin(theta), np.cos(theta)]])
+
+    def drho(s,t):
+        return R @ np.array([[a, 0], [0, b], [0, 0]])
+    
+    def jacobian(s,t):
+        J = drho(s,t)
+        return np.sqrt(np.linalg.det(J.T@J))
+    
+    rho = lambda s,t: R @ np.array([a*s,b*t,0])
     x0 = np.array([-0.0, 0.8])
 
     B, Binv = ensure_conformal_mapping(drho,x0)
     simplex = Rectangle((-1, -1), (-1, 1), (1, 1), (1, -1))
     x, y, w = singular_integral_quad(drho, x0, simplex)
-    assert np.sum(w) == approx(4.0*a*b)
-    print(np.linalg.norm(np.column_stack([rho(s,t) for s,t in zip(x,y)]), axis = 0))
-    assert np.sum(w[np.linalg.norm(np.column_stack([rho(s,t) for s,t in zip(x,y)]), axis = 0) < 2]) == approx(4*np.pi, abs = 1.0)
+    assert np.sum(w*jacobian(x,y)) == approx(4.0*a*b)
+    assert np.sum((w*jacobian(x,y))[np.linalg.norm(np.column_stack([rho(s,t) for s,t in zip(x,y)]), axis = 0) < 2]) == approx(4*np.pi, abs = 1.0)
     plt.figure()
     plt.title(f"Nodes = {len(x)}")
     plt.scatter(x, y, marker="x")
@@ -190,3 +201,38 @@ def test_node_placement(plt):
         assert T.is_in((x, y))
 
     v = B @ (Ainv @ v) + x0[:, np.newaxis]
+
+
+def test_area_sphere():
+    M = 4
+    N = 10
+    s, ws = leggauss(M)
+    t, wt = leggauss(N)
+
+    gls = Quadrature.gauss_legendre_on_interval(M, Interval(0, 2 * np.pi))
+    glt = Quadrature.gauss_legendre_on_interval(N, Interval(0, np.pi))
+    s, ws = gls.x, gls.w
+    t, wt = glt.x, glt.w
+
+    rho = lambda s, t: np.array([np.sin(t) * np.cos(s), np.sin(t) * np.sin(s), np.cos(t)])
+    drho = lambda s, t: np.array(
+        [
+            [-np.sin(t) * np.sin(s), np.cos(t) * np.cos(s)],
+            [np.sin(t) * np.cos(s), np.cos(t) * np.sin(s)],
+            [0, -np.sin(t)],
+        ]
+    )
+
+    def normal(p):
+        return p / np.linalg.norm(p, axis=0)
+
+    def jacobian(s, t):
+        return np.sin(t)
+    
+    simplex = Rectangle((0, 0), (2 * np.pi, 0), (2 * np.pi, np.pi), (0, np.pi))
+    ss, tt = np.meshgrid(s, t)
+    ss, tt = ss.flatten(), tt.flatten()
+
+    xs, yt, w = singular_integral_quad(drho, np.array([2.0,2.0]), simplex)
+
+    assert np.sum(w * jacobian(xs, yt)) == approx(4 * np.pi)
