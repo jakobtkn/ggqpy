@@ -90,7 +90,7 @@ def standard_radial_triangle_transform(a, b):
     return scale, angle, A, Ainv, det
 
 
-class Rectangle:
+class Quadrilateral:
     """
     Rectangle class. Corners are presented as numpy arrays x,y where
 
@@ -113,6 +113,20 @@ class Rectangle:
     def split_into_triangles_around_point(self, x0: tuple):
         for p, q in pairwise(self.vertices + [self.vertices[0]]):
             yield Triangle(x0, p, q)
+
+
+class Rectangle(Quadrilateral):
+    def __init__(self, I: Interval, J: Interval):
+        self.I = I
+        self.J = J
+        a = (I.a, J.a)
+        b = (I.b, J.a)
+        c = (I.b, J.b)
+        d = (I.a, J.b)
+        super().__init__(a, b, c, d)
+
+    def get_intervals(self):
+        return self.I, self.J
 
 
 class Triangle:
@@ -193,7 +207,7 @@ def quad_on_standard_triangle(order, r0, theta0):
 def singular_integral_quad(drho, x0, simplex):
     order = 4
     B, Binv = ensure_conformal_mapping(drho, x0)
-    R = Rectangle(*[Binv @ (np.array(v) - x0) for v in iter(simplex)])
+    R = Quadrilateral(*[Binv @ (np.array(v) - x0) for v in iter(simplex)])
     x_list = list()
     y_list = list()
     w_list = list()
@@ -220,3 +234,41 @@ def singular_integral_quad(drho, x0, simplex):
 
     return x, y, w
 
+
+def gl_nodes2d(
+    I: Interval,
+    J: Interval,
+    M: int,
+    N: int,
+):
+    gls = Quadrature.gauss_legendre_on_interval(M, I)
+    glt = Quadrature.gauss_legendre_on_interval(N, J)
+    ss, tt = np.meshgrid(gls.x, glt.x)
+    ss, tt = ss.flatten(), tt.flatten()
+    wws, wwt = np.meshgrid(gls.w, glt.w)
+    ww = (wws * wwt).flatten()
+    return ss, tt, ww
+
+
+def construct_discretization_matrix(
+    I: Interval,
+    J: Interval,
+    M: int,
+    N: int,
+    rho: Callable,
+    drho: Callable,
+    kernel: Callable,
+    jacobian: Callable,
+):
+    ss, tt, ww = gl_nodes2d(I, J, M, N)
+    simplex = Rectangle(I, J)
+
+    Vin = np.linalg.inv(legvander2d(ss, tt, [M - 1, N - 1]))
+    A = np.zeros(shape=(N * M, N * M))
+    for idx, singularity in enumerate(zip(ss, tt)):
+        xs, yt, w = singular_integral_quad(drho, np.array([*singularity]), simplex)
+        Vout = legvander2d(xs, yt, [M - 1, N - 1])
+        K = w * kernel(rho(*singularity), rho(xs, yt)) * jacobian(xs, yt)
+        A[idx, :] = K @ (Vout @ Vin)
+
+    return A
