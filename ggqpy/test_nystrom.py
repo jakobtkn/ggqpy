@@ -70,7 +70,7 @@ def test_conformal_mapping():
 
 
 def test_geometry():
-    R = Rectangle((-1, -1), (1, -1), (1, 1), (-1, 1))
+    R = Quadrilateral((-1, -1), (1, -1), (1, 1), (-1, 1))
     assert [*R.split_into_triangles_around_point((0, 0))] == [
         Triangle((0, 0), (-1, -1), (1, -1)),
         Triangle((0, 0), (1, -1), (1, 1)),
@@ -92,7 +92,7 @@ def test_quad_on_standard_triangle():
 def test_singular_integral_0(plt):
     drho = lambda s, t: np.array([[1, 0], [0, 1], [0, 0]])
     x0 = np.array([0.5, 0.0])
-    simplex = Rectangle((-1, -1), (-1, 1), (1, 1), (1, -1))
+    simplex = Quadrilateral((-1, -1), (-1, 1), (1, 1), (1, -1))
     x, y, w = singular_integral_quad(drho, x0, simplex)
 
     plt.figure()
@@ -106,7 +106,7 @@ def test_singular_integral_0(plt):
 def test_singular_integral_1(plt):
     drho = lambda s, t: np.array([[0, 0], [1, 0], [0, 3 * t]])
     x0 = np.array([0.5, 0.5])
-    simplex = Rectangle((-1, -1), (1, -1), (1, 1), (-1, 1))
+    simplex = Quadrilateral((-1, -1), (1, -1), (1, 1), (-1, 1))
     x, y, w = singular_integral_quad(drho, x0, simplex)
     plt.figure()
     plt.title(f"Nodes = {len(x)}")
@@ -119,7 +119,7 @@ def test_singular_integral_1(plt):
 def test_singular_integral_2(plt):
     drho = lambda s, t: np.array([[0, 0], [1, 0 + s], [0, 2 * t + s]])
     x0 = np.array([-0.1, 0.5])
-    simplex = Rectangle((-1, -1), (-1, 1), (1, 1), (1, -1))
+    simplex = Quadrilateral((-1, -1), (-1, 1), (1, 1), (1, -1))
     x, y, w = singular_integral_quad(drho, x0, simplex)
     plt.figure()
     plt.title(f"Nodes = {len(x)}")
@@ -148,7 +148,7 @@ def test_singular_integral_3(plt):
     x0 = np.array([-0.0, 0.8])
 
     B, Binv = ensure_conformal_mapping(drho,x0)
-    simplex = Rectangle((-1, -1), (-1, 1), (1, 1), (1, -1))
+    simplex = Quadrilateral((-1, -1), (-1, 1), (1, 1), (1, -1))
     x, y, w = singular_integral_quad(drho, x0, simplex)
     assert np.sum(w*jacobian(x,y)) == approx(4.0*a*b)
     assert np.sum((w*jacobian(x,y))[np.linalg.norm(np.column_stack([rho(s,t) for s,t in zip(x,y)]), axis = 0) < 2]) == approx(4*np.pi, abs = 1.0)
@@ -163,10 +163,10 @@ def test_singular_integral_3(plt):
 def test_node_placement(plt):
     drho = lambda s, t: np.array([[0, 0], [1, 0], [0, 2 * t]])
     x0 = np.array([0.5, 0.5])
-    simplex = Rectangle((-1, -1), (1, -1), (1, 1), (-1, 1))
+    simplex = Quadrilateral((-1, -1), (1, -1), (1, 1), (-1, 1))
 
     B, Binv = ensure_conformal_mapping(drho, x0)
-    R = Rectangle(*[Binv @ (np.array(v) - x0) for v in iter(simplex)])
+    R = Quadrilateral(*[Binv @ (np.array(v) - x0) for v in iter(simplex)])
 
     T, _, _, _ = [*R.split_into_triangles_around_point(np.array([0, 0]))]
 
@@ -229,10 +229,16 @@ def test_area_sphere():
     def jacobian(s, t):
         return np.sin(t)
     
-    simplex = Rectangle((0, 0), (2 * np.pi, 0), (2 * np.pi, np.pi), (0, np.pi))
+    simplex = Quadrilateral((0, 0), (2 * np.pi, 0), (2 * np.pi, np.pi), (0, np.pi))
     ss, tt = np.meshgrid(s, t)
     ss, tt = ss.flatten(), tt.flatten()
 
     xs, yt, w = singular_integral_quad(drho, np.array([2.0,2.0]), simplex)
 
     assert np.sum(w * jacobian(xs, yt)) == approx(4 * np.pi)
+
+def test_rectangle():
+    I = Interval(0,3)
+    J = Interval(2,4)
+    R = Rectangle(I, J)
+    assert [*R] == [(0,2),(3,2),(3,4),(0,4)]
