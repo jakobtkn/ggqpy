@@ -264,11 +264,11 @@ def construct_discretization_matrix(
     simplex = Rectangle(I, J)
 
     Vin = np.linalg.inv(legvander2d(ss, tt, [M - 1, N - 1]))
-    A = np.zeros(shape=(N * M, N * M))
+    A = np.zeros(shape=(N * M, N * M), dtype=complex)
     for idx, singularity in enumerate(zip(ss, tt)):
         xs, yt, w = singular_integral_quad(drho, np.array([*singularity]), simplex)
         Vout = legvander2d(xs, yt, [M - 1, N - 1])
-        K = w * kernel(rho(*singularity), rho(xs, yt)) * jacobian(xs, yt)
+        K = w * kernel(*singularity, xs, yt) * jacobian(xs, yt)
         A[idx, :] = K @ (Vout @ Vin)
 
     return A
