@@ -15,25 +15,57 @@ import matplotlib.pyplot as plt
 param = Parametrization.droplet()
 rho, drho, jacobian, normal = param.get_lambdas()
 k = 1.0
-def kernel(x0,y0, s, t):
-    q = rho(x0,y0)
-    p = rho(s,t)
-    n = normal(s,t)
-    dist = np.linalg.norm(p - q[:, np.newaxis], axis=0)
+
+
+def kernel(x0, y0, s, t):
+    q = rho(x0, y0)[:, np.newaxis]
+    p = rho(s, t)
+    n = normal(s, t)
+    dist = np.linalg.norm(p - q, axis=0)
     return (
-       ( (1 / (4 * np.pi))
-        * (np.sum(n * (p - q[:, np.newaxis]), axis=0))
-        / dist ** 3) * np.exp(1j*k*dist)*(1.0 - 1j*k*dist)
+        (np.sum(n * (p - q), axis=0))
+        / dist**3
+        * np.exp(1j * k * dist)
+        * (1.0 - 1j * k * dist)
     )
 
-M = 5
-N = 5
-A, ss, tt, ww = construct_discretization_matrix(Interval(0,2*np.pi), Interval(0,np.pi), M, N, rho, drho, kernel, jacobian)
-print(A@ww)
-h, dh = param.directional_derivative_h()
 
-f = dh(ss,tt)
-A = A - 0.5 *np.identity(M*N)
-q = np.linalg.solve(A,f)
-print(q)
+M = 7
+N = 5
+A, ss, tt, ww = construct_discretization_matrix(
+    Interval(0, 2 * np.pi), Interval(0, np.pi), M, N, rho, drho, kernel, jacobian
+)
+h, h_grad = param.h_and_hgrad()
+
+
+def dh(s, t):
+    x, y, z = rho(s, t)
+    return np.sum(h(x, y, z) * h_grad(x, y, z), axis=0)
+
+
+f = dh(ss, tt)
+A = -0.5 * np.identity(M * N) + (1.0 / 4.0 * np.pi) * A
+q = np.linalg.solve(A, f) / np.sqrt(ww)
+
+p0 = np.array([10, 0, 0])
+
+
+def double_layer(s, t):
+    p = rho(s, t)
+    n = normal(s, t)
+    dist = np.linalg.norm(p - p0[:, np.newaxis], axis=0)
+    return (1 / (4 * np.pi)) * (np.sum(n * (p - p0[:, np.newaxis]), axis=0)) / (dist**3)
+
+print(np.sum(ww))
+
+target = np.array(h(10, 0, 0))
+result = np.sum(double_layer(ss, tt) * q * jacobian(ss, tt) * ww)
+
+print("Relative error:", abs(result - target) / abs(target))
+print("Result:", result)
+print("Target:", target)
+
+# print(q)
+# print(h(*rho(ss, tt)))
+
 print(np.linalg.cond(A))

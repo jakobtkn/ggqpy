@@ -56,15 +56,15 @@ class Parametrization:
         z = sp.sin(s) * sp.sin(t)
         return cls(s,t,x,y,z)
     
-    def directional_derivative_h(self, p0 = sp.Matrix([10,0,0])):
-        h = sp.exp(sp.I * (self.rho - p0).norm()) / (self.rho - p0).norm()
-        gradient = sp.Matrix([sp.diff(h, var) for var in self.variables])
+    def h_and_hgrad(self, p0 = sp.Matrix([1,0,0])):
+        x,y,z = sp.symbols("x y z", real=True)
 
-        h_derivative = gradient.dot(self.normal)
-        _h = sp.lambdify(self.variables, h, modules="numpy")
-        
-        _h_derivative = sp.lambdify(self.variables, h_derivative, modules="numpy")
-        for f in [_h, _h_derivative]:
+        h = sp.exp(sp.I * (sp.Matrix([x,y,z]) - p0).norm()) / (sp.Matrix([x,y,z]) - p0).norm()
+        h_grad = sp.simplify(sp.Matrix([h.diff(var) for var in [x,y,z]]))
+
+        _h = sp.lambdify((x,y,z), h, modules="numpy")        
+        _h_grad = sp.lambdify((x,y,z), h_grad, modules="numpy")
+        for f in [_h, _h_grad]:
             yield _de_dimension(f)
     
     def print(self):
@@ -85,10 +85,6 @@ def parametrize_sphere():
 
     rho = sp.Matrix([x, y, z])
     return determine_parametrization(rho, s, t)
-
-
-
-
 
 def determine_parametrization(rho, s, t):
     variables = sp.Matrix([s, t])
@@ -115,9 +111,13 @@ def determine_parametrization(rho, s, t):
 
 
 if __name__ == "__main__":
-    rho, drho, jacobian, normal = Parametrization.sphere().get_lambdas()
-    print(normal(2, 3).shape)
-    print(normal(np.array([2, 2, 6, 0, 1, 1]), np.array([3, 3, 0, 0, 1, 1])))
-    # print(normal(np.array([2]),np.array([3])))
-    # print(normal((2,2),(3,3)))
-    # print(normal(2,3))
+    param = Parametrization.droplet()
+    rho, drho, jacobian, normal = param.get_lambdas()
+    h, h_grad = param.h_and_hgrad()
+    # print(h_grad(1,1,1))
+    # print(h(1,1,1))
+    s = np.arange(10)
+    t = np.arange(10)
+    x,y,z = rho(s,t)
+    print(x)
+    # print(h_grad(*rho(0,1))@normal(0,1))
