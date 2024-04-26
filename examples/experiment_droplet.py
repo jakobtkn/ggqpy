@@ -21,19 +21,27 @@ def kernel(x0, y0, s, t):
     q = rho(x0, y0)[:, np.newaxis]
     p = rho(s, t)
     n = normal(s, t)
-    dist = np.linalg.norm(p - q, axis=0)
+    dist = np.linalg.norm(q - p, axis=0)
     return (
-        (np.sum(n * (p - q), axis=0))
+        (np.sum(n * (q - p), axis=0))
         / dist**3
         * np.exp(1j * k * dist)
         * (1.0 - 1j * k * dist)
     )
 
 
-M = 7
-N = 5
+M = 18
+N = 10
 A, ss, tt, ww = construct_discretization_matrix(
-    Interval(0, 2 * np.pi), Interval(0, np.pi), M, N, rho, drho, kernel, jacobian
+    Interval(0, 2 * np.pi),
+    Interval(0, np.pi),
+    M,
+    N,
+    rho,
+    drho,
+    kernel,
+    jacobian,
+    order=8,
 )
 h, h_grad = param.h_and_hgrad()
 
@@ -44,22 +52,17 @@ def dh(s, t):
 
 
 f = dh(ss, tt)
-A = -0.5 * np.identity(M * N) + (1.0 / 4.0 * np.pi) * A
-q = np.linalg.solve(A, f) / np.sqrt(ww)
+A = - 0.5 * np.diag(1/np.sqrt(ww)) + (4.0 * np.pi) ** (-1) * A
+q = np.linalg.solve(A, f)
 
-p0 = np.array([10, 0, 0])
-
-
-def double_layer(s, t):
+p0 = np.array([10, 20, 0])
+def single_layer(s, t):
     p = rho(s, t)
-    n = normal(s, t)
     dist = np.linalg.norm(p - p0[:, np.newaxis], axis=0)
-    return (1 / (4 * np.pi)) * (np.sum(n * (p - p0[:, np.newaxis]), axis=0)) / (dist**3)
+    return np.exp(1j * k * dist) / dist
 
-print(np.sum(ww))
-
-target = np.array(h(10, 0, 0))
-result = np.sum(double_layer(ss, tt) * q * jacobian(ss, tt) * ww)
+target = np.array(h(*p0))
+result = (4.0 * np.pi) ** (-1) * np.sum(single_layer(ss, tt) * q * jacobian(ss, tt) * np.sqrt(ww))
 
 print("Relative error:", abs(result - target) / abs(target))
 print("Result:", result)

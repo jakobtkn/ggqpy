@@ -204,8 +204,7 @@ def quad_on_standard_triangle(order, r0, theta0):
     return r, theta, w
 
 
-def singular_integral_quad(drho, x0, simplex):
-    order = 4
+def singular_integral_quad(drho, x0, simplex, order=4):
     B, Binv = ensure_conformal_mapping(drho, x0)
     R = Quadrilateral(*[Binv @ (np.array(v) - x0) for v in iter(simplex)])
     x_list = list()
@@ -259,6 +258,7 @@ def construct_discretization_matrix(
     drho: Callable,
     kernel: Callable,
     jacobian: Callable,
+    order = 4,
 ):
     ss, tt, ww = gl_nodes2d(I, J, M, N)
     simplex = Rectangle(I, J)
@@ -266,9 +266,11 @@ def construct_discretization_matrix(
     Vin = np.linalg.inv(legvander2d(ss, tt, [M - 1, N - 1]))
     A = np.zeros(shape=(N * M, N * M), dtype=complex)
     for idx, singularity in enumerate(zip(ss, tt)):
-        xs, yt, w = singular_integral_quad(drho, np.array([*singularity]), simplex)
+        xs, yt, w = singular_integral_quad(
+            drho, np.array([*singularity]), simplex, order
+        )
         Vout = legvander2d(xs, yt, [M - 1, N - 1])
-        K = w * kernel(*singularity, xs, yt) * jacobian(xs, yt) * np.sqrt(ww[idx])
-        A[idx, :] = K @ (Vout @ Vin)
+        K = w * kernel(*singularity, xs, yt) * jacobian(xs, yt)
+        A[idx, :] = (K @ (Vout @ Vin)) * ww
 
     return A, ss, tt, ww

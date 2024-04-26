@@ -56,7 +56,8 @@ class Parametrization:
         z = sp.sin(s) * sp.sin(t)
         return cls(s,t,x,y,z)
     
-    def h_and_hgrad(self, p0 = sp.Matrix([1,0,0])):
+    def h_and_hgrad(self, p0 = [1,0,0]):
+        p0 = sp.Matrix(p0)
         x,y,z = sp.symbols("x y z", real=True)
 
         h = sp.exp(sp.I * (sp.Matrix([x,y,z]) - p0).norm()) / (sp.Matrix([x,y,z]) - p0).norm()
@@ -119,5 +120,5 @@ if __name__ == "__main__":
     s = np.arange(10)
     t = np.arange(10)
     x,y,z = rho(s,t)
-    print(x)
-    # print(h_grad(*rho(0,1))@normal(0,1))
+    print(normal(0,1))
+    print(h_grad(*rho(0,1)))
