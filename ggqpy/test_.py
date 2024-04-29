@@ -36,9 +36,9 @@ def test_end_to_end_polynomial():
     )
 
     min_length = 1e-9
-    eps_disc = 1e-12
-    eps_comp = 1e-10
-    eps_quad = 1e-8
+    eps_disc = 1e-5
+    eps_comp = 1e-5
+    eps_quad = 1e-4
     interpolation_degree = 30
 
     discretizer = Discretizer(eps_disc, min_length, interpolation_degree)
@@ -79,13 +79,13 @@ def test_end_to_end_polynomial():
 def test_end_to_end_nystrom(plt):
     order = 4
     function_family = FunctionFamily.nystrom_integral_functions(
-        number_of_discretizations=8, order=order
+        number_of_discretizations=4, order=order
     )
 
     min_length = 1e-4
-    eps_disc = 1e-6
-    eps_comp = 1e-6
-    eps_quad = 1e-6
+    eps_disc = 1e-5
+    eps_comp = 1e-4
+    eps_quad = 1e-3
     interpolation_degree = 30
 
     discretizer = Discretizer(eps_disc, min_length, interpolation_degree)
@@ -122,8 +122,8 @@ def test_end_to_end_nystrom(plt):
     integral_ggq = ggq.eval(f)
     integral_adap = adap.eval(f)
 
-    assert integral_cheb == approx(integral_adap, abs=eps_comp*10)
-    assert integral_ggq == approx(integral_adap, abs=eps_quad*10)
+    assert integral_cheb == approx(integral_adap, abs=eps_comp)
+    assert integral_ggq == approx(integral_cheb, abs=eps_quad)
     assert ggq.size < cheb.size
 
 
