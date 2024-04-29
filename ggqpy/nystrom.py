@@ -263,14 +263,17 @@ def construct_discretization_matrix(
     ss, tt, ww = gl_nodes2d(I, J, M, N)
     simplex = Rectangle(I, J)
 
-    Vin = np.linalg.inv(legvander2d(ss, tt, [M - 1, N - 1]))
+    Vin = np.linalg.inv(legvander2d(I.itranslate(ss), J.itranslate(tt), [M - 1, N - 1]))
     A = np.zeros(shape=(N * M, N * M), dtype=complex)
     for idx, singularity in enumerate(zip(ss, tt)):
         xs, yt, w = singular_integral_quad(
             drho, np.array([*singularity]), simplex, order
         )
-        Vout = legvander2d(xs, yt, [M - 1, N - 1])
+        
         K = w * kernel(*singularity, xs, yt) * jacobian(xs, yt)
-        A[idx, :] = np.sqrt(ww[idx]) * (K @ (Vout @ Vin)) / np.sqrt(ww)
+        Vout = legvander2d(I.itranslate(xs), J.itranslate(yt), [M - 1, N - 1])
+        interpolation_matrix = (Vout @ Vin)
+
+        A[idx, :] = np.sqrt(ww[idx]) * (K @ interpolation_matrix) / np.sqrt(ww)
 
     return A, ss, tt, ww

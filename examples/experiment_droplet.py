@@ -77,8 +77,7 @@ if __name__ == "__main__":
     parser.add_argument("wavenumber", default=1.0)
     args = parser.parse_args()
 
-    N = [2, 3, 5, 7]
-    N = [6]
+    N = [2, 3, 5, 7, 10, 15]
     M = [2 * n for n in N]
     error = list()
     for m, n in zip(M, N):
