@@ -44,8 +44,8 @@ def jacobian(s, t):
 
 
 
-
-rho, drho, jacobian, normal = parametrize_sphere()
+param = Parametrization.sphere()
+rho, drho, jacobian, normal = param.get_lambdas()
 def kernel(x0,y0, s, t):
     q = rho(x0,y0)
     p = rho(s,t)
