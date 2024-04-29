@@ -61,12 +61,12 @@ class Parametrization:
 
         return cls(s, t, x, y, z, flip_normal=True)
 
-    def h_and_hgrad(self, p0=[1, 0, 0]):
+    def h_and_hgrad(self, k = 1.0, p0=[1, 0, 0]):
         p0 = sp.Matrix(p0)
         x, y, z = sp.symbols("x y z", real=True)
 
         h = (
-            sp.exp(sp.I * (sp.Matrix([x, y, z]) - p0).norm())
+            sp.exp(sp.I * k * (sp.Matrix([x, y, z]) - p0).norm())
             / (sp.Matrix([x, y, z]) - p0).norm()
         )
         h_grad = sp.simplify(sp.Matrix([h.diff(var) for var in [x, y, z]]))
