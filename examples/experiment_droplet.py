@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 
 param = Parametrization.droplet()
 rho, drho, jacobian, normal = param.get_lambdas()
-
+verbose = False
 
 def Phi(s, t, k=1.0, p0=np.array([10, 0, 0])):
     p = rho(s, t)
@@ -64,10 +64,11 @@ def main(M, N, order, k):
         Phi(ss, tt, k, p0) * q * jacobian(ss, tt) * np.sqrt(ww)
     )
     relative_error = abs(result - target) / abs(target)
-    print("Relative error:", relative_error)
-    print("Result:", result)
-    print("Target:", target)
-    print(np.linalg.cond(A))
+    if verbose:
+        print("Relative error:", relative_error)
+        print("Result:", result)
+        print("Target:", target)
+        print(np.linalg.cond(A))
     return relative_error
 
 
