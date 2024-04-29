@@ -258,7 +258,7 @@ def construct_discretization_matrix(
     drho: Callable,
     kernel: Callable,
     jacobian: Callable,
-    order = 4,
+    order=4,
 ):
     ss, tt, ww = gl_nodes2d(I, J, M, N)
     simplex = Rectangle(I, J)
@@ -271,6 +271,6 @@ def construct_discretization_matrix(
         )
         Vout = legvander2d(xs, yt, [M - 1, N - 1])
         K = w * kernel(*singularity, xs, yt) * jacobian(xs, yt)
-        A[idx, :] = (K @ (Vout @ Vin)) * ww
+        A[idx, :] = np.sqrt(ww[idx]) * (K @ (Vout @ Vin)) / np.sqrt(ww)
 
     return A, ss, tt, ww
