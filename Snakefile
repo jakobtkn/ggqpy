@@ -9,6 +9,9 @@ rule all:
         "output/experiment_triangle.4.tex",
         "output/experiment_triangle.8.tex",
         "output/experiment_triangle.16.tex",
+        "output/experiment_droplet.4.1.tex",
+        "output/experiment_droplet.8.1.tex",
+        "output/experiment_droplet.16.1.tex",
 
 rule make_config:
     input:
@@ -28,7 +31,7 @@ rule generate_nystrom_quadrature:
         "python3 examples/generate_nystrom_quad.py {wildcards.order} {wildcards.r0_index} {wildcards.theta0_index} quads/nystrom.{wildcards.order}/{wildcards.r0_index}.{wildcards.theta0_index}.quad"
 
 ALPHAS = [0.5,0.1,1e-3,1e-9]
-rule generate_table:
+rule experiment_triangle:
     input:
         "quads/nystrom.{order}/breakpoints_r",
         "quads/nystrom.{order}/breakpoints_theta",
@@ -38,8 +41,17 @@ rule generate_table:
     shell:
         "python3 examples/experiment_triangle.py {wildcards.order} > output/experiment_triangle.{wildcards.order}.tex"
 
+rule experiment_droplet:
+    input:
+        "quads/nystrom.{order}/breakpoints_r",
+        "quads/nystrom.{order}/breakpoints_theta",
+        expand("quads/nystrom.{order}/{r0_index}.{theta0_index}.quad", r0_index=range(nR-1), theta0_index=range(nTHETA-1), allow_missing=True),
+    output:
+        "output/experiment_droplet.{order}.{wavenumber}.tex"
+    shell:
+        "python3 examples/experiment_droplet.py {wildcards.order} {wildcards.wavenumber}> output/experiment_droplet.{wildcards.order}.{wildcards.wavenumber}.tex"
 
-FILES = ["experiment_triangle.16.4.tex"]
+FILES = ["experiment_triangle.4.tex","output/experiment_droplet.8.1.tex"]
 rule tex:
     input:
         expand("../report/output/{file}", file=FILES)
