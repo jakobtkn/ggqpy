@@ -269,10 +269,10 @@ def construct_discretization_matrix(
         xs, yt, w = singular_integral_quad(
             drho, np.array([*singularity]), simplex, order
         )
-        
+
         K = w * kernel(*singularity, xs, yt) * jacobian(xs, yt)
         Vout = legvander2d(I.itranslate(xs), J.itranslate(yt), [M - 1, N - 1])
-        interpolation_matrix = (Vout @ Vin)
+        interpolation_matrix = Vout @ Vin
 
         A[idx, :] = np.sqrt(ww[idx]) * (K @ interpolation_matrix) / np.sqrt(ww)
 

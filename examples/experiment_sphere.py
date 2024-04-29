@@ -36,25 +36,24 @@ def normal(p):
     return p / np.linalg.norm(p, axis=0)
 
 
-
-
-
 def jacobian(s, t):
     return np.sin(t)
 
 
-
 param = Parametrization.sphere()
 rho, drho, jacobian, normal = param.get_lambdas()
-def kernel(x0,y0, s, t):
-    q = rho(x0,y0)
-    p = rho(s,t)
-    n = normal(s,t)
+
+
+def kernel(x0, y0, s, t):
+    q = rho(x0, y0)
+    p = rho(s, t)
+    n = normal(s, t)
     return (
         (1 / (4 * np.pi))
         * (np.sum(n * (p - q[:, np.newaxis]), axis=0))
         / np.linalg.norm(p - q[:, np.newaxis], axis=0) ** 3
     )
+
 
 A = np.zeros(shape=(N * M, N * M))
 simplex = Quadrilateral((0, 0), (2 * np.pi, 0), (2 * np.pi, np.pi), (0, np.pi))

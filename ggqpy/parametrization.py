@@ -61,7 +61,7 @@ class Parametrization:
 
         return cls(s, t, x, y, z, flip_normal=True)
 
-    def h_and_hgrad(self, k = 1.0, p0=[1, 0, 0]):
+    def h_and_hgrad(self, k=1.0, p0=[1, 0, 0]):
         p0 = sp.Matrix(p0)
         x, y, z = sp.symbols("x y z", real=True)
 

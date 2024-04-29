@@ -59,7 +59,7 @@ class Discretizer:
         normalization_factor = np.sqrt((2 * np.arange(testing_degree + 1) + 1) / 2)
         alpha_normalized = alpha * normalization_factor[:, np.newaxis]
 
-        high_freq_coefficients = alpha_normalized[self.interpolation_degree:, :]
+        high_freq_coefficients = alpha_normalized[self.interpolation_degree :, :]
         high_freq_sq_residuals = np.sqrt(
             np.sum(abs(high_freq_coefficients) ** 2, axis=0)
         )

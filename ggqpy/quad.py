@@ -43,9 +43,9 @@ class Quadrature:
 
 
 class SingularTriangleQuadrature:
-    def __init__(self, order = 4):
+    def __init__(self, order=4):
         self.order = order
-        quad_folder=f"quads/nystrom.{order}/"
+        quad_folder = f"quads/nystrom.{order}/"
         self.breakpoints = {
             "r0": np.loadtxt(quad_folder + "breakpoints_r"),
             "theta0": np.loadtxt(quad_folder + "breakpoints_theta"),
@@ -57,24 +57,24 @@ class SingularTriangleQuadrature:
 
         self.quadratures = dict()
         for filepath in glob.glob(quad_folder + "*.quad"):
-            
             ## Extract indices from filename
-            pattern = r'\d+'
+            pattern = r"\d+"
             parameters = re.findall(pattern, filepath)
-            
+
             r0_index = int(parameters[1])
             theta0_index = int(parameters[2])
 
-            self.quadratures[(r0_index,theta0_index)] = Quadrature.load_from_file(filepath)
+            self.quadratures[(r0_index, theta0_index)] = Quadrature.load_from_file(
+                filepath
+            )
 
     def get_quad(self, r0, theta0):
         r0_index = bisect.bisect(self.breakpoints["r0"], r0) - 1
-        r0_index = np.clip(r0_index, 0, len([*self.intervals["r0"]]) - 1 )
+        r0_index = np.clip(r0_index, 0, len([*self.intervals["r0"]]) - 1)
 
         theta0_index = bisect.bisect(self.breakpoints["theta0"], theta0) - 1
-        theta0_index = np.clip(theta0_index, 0, len([*self.intervals["theta0"]]) - 1 )
+        theta0_index = np.clip(theta0_index, 0, len([*self.intervals["theta0"]]) - 1)
 
+        assert (r0_index, theta0_index) in self.quadratures
 
-        assert (r0_index,theta0_index) in self.quadratures
-        
-        return self.quadratures[(r0_index,theta0_index)]
+        return self.quadratures[(r0_index, theta0_index)]
