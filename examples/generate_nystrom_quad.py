@@ -16,9 +16,9 @@ from ggqpy.quad import Quadrature
 def generate_quad(order, r0_index, theta0_index, filename):
     count = 16
     min_length = 1e-10
-    eps_disc = 1e-13
-    eps_comp = 1e-12
-    eps_quad = 1e-12
+    eps_disc = 1e-11
+    eps_comp = 1e-10
+    eps_quad = 1e-10
 
     r = np.loadtxt(f"quads/nystrom.{order}/breakpoints_r")
     theta = np.loadtxt(f"quads/nystrom.{order}/breakpoints_theta")
