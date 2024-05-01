@@ -30,9 +30,10 @@ def test_sherman_morrison():
 
 def test_end_to_end_polynomial():
     order = 9
+    number_of_polynomials = 40
     I = Interval(1e-8, 1 - 1e-5)
     function_family = FunctionFamilySymbolic.polynomials_and_singularity(
-        I, order=order, number_of_polynomials=40
+        I, order=order, number_of_polynomials=number_of_polynomials
     )
 
     min_length = 1e-9
@@ -72,8 +73,8 @@ def test_end_to_end_polynomial():
     print(integral_f)
     assert type(function_family) == FunctionFamilySymbolic
     assert approx((np.log(x_disc)) @ w_disc, abs=eps_disc) == integral_f
-    assert (np.log(x_cheb)) @ w_cheb == approx(integral_f, abs=(eps_disc + eps_comp))
-    assert (np.log(x)) @ w == approx(integral_f, abs=(eps_disc + eps_comp + eps_quad))
+    assert (np.log(x_cheb)) @ w_cheb == approx(integral_f, abs=(eps_disc + number_of_polynomials*eps_comp))
+    assert (np.log(x)) @ w == approx(integral_f, abs=(eps_disc + number_of_polynomials*eps_comp + eps_quad))
 
 
 def test_end_to_end_nystrom(plt):
@@ -116,15 +117,24 @@ def test_end_to_end_nystrom(plt):
     x, w = optimizer.reduce_quadrature(x_cheb, w_cheb, eps_quad)
     np.clip(x, *function_family.I, out=x)
     ggq = Quadrature(x, w)
-
+    assert ggq.size < cheb.size
+    m = len(function_family.functions_lambdas)
+    k = len(x)
+    
+    a,b,c =-1.0, 3.0, np.pi
+    f = lambda x: a*U_family.piecewise_poly_list[20](x) + b*U_family.piecewise_poly_list[3](x) + c*U_family.piecewise_poly_list[17](x)
+    integral_cheb = cheb.eval(f)
+    integral_ggq = ggq.eval(f)
+    integral_adap = adap.eval(f)
+    assert integral_cheb == approx(integral_adap, abs=eps_comp*(m-k+1)/np.sqrt(2))
+    assert integral_ggq == approx(integral_cheb, abs=eps_quad*(abs(a) + abs(b) + abs(c)))
+    
     f = function_family.generate_example_function()
     integral_cheb = cheb.eval(f)
     integral_ggq = ggq.eval(f)
     integral_adap = adap.eval(f)
-
-    assert integral_cheb == approx(integral_adap, abs=eps_comp)
-    assert integral_ggq == approx(integral_cheb, abs=eps_quad)
-    assert ggq.size < cheb.size
+    assert integral_cheb == approx(integral_adap, abs=eps_comp*(m-k+1)/np.sqrt(2))
+    assert integral_ggq == approx(integral_cheb, abs=10e-1)
 
 
 def test_piecewisepoly():

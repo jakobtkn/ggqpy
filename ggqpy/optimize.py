@@ -205,9 +205,9 @@ class QuadOptimizer:
                 verbose=self.verbose,
             )
             y = res.x
-            eps = 2 * res.cost
+            eps = 2 * np.sqrt(res.cost)
 
-            if eps < eps_quad**2:
+            if eps < eps_quad:
                 x, w = np.split(y, 2)
 
                 vprint(f"Node removed, a total of {iteration + 1} have been checked")
