@@ -78,21 +78,22 @@ def test_end_to_end_polynomial():
 
 
 def test_end_to_end_nystrom(plt):
-    order = 4
+    order = 2
     function_family = FunctionFamily.nystrom_integral_functions(
-        number_of_discretizations=4, order=order
+        number_of_discretizations=16, order=order, amin = 1e-7, amax = 1e-6, bmin = 2.0, bmax = 3.0
     )
 
     min_length = 1e-4
-    eps_disc = 1e-5
+    eps_disc = 1e-4
     eps_comp = 1e-4
     eps_quad = 1e-3
     interpolation_degree = 30
 
     discretizer = Discretizer(eps_disc, min_length, interpolation_degree)
-    x_disc, w_disc = discretizer.adaptive_discretization(function_family)
+    x_disc, w_disc = discretizer.adaptive_discretization(function_family, priority=False)
     adap = Quadrature(x_disc, w_disc)
 
+    print(*discretizer.intervals)
     assert sorted(discretizer.endpoints) == discretizer.endpoints
     np.testing.assert_allclose(x_disc, sorted(x_disc))
 
@@ -114,28 +115,28 @@ def test_end_to_end_nystrom(plt):
 
     np.testing.assert_allclose(U_family(x_disc), U_disc.T)
     optimizer = QuadOptimizer(U_family, r)
-    x, w = optimizer.reduce_quadrature(x_cheb, w_cheb, eps_quad)
-    np.clip(x, *function_family.I, out=x)
-    ggq = Quadrature(x, w)
-    assert ggq.size < cheb.size
-    m = len(function_family.functions_lambdas)
-    k = len(x)
+    # x, w = optimizer.reduce_quadrature(x_cheb, w_cheb, eps_quad)
+    # np.clip(x, *function_family.I, out=x)
+    # ggq = Quadrature(x, w)
+    # assert ggq.size < cheb.size
+    # m = len(function_family.functions_lambdas)
+    # k = len(x)
     
-    a,b,c =-1.0, 3.0, np.pi
-    f = lambda x: a*U_family.piecewise_poly_list[20](x) + b*U_family.piecewise_poly_list[3](x) + c*U_family.piecewise_poly_list[17](x)
-    integral_cheb = cheb.eval(f)
-    integral_ggq = ggq.eval(f)
-    integral_adap = adap.eval(f)
-    assert integral_cheb == approx(integral_adap, abs=eps_comp*(m-k+1)/np.sqrt(2))
-    assert integral_ggq == approx(integral_cheb, abs=eps_quad*(abs(a) + abs(b) + abs(c)))
+    # a,b,c =-1.0, 3.0, np.pi
+    # f = lambda x: a*U_family.piecewise_poly_list[20](x) + b*U_family.piecewise_poly_list[3](x) + c*U_family.piecewise_poly_list[17](x)
+    # integral_cheb = cheb.eval(f)
+    # integral_ggq = ggq.eval(f)
+    # integral_adap = adap.eval(f)
+    # assert integral_cheb == approx(integral_adap, abs=eps_comp*(m-k+1)/np.sqrt(2))
+    # assert integral_ggq == approx(integral_cheb, abs=eps_quad*(abs(a) + abs(b) + abs(c)))
     
-    f = function_family.generate_example_function()
-    integral_cheb = cheb.eval(f)
-    integral_ggq = ggq.eval(f)
-    integral_adap = adap.eval(f)
-    assert integral_cheb == approx(integral_adap, abs=eps_comp*(m-k+1)/np.sqrt(2))
-    assert integral_ggq == approx(integral_cheb, abs=10e-1)
-
+    # f = function_family.generate_example_function()
+    # integral_cheb = cheb.eval(f)
+    # integral_ggq = ggq.eval(f)
+    # integral_adap = adap.eval(f)
+    # assert integral_cheb == approx(integral_adap, abs=eps_comp*(m-k+1)/np.sqrt(2))
+    # assert integral_ggq == approx(integral_cheb, abs=10e-1)
+    assert False
 
 def test_piecewisepoly():
     n = 5

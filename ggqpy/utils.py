@@ -14,7 +14,7 @@ class Interval:
         return
 
     def __repr__(self):
-        return (self.a, self.b)
+        return f"({self.a}, {self.b})"
 
     def __str__(self):
         return "(" + str(self.a) + "," + str(self.b) + ")"
