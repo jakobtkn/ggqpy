@@ -8,6 +8,7 @@ from ggqpy.utils import (
     Interval,
     FunctionFamily,
 )
+from queue import PriorityQueue
 
 
 def pairwise(iterable):
@@ -32,8 +33,38 @@ class Discretizer:
         self.min_length = min_length
         self.verbose = verbose
         self.interpolation_degree = interpolation_degree
+        self.testing_degree = 2 * self.interpolation_degree - 1
         self.x_gl, _ = legendre.leggauss(2 * self.interpolation_degree)
         return
+
+    def interval_error(self, I: Interval, function_family: FunctionFamily, scale=True):
+        """
+
+        Parameters
+        ----------
+        :
+        Returns
+        -------
+        :
+        """
+        x = (I.b - I.a) * (self.x_gl + 1.0) / 2.0 + I.a
+        A = np.column_stack([phi(x) for phi in function_family.functions_lambdas])
+
+        alpha = legendre.legfit(
+            self.x_gl, y=A, deg=self.testing_degree
+        )  # Fit to Legendre Polynomials on [a,b]
+
+        normalization_factor = np.sqrt((2 * np.arange(self.testing_degree + 1) + 1) / 2)
+        alpha_normalized = alpha * normalization_factor[:, np.newaxis]
+
+        high_freq_coefficients = alpha_normalized[self.interpolation_degree :, :]
+        high_freq_sq_residuals = np.sum(abs(high_freq_coefficients) ** 2, axis=0)
+
+        if scale:
+            return high_freq_sq_residuals*I.length()/function_family.I.length()
+        else:
+            return high_freq_sq_residuals
+
 
     def interval_compatible(self, I: Interval, function_family: FunctionFamily):
         """
@@ -45,37 +76,52 @@ class Discretizer:
         -------
         :
         """
-        if self.min_length is not None and I.length() < self.min_length:
-            return True
-
-        x = (I.b - I.a) * (self.x_gl + 1.0) / 2.0 + I.a
-        testing_degree = 2 * self.interpolation_degree - 1
-        A = np.column_stack([phi(x) for phi in function_family.functions_lambdas])
-
-        alpha = legendre.legfit(
-            self.x_gl, y=A, deg=testing_degree
-        )  # Fit to Legendre Polynomials on [a,b]
-
-        normalization_factor = np.sqrt((2 * np.arange(testing_degree + 1) + 1) / 2)
-        alpha_normalized = alpha * normalization_factor[:, np.newaxis]
-
-        high_freq_coefficients = alpha_normalized[self.interpolation_degree :, :]
-        high_freq_sq_residuals = np.sqrt(
-            np.sum(abs(high_freq_coefficients) ** 2, axis=0)
-        )
-        interval_weight = I.length() / function_family.I.length()
-        interval_weight = 1.0
-
+        high_freq_residuals = np.sqrt(self.interval_error(I, function_family, scale=False))
         is_compatible = np.all(
-            high_freq_sq_residuals * interval_weight < self.precision
+            high_freq_residuals < self.precision
         )
 
         if self.verbose:
-            print("Residual: ", high_freq_sq_residuals, " found on interval ", I)
+            print("Residual: ", high_freq_residuals, " found on interval ", I)
 
         return is_compatible
 
-    def adaptive_discretization(self, function_family):
+    def determine_intervals_priority(self, function_family):
+        P = PriorityQueue()
+        total_error = self.interval_error(function_family.I, function_family)
+        P.put((1/np.linalg.norm(total_error),total_error, function_family.I))
+        
+        while max(np.sqrt(abs(total_error))) > self.precision:
+            (k, xi, I) = P.get()
+            midpoint = (I.a + I.b) / 2.0
+            I1 = Interval(I.a, midpoint)
+            I2 = Interval(midpoint, I.b)
+            xi1 = self.interval_error(I1, function_family)
+            xi2 = self.interval_error(I2, function_family)
+            P.put((1/np.linalg.norm(xi1), xi1, I1))
+            P.put((1/np.linalg.norm(xi2), xi2, I2))
+            total_error = total_error - xi + xi1 + xi2
+            print(max(np.sqrt(abs(total_error))))
+
+        self.intervals = sorted([I for (_,_,I) in P.queue])
+
+    def determine_intervals_iterative(self, function_family):
+        intervals_to_check = [function_family.I]
+        intervals = list()
+
+        while intervals_to_check:
+            I = intervals_to_check.pop()
+
+            if self.interval_compatible(I, function_family):
+                intervals.append(I)
+            else:
+                midpoint = (I.a + I.b) / 2.0
+                intervals_to_check.append(Interval(I.a, midpoint))
+                intervals_to_check.append(Interval(midpoint, I.b))
+        self.intervals = sorted(intervals)
+        return
+
+    def adaptive_discretization(self, function_family, priority = False):
         """
         Adaptive disrectization using nested Gaussian Legendre polynomial interpolation.
         Procedure described in "A nonlinear optimization procedure for generalized Gaussian quadratures" p.12-13
@@ -89,23 +135,14 @@ class Discretizer:
         """
 
         ## Stage 1.
-        intervals_to_check = [function_family.I]
-        intervals = list()
-
-        while intervals_to_check:
-            I = intervals_to_check.pop()
-
-            if self.interval_compatible(I, function_family):
-                intervals.append(I)
-            else:
-                midpoint = (I.a + I.b) / 2.0
-                intervals_to_check.append(Interval(I.a, midpoint))
-                intervals_to_check.append(Interval(midpoint, I.b))
+        if priority:
+            self.determine_intervals_priority(function_family)
+        else:
+            self.determine_intervals_iterative(function_family)
 
         ## Stage 2.
-        self.intervals = sorted(intervals)
         self.endpoints = sorted(
-            set([a for (a, b) in intervals] + [function_family.I.b])
+            set([a for (a, b) in self.intervals] + [function_family.I.b])
         )
 
         if self.verbose:
