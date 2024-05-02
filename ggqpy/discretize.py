@@ -266,7 +266,7 @@ def compress_sequence_of_functions(functions, eval_points, weights, precision):
     """
     A = construct_A_matrix(eval_points, weights, functions)
     Q, R, perm = sp.linalg.qr(A, pivoting=True, mode="economic")
-    rank = np.sum(np.abs(np.diag(R)) > precision)
+    rank = np.sum(np.abs(np.diag(R)) > precision/len(functions))
 
     U = Q[:, :rank] * (np.sqrt(weights)[:, np.newaxis]) ** (-1)
     return U, rank
