@@ -73,7 +73,7 @@ def generalized_gaussian_quadrature(
 
     ## Discretize
     discretizer = Discretizer(eps_disc, min_length, interpolation_degree)
-    x_disc, w_disc = discretizer.adaptive_discretization(function_family)
+    x_disc, w_disc = discretizer.adaptive_discretization(function_family, priority=True)
     vprint(
         f"Adaptive discretization divided the domain into {len(discretizer.intervals)} subintervals"
     )
