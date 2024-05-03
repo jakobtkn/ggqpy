@@ -1,0 +1,110 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 4
+Rules claiming more threads will be scaled down.
+Job stats:
+job                            count
+---------------------------  -------
+all                                1
+experiment_droplet                 2
+experiment_triangle                2
+generate_nystrom_quadrature      234
+total                            239
+
+Select jobs to execute...
+Execute 4 jobs...
+
+[Wed May  1 11:03:36 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.4/breakpoints_r, quads/nystrom.4/breakpoints_theta
+    output: quads/nystrom.4/8.4.quad
+    jobid: 103
+    reason: Missing output files: quads/nystrom.4/8.4.quad
+    wildcards: order=4, r0_index=8, theta0_index=4
+    resources: tmpdir=/tmp
+
+
+[Wed May  1 11:03:36 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/2.11.quad
+    jobid: 160
+    reason: Missing output files: quads/nystrom.8/2.11.quad
+    wildcards: order=8, r0_index=2, theta0_index=11
+    resources: tmpdir=/tmp
+
+
+[Wed May  1 11:03:36 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.4/breakpoints_r, quads/nystrom.4/breakpoints_theta
+    output: quads/nystrom.4/4.7.quad
+    jobid: 58
+    reason: Missing output files: quads/nystrom.4/4.7.quad
+    wildcards: order=4, r0_index=4, theta0_index=7
+    resources: tmpdir=/tmp
+
+
+[Wed May  1 11:03:36 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.4/breakpoints_r, quads/nystrom.4/breakpoints_theta
+    output: quads/nystrom.4/5.10.quad
+    jobid: 73
+    reason: Missing output files: quads/nystrom.4/5.10.quad
+    wildcards: order=4, r0_index=5, theta0_index=10
+    resources: tmpdir=/tmp
+
+[Wed May  1 11:03:41 2024]
+Finished job 103.
+1 of 239 steps (0.4%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Wed May  1 11:03:41 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/4.8.quad
+    jobid: 181
+    reason: Missing output files: quads/nystrom.8/4.8.quad
+    wildcards: order=8, r0_index=4, theta0_index=8
+    resources: tmpdir=/tmp
+
+Terminating processes on user request, this might take some time.
+[Wed May  1 11:03:51 2024]
+Error in rule generate_nystrom_quadrature:
+    jobid: 58
+    input: quads/nystrom.4/breakpoints_r, quads/nystrom.4/breakpoints_theta
+    output: quads/nystrom.4/4.7.quad
+    shell:
+        python3 examples/generate_nystrom_quad.py 4 4 7 quads/nystrom.4/4.7.quad
+        (one of the commands exited with non-zero exit code; note that snakemake uses bash strict mode!)
+
+[Wed May  1 11:03:51 2024]
+Error in rule generate_nystrom_quadrature:
+    jobid: 181
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/4.8.quad
+    shell:
+        python3 examples/generate_nystrom_quad.py 8 4 8 quads/nystrom.8/4.8.quad
+        (one of the commands exited with non-zero exit code; note that snakemake uses bash strict mode!)
+
+[Wed May  1 11:03:51 2024]
+Error in rule generate_nystrom_quadrature:
+    jobid: 160
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/2.11.quad
+    shell:
+        python3 examples/generate_nystrom_quad.py 8 2 11 quads/nystrom.8/2.11.quad
+        (one of the commands exited with non-zero exit code; note that snakemake uses bash strict mode!)
+
+[Wed May  1 11:03:51 2024]
+Error in rule generate_nystrom_quadrature:
+    jobid: 73
+    input: quads/nystrom.4/breakpoints_r, quads/nystrom.4/breakpoints_theta
+    output: quads/nystrom.4/5.10.quad
+    shell:
+        python3 examples/generate_nystrom_quad.py 4 5 10 quads/nystrom.4/5.10.quad
+        (one of the commands exited with non-zero exit code; note that snakemake uses bash strict mode!)
+
+Complete log: .snakemake/log/2024-05-01T110335.142062.snakemake.log
+WorkflowError:
+At least one job did not complete successfully.

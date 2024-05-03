@@ -1,0 +1,70 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 6
+Rules claiming more threads will be scaled down.
+Job stats:
+job                    count
+-------------------  -------
+all                        1
+generate_quadrature        4
+total                      5
+
+Select jobs to execute...
+Execute 4 jobs...
+
+[Sun Mar 24 15:12:10 2024]
+localrule generate_quadrature:
+    output: quads/nystrom.16.4.quad
+    jobid: 4
+    reason: Missing output files: quads/nystrom.16.4.quad
+    wildcards: number_parameters=16, order=4
+    resources: tmpdir=/tmp
+
+
+[Sun Mar 24 15:12:10 2024]
+localrule generate_quadrature:
+    output: quads/nystrom.8.4.quad
+    jobid: 3
+    reason: Missing output files: quads/nystrom.8.4.quad
+    wildcards: number_parameters=8, order=4
+    resources: tmpdir=/tmp
+
+
+[Sun Mar 24 15:12:10 2024]
+localrule generate_quadrature:
+    output: quads/nystrom.4.4.quad
+    jobid: 2
+    reason: Missing output files: quads/nystrom.4.4.quad
+    wildcards: number_parameters=4, order=4
+    resources: tmpdir=/tmp
+
+
+[Sun Mar 24 15:12:10 2024]
+localrule generate_quadrature:
+    output: quads/nystrom.2.4.quad
+    jobid: 1
+    reason: Missing output files: quads/nystrom.2.4.quad
+    wildcards: number_parameters=2, order=4
+    resources: tmpdir=/tmp
+
+[Sun Mar 24 15:12:43 2024]
+Finished job 1.
+1 of 5 steps (20%) done
+[Sun Mar 24 15:17:10 2024]
+Finished job 2.
+2 of 5 steps (40%) done
+[Sun Mar 24 19:32:50 2024]
+Finished job 3.
+3 of 5 steps (60%) done
+Terminating processes on user request, this might take some time.
+[Sun Mar 24 21:50:56 2024]
+Error in rule generate_quadrature:
+    jobid: 4
+    output: quads/nystrom.16.4.quad
+    shell:
+        python3 examples/generate_quad.py 16 4 quads/nystrom.16.4.quad
+        (one of the commands exited with non-zero exit code; note that snakemake uses bash strict mode!)
+
+Complete log: .snakemake/log/2024-03-24T151159.842644.snakemake.log
+WorkflowError:
+At least one job did not complete successfully.

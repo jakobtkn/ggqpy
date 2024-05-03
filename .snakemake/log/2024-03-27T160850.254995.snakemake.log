@@ -1,0 +1,75 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 6
+Rules claiming more threads will be scaled down.
+Job stats:
+job                    count
+-------------------  -------
+all                        1
+generate_quadrature        4
+total                      5
+
+Select jobs to execute...
+Execute 4 jobs...
+
+[Wed Mar 27 16:08:57 2024]
+localrule generate_quadrature:
+    output: quads/nystrom.16.4.quad
+    jobid: 4
+    reason: Missing output files: quads/nystrom.16.4.quad
+    wildcards: number_parameters=16, order=4
+    resources: tmpdir=/tmp
+
+
+[Wed Mar 27 16:08:57 2024]
+localrule generate_quadrature:
+    output: quads/nystrom.8.4.quad
+    jobid: 3
+    reason: Missing output files: quads/nystrom.8.4.quad
+    wildcards: number_parameters=8, order=4
+    resources: tmpdir=/tmp
+
+
+[Wed Mar 27 16:08:57 2024]
+localrule generate_quadrature:
+    output: quads/nystrom.4.4.quad
+    jobid: 2
+    reason: Missing output files: quads/nystrom.4.4.quad
+    wildcards: number_parameters=4, order=4
+    resources: tmpdir=/tmp
+
+
+[Wed Mar 27 16:08:57 2024]
+localrule generate_quadrature:
+    output: quads/nystrom.2.4.quad
+    jobid: 1
+    reason: Missing output files: quads/nystrom.2.4.quad
+    wildcards: number_parameters=2, order=4
+    resources: tmpdir=/tmp
+
+[Wed Mar 27 16:09:27 2024]
+Finished job 1.
+1 of 5 steps (20%) done
+[Wed Mar 27 16:10:29 2024]
+Finished job 2.
+2 of 5 steps (40%) done
+[Wed Mar 27 16:13:34 2024]
+Finished job 3.
+3 of 5 steps (60%) done
+[Wed Mar 27 16:29:33 2024]
+Finished job 4.
+4 of 5 steps (80%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Wed Mar 27 16:29:33 2024]
+localrule all:
+    input: quads/nystrom.2.4.quad, quads/nystrom.4.4.quad, quads/nystrom.8.4.quad, quads/nystrom.16.4.quad
+    jobid: 0
+    reason: Input files updated by another job: quads/nystrom.8.4.quad, quads/nystrom.2.4.quad, quads/nystrom.4.4.quad, quads/nystrom.16.4.quad
+    resources: tmpdir=/tmp
+
+[Wed Mar 27 16:29:33 2024]
+Finished job 0.
+5 of 5 steps (100%) done
+Complete log: .snakemake/log/2024-03-27T160850.254995.snakemake.log

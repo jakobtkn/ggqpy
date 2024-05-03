@@ -1,0 +1,103 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 3
+Rules claiming more threads will be scaled down.
+Job stats:
+job                            count
+---------------------------  -------
+all                                1
+generate_nystrom_quadrature      240
+generate_table                     3
+make_config                        2
+total                            246
+
+Select jobs to execute...
+Execute 3 jobs...
+
+[Wed Apr 24 11:03:25 2024]
+localrule make_config:
+    output: quads/nystrom.16/breakpoints_r, quads/nystrom.16/breakpoints_theta
+    jobid: 246
+    reason: Missing output files: quads/nystrom.16/breakpoints_theta, quads/nystrom.16/breakpoints_r
+    wildcards: order=16
+    resources: tmpdir=/tmp/pbs.398222.hnode41
+
+
+[Wed Apr 24 11:03:25 2024]
+localrule make_config:
+    output: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    jobid: 124
+    reason: Missing output files: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    wildcards: order=8
+    resources: tmpdir=/tmp/pbs.398222.hnode41
+
+
+[Wed Apr 24 11:03:25 2024]
+localrule generate_table:
+    input: quads/nystrom.4/breakpoints_r, quads/nystrom.4/breakpoints_theta, quads/nystrom.4/0.0.quad, quads/nystrom.4/0.1.quad, quads/nystrom.4/0.2.quad, quads/nystrom.4/0.3.quad, quads/nystrom.4/0.4.quad, quads/nystrom.4/0.5.quad, quads/nystrom.4/0.6.quad, quads/nystrom.4/0.7.quad, quads/nystrom.4/0.8.quad, quads/nystrom.4/0.9.quad, quads/nystrom.4/0.10.quad, quads/nystrom.4/0.11.quad, quads/nystrom.4/1.0.quad, quads/nystrom.4/1.1.quad, quads/nystrom.4/1.2.quad, quads/nystrom.4/1.3.quad, quads/nystrom.4/1.4.quad, quads/nystrom.4/1.5.quad, quads/nystrom.4/1.6.quad, quads/nystrom.4/1.7.quad, quads/nystrom.4/1.8.quad, quads/nystrom.4/1.9.quad, quads/nystrom.4/1.10.quad, quads/nystrom.4/1.11.quad, quads/nystrom.4/2.0.quad, quads/nystrom.4/2.1.quad, quads/nystrom.4/2.2.quad, quads/nystrom.4/2.3.quad, quads/nystrom.4/2.4.quad, quads/nystrom.4/2.5.quad, quads/nystrom.4/2.6.quad, quads/nystrom.4/2.7.quad, quads/nystrom.4/2.8.quad, quads/nystrom.4/2.9.quad, quads/nystrom.4/2.10.quad, quads/nystrom.4/2.11.quad, quads/nystrom.4/3.0.quad, quads/nystrom.4/3.1.quad, quads/nystrom.4/3.2.quad, quads/nystrom.4/3.3.quad, quads/nystrom.4/3.4.quad, quads/nystrom.4/3.5.quad, quads/nystrom.4/3.6.quad, quads/nystrom.4/3.7.quad, quads/nystrom.4/3.8.quad, quads/nystrom.4/3.9.quad, quads/nystrom.4/3.10.quad, quads/nystrom.4/3.11.quad, quads/nystrom.4/4.0.quad, quads/nystrom.4/4.1.quad, quads/nystrom.4/4.2.quad, quads/nystrom.4/4.3.quad, quads/nystrom.4/4.4.quad, quads/nystrom.4/4.5.quad, quads/nystrom.4/4.6.quad, quads/nystrom.4/4.7.quad, quads/nystrom.4/4.8.quad, quads/nystrom.4/4.9.quad, quads/nystrom.4/4.10.quad, quads/nystrom.4/4.11.quad, quads/nystrom.4/5.0.quad, quads/nystrom.4/5.1.quad, quads/nystrom.4/5.2.quad, quads/nystrom.4/5.3.quad, quads/nystrom.4/5.4.quad, quads/nystrom.4/5.5.quad, quads/nystrom.4/5.6.quad, quads/nystrom.4/5.7.quad, quads/nystrom.4/5.8.quad, quads/nystrom.4/5.9.quad, quads/nystrom.4/5.10.quad, quads/nystrom.4/5.11.quad, quads/nystrom.4/6.0.quad, quads/nystrom.4/6.1.quad, quads/nystrom.4/6.2.quad, quads/nystrom.4/6.3.quad, quads/nystrom.4/6.4.quad, quads/nystrom.4/6.5.quad, quads/nystrom.4/6.6.quad, quads/nystrom.4/6.7.quad, quads/nystrom.4/6.8.quad, quads/nystrom.4/6.9.quad, quads/nystrom.4/6.10.quad, quads/nystrom.4/6.11.quad, quads/nystrom.4/7.0.quad, quads/nystrom.4/7.1.quad, quads/nystrom.4/7.2.quad, quads/nystrom.4/7.3.quad, quads/nystrom.4/7.4.quad, quads/nystrom.4/7.5.quad, quads/nystrom.4/7.6.quad, quads/nystrom.4/7.7.quad, quads/nystrom.4/7.8.quad, quads/nystrom.4/7.9.quad, quads/nystrom.4/7.10.quad, quads/nystrom.4/7.11.quad, quads/nystrom.4/8.0.quad, quads/nystrom.4/8.1.quad, quads/nystrom.4/8.2.quad, quads/nystrom.4/8.3.quad, quads/nystrom.4/8.4.quad, quads/nystrom.4/8.5.quad, quads/nystrom.4/8.6.quad, quads/nystrom.4/8.7.quad, quads/nystrom.4/8.8.quad, quads/nystrom.4/8.9.quad, quads/nystrom.4/8.10.quad, quads/nystrom.4/8.11.quad, quads/nystrom.4/9.0.quad, quads/nystrom.4/9.1.quad, quads/nystrom.4/9.2.quad, quads/nystrom.4/9.3.quad, quads/nystrom.4/9.4.quad, quads/nystrom.4/9.5.quad, quads/nystrom.4/9.6.quad, quads/nystrom.4/9.7.quad, quads/nystrom.4/9.8.quad, quads/nystrom.4/9.9.quad, quads/nystrom.4/9.10.quad, quads/nystrom.4/9.11.quad
+    output: output/experiment_triangle.4.tex
+    jobid: 1
+    reason: Set of input files has changed since last execution
+    wildcards: order=4
+    resources: tmpdir=/tmp/pbs.398222.hnode41
+
+[Wed Apr 24 11:03:26 2024]
+Finished job 246.
+1 of 246 steps (0.4%) done
+[Wed Apr 24 11:03:26 2024]
+Finished job 124.
+2 of 246 steps (1%) done
+Select jobs to execute...
+Execute 2 jobs...
+
+[Wed Apr 24 11:03:26 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.16/breakpoints_r, quads/nystrom.16/breakpoints_theta
+    output: quads/nystrom.16/9.8.quad
+    jobid: 363
+    reason: Missing output files: quads/nystrom.16/9.8.quad; Input files updated by another job: quads/nystrom.16/breakpoints_theta, quads/nystrom.16/breakpoints_r
+    wildcards: order=16, r0_index=9, theta0_index=8
+    resources: tmpdir=/tmp/pbs.398222.hnode41
+
+
+[Wed Apr 24 11:03:26 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.16/breakpoints_r, quads/nystrom.16/breakpoints_theta
+    output: quads/nystrom.16/2.9.quad
+    jobid: 280
+    reason: Missing output files: quads/nystrom.16/2.9.quad; Input files updated by another job: quads/nystrom.16/breakpoints_theta, quads/nystrom.16/breakpoints_r
+    wildcards: order=16, r0_index=2, theta0_index=9
+    resources: tmpdir=/tmp/pbs.398222.hnode41
+
+Select jobs to execute...
+Terminating processes on user request, this might take some time.
+[Wed Apr 24 11:03:27 2024]
+Error in rule generate_nystrom_quadrature:
+    jobid: 363
+    input: quads/nystrom.16/breakpoints_r, quads/nystrom.16/breakpoints_theta
+    output: quads/nystrom.16/9.8.quad
+    shell:
+        python3 examples/generate_nystrom_quad.py 16 9 8 quads/nystrom.16/9.8.quad
+        (one of the commands exited with non-zero exit code; note that snakemake uses bash strict mode!)
+
+[Wed Apr 24 11:03:27 2024]
+Error in rule generate_nystrom_quadrature:
+    jobid: 280
+    input: quads/nystrom.16/breakpoints_r, quads/nystrom.16/breakpoints_theta
+    output: quads/nystrom.16/2.9.quad
+    shell:
+        python3 examples/generate_nystrom_quad.py 16 2 9 quads/nystrom.16/2.9.quad
+        (one of the commands exited with non-zero exit code; note that snakemake uses bash strict mode!)
+
+[Wed Apr 24 11:03:27 2024]
+Error in rule generate_table:
+    jobid: 1
+    input: quads/nystrom.4/breakpoints_r, quads/nystrom.4/breakpoints_theta, quads/nystrom.4/0.0.quad, quads/nystrom.4/0.1.quad, quads/nystrom.4/0.2.quad, quads/nystrom.4/0.3.quad, quads/nystrom.4/0.4.quad, quads/nystrom.4/0.5.quad, quads/nystrom.4/0.6.quad, quads/nystrom.4/0.7.quad, quads/nystrom.4/0.8.quad, quads/nystrom.4/0.9.quad, quads/nystrom.4/0.10.quad, quads/nystrom.4/0.11.quad, quads/nystrom.4/1.0.quad, quads/nystrom.4/1.1.quad, quads/nystrom.4/1.2.quad, quads/nystrom.4/1.3.quad, quads/nystrom.4/1.4.quad, quads/nystrom.4/1.5.quad, quads/nystrom.4/1.6.quad, quads/nystrom.4/1.7.quad, quads/nystrom.4/1.8.quad, quads/nystrom.4/1.9.quad, quads/nystrom.4/1.10.quad, quads/nystrom.4/1.11.quad, quads/nystrom.4/2.0.quad, quads/nystrom.4/2.1.quad, quads/nystrom.4/2.2.quad, quads/nystrom.4/2.3.quad, quads/nystrom.4/2.4.quad, quads/nystrom.4/2.5.quad, quads/nystrom.4/2.6.quad, quads/nystrom.4/2.7.quad, quads/nystrom.4/2.8.quad, quads/nystrom.4/2.9.quad, quads/nystrom.4/2.10.quad, quads/nystrom.4/2.11.quad, quads/nystrom.4/3.0.quad, quads/nystrom.4/3.1.quad, quads/nystrom.4/3.2.quad, quads/nystrom.4/3.3.quad, quads/nystrom.4/3.4.quad, quads/nystrom.4/3.5.quad, quads/nystrom.4/3.6.quad, quads/nystrom.4/3.7.quad, quads/nystrom.4/3.8.quad, quads/nystrom.4/3.9.quad, quads/nystrom.4/3.10.quad, quads/nystrom.4/3.11.quad, quads/nystrom.4/4.0.quad, quads/nystrom.4/4.1.quad, quads/nystrom.4/4.2.quad, quads/nystrom.4/4.3.quad, quads/nystrom.4/4.4.quad, quads/nystrom.4/4.5.quad, quads/nystrom.4/4.6.quad, quads/nystrom.4/4.7.quad, quads/nystrom.4/4.8.quad, quads/nystrom.4/4.9.quad, quads/nystrom.4/4.10.quad, quads/nystrom.4/4.11.quad, quads/nystrom.4/5.0.quad, quads/nystrom.4/5.1.quad, quads/nystrom.4/5.2.quad, quads/nystrom.4/5.3.quad, quads/nystrom.4/5.4.quad, quads/nystrom.4/5.5.quad, quads/nystrom.4/5.6.quad, quads/nystrom.4/5.7.quad, quads/nystrom.4/5.8.quad, quads/nystrom.4/5.9.quad, quads/nystrom.4/5.10.quad, quads/nystrom.4/5.11.quad, quads/nystrom.4/6.0.quad, quads/nystrom.4/6.1.quad, quads/nystrom.4/6.2.quad, quads/nystrom.4/6.3.quad, quads/nystrom.4/6.4.quad, quads/nystrom.4/6.5.quad, quads/nystrom.4/6.6.quad, quads/nystrom.4/6.7.quad, quads/nystrom.4/6.8.quad, quads/nystrom.4/6.9.quad, quads/nystrom.4/6.10.quad, quads/nystrom.4/6.11.quad, quads/nystrom.4/7.0.quad, quads/nystrom.4/7.1.quad, quads/nystrom.4/7.2.quad, quads/nystrom.4/7.3.quad, quads/nystrom.4/7.4.quad, quads/nystrom.4/7.5.quad, quads/nystrom.4/7.6.quad, quads/nystrom.4/7.7.quad, quads/nystrom.4/7.8.quad, quads/nystrom.4/7.9.quad, quads/nystrom.4/7.10.quad, quads/nystrom.4/7.11.quad, quads/nystrom.4/8.0.quad, quads/nystrom.4/8.1.quad, quads/nystrom.4/8.2.quad, quads/nystrom.4/8.3.quad, quads/nystrom.4/8.4.quad, quads/nystrom.4/8.5.quad, quads/nystrom.4/8.6.quad, quads/nystrom.4/8.7.quad, quads/nystrom.4/8.8.quad, quads/nystrom.4/8.9.quad, quads/nystrom.4/8.10.quad, quads/nystrom.4/8.11.quad, quads/nystrom.4/9.0.quad, quads/nystrom.4/9.1.quad, quads/nystrom.4/9.2.quad, quads/nystrom.4/9.3.quad, quads/nystrom.4/9.4.quad, quads/nystrom.4/9.5.quad, quads/nystrom.4/9.6.quad, quads/nystrom.4/9.7.quad, quads/nystrom.4/9.8.quad, quads/nystrom.4/9.9.quad, quads/nystrom.4/9.10.quad, quads/nystrom.4/9.11.quad
+    output: output/experiment_triangle.4.tex
+    shell:
+        python3 examples/experiment_triangle.py 4 > output/experiment_triangle.4.tex
+        (one of the commands exited with non-zero exit code; note that snakemake uses bash strict mode!)
+
+Complete log: .snakemake/log/2024-04-24T110323.142189.snakemake.log
+WorkflowError:
+At least one job did not complete successfully.

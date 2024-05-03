@@ -1,0 +1,1114 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 4
+Rules claiming more threads will be scaled down.
+Job stats:
+job                            count
+---------------------------  -------
+experiment_droplet                 1
+gen8                               1
+generate_nystrom_quadrature       72
+total                             74
+
+Select jobs to execute...
+Execute 4 jobs...
+
+[Thu May  2 15:34:49 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/3.6.quad
+    jobid: 45
+    reason: Missing output files: quads/nystrom.8/3.6.quad
+    wildcards: order=8, r0_index=3, theta0_index=6
+    resources: tmpdir=/tmp
+
+
+[Thu May  2 15:34:49 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/2.3.quad
+    jobid: 30
+    reason: Missing output files: quads/nystrom.8/2.3.quad
+    wildcards: order=8, r0_index=2, theta0_index=3
+    resources: tmpdir=/tmp
+
+
+[Thu May  2 15:34:49 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/8.4.quad
+    jobid: 103
+    reason: Missing output files: quads/nystrom.8/8.4.quad
+    wildcards: order=8, r0_index=8, theta0_index=4
+    resources: tmpdir=/tmp
+
+
+[Thu May  2 15:34:49 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/1.0.quad
+    jobid: 15
+    reason: Missing output files: quads/nystrom.8/1.0.quad
+    wildcards: order=8, r0_index=1, theta0_index=0
+    resources: tmpdir=/tmp
+
+[Thu May  2 15:34:59 2024]
+Finished job 103.
+1 of 74 steps (1%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 15:34:59 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/5.0.quad
+    jobid: 63
+    reason: Missing output files: quads/nystrom.8/5.0.quad
+    wildcards: order=8, r0_index=5, theta0_index=0
+    resources: tmpdir=/tmp
+
+[Thu May  2 15:35:07 2024]
+Finished job 63.
+2 of 74 steps (3%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 15:35:07 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/6.3.quad
+    jobid: 78
+    reason: Missing output files: quads/nystrom.8/6.3.quad
+    wildcards: order=8, r0_index=6, theta0_index=3
+    resources: tmpdir=/tmp
+
+[Thu May  2 15:35:17 2024]
+Finished job 78.
+3 of 74 steps (4%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 15:35:17 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/3.11.quad
+    jobid: 50
+    reason: Missing output files: quads/nystrom.8/3.11.quad
+    wildcards: order=8, r0_index=3, theta0_index=11
+    resources: tmpdir=/tmp
+
+[Thu May  2 15:36:27 2024]
+Finished job 15.
+4 of 74 steps (5%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 15:36:27 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/5.2.quad
+    jobid: 65
+    reason: Missing output files: quads/nystrom.8/5.2.quad
+    wildcards: order=8, r0_index=5, theta0_index=2
+    resources: tmpdir=/tmp
+
+[Thu May  2 15:36:38 2024]
+Finished job 65.
+5 of 74 steps (7%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 15:36:38 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/3.3.quad
+    jobid: 42
+    reason: Missing output files: quads/nystrom.8/3.3.quad
+    wildcards: order=8, r0_index=3, theta0_index=3
+    resources: tmpdir=/tmp
+
+[Thu May  2 15:37:11 2024]
+Finished job 30.
+6 of 74 steps (8%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 15:37:11 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/7.8.quad
+    jobid: 95
+    reason: Missing output files: quads/nystrom.8/7.8.quad
+    wildcards: order=8, r0_index=7, theta0_index=8
+    resources: tmpdir=/tmp
+
+[Thu May  2 15:37:13 2024]
+Finished job 45.
+7 of 74 steps (9%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 15:37:13 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/2.0.quad
+    jobid: 27
+    reason: Missing output files: quads/nystrom.8/2.0.quad
+    wildcards: order=8, r0_index=2, theta0_index=0
+    resources: tmpdir=/tmp
+
+[Thu May  2 15:38:20 2024]
+Finished job 42.
+8 of 74 steps (11%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 15:38:20 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/2.6.quad
+    jobid: 33
+    reason: Missing output files: quads/nystrom.8/2.6.quad
+    wildcards: order=8, r0_index=2, theta0_index=6
+    resources: tmpdir=/tmp
+
+[Thu May  2 15:38:26 2024]
+Finished job 27.
+9 of 74 steps (12%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 15:38:26 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/0.9.quad
+    jobid: 12
+    reason: Missing output files: quads/nystrom.8/0.9.quad
+    wildcards: order=8, r0_index=0, theta0_index=9
+    resources: tmpdir=/tmp
+
+[Thu May  2 15:38:29 2024]
+Finished job 95.
+10 of 74 steps (14%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 15:38:29 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/5.8.quad
+    jobid: 71
+    reason: Missing output files: quads/nystrom.8/5.8.quad
+    wildcards: order=8, r0_index=5, theta0_index=8
+    resources: tmpdir=/tmp
+
+[Thu May  2 15:39:54 2024]
+Finished job 71.
+11 of 74 steps (15%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 15:39:54 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/8.10.quad
+    jobid: 109
+    reason: Missing output files: quads/nystrom.8/8.10.quad
+    wildcards: order=8, r0_index=8, theta0_index=10
+    resources: tmpdir=/tmp
+
+[Thu May  2 15:41:34 2024]
+Finished job 33.
+12 of 74 steps (16%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 15:41:34 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/1.3.quad
+    jobid: 18
+    reason: Missing output files: quads/nystrom.8/1.3.quad
+    wildcards: order=8, r0_index=1, theta0_index=3
+    resources: tmpdir=/tmp
+
+[Thu May  2 15:44:59 2024]
+Finished job 18.
+13 of 74 steps (18%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 15:44:59 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/7.7.quad
+    jobid: 94
+    reason: Missing output files: quads/nystrom.8/7.7.quad
+    wildcards: order=8, r0_index=7, theta0_index=7
+    resources: tmpdir=/tmp
+
+[Thu May  2 15:45:31 2024]
+Finished job 94.
+14 of 74 steps (19%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 15:45:31 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/0.11.quad
+    jobid: 14
+    reason: Missing output files: quads/nystrom.8/0.11.quad
+    wildcards: order=8, r0_index=0, theta0_index=11
+    resources: tmpdir=/tmp
+
+[Thu May  2 15:53:19 2024]
+Finished job 12.
+15 of 74 steps (20%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 15:53:19 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/6.4.quad
+    jobid: 79
+    reason: Missing output files: quads/nystrom.8/6.4.quad
+    wildcards: order=8, r0_index=6, theta0_index=4
+    resources: tmpdir=/tmp
+
+[Thu May  2 15:53:31 2024]
+Finished job 79.
+16 of 74 steps (22%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 15:53:31 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/2.2.quad
+    jobid: 29
+    reason: Missing output files: quads/nystrom.8/2.2.quad
+    wildcards: order=8, r0_index=2, theta0_index=2
+    resources: tmpdir=/tmp
+
+[Thu May  2 15:55:45 2024]
+Finished job 29.
+17 of 74 steps (23%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 15:55:46 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/5.1.quad
+    jobid: 64
+    reason: Missing output files: quads/nystrom.8/5.1.quad
+    wildcards: order=8, r0_index=5, theta0_index=1
+    resources: tmpdir=/tmp
+
+[Thu May  2 15:55:55 2024]
+Finished job 64.
+18 of 74 steps (24%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 15:55:55 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/3.5.quad
+    jobid: 44
+    reason: Missing output files: quads/nystrom.8/3.5.quad
+    wildcards: order=8, r0_index=3, theta0_index=5
+    resources: tmpdir=/tmp
+
+[Thu May  2 15:58:08 2024]
+Finished job 44.
+19 of 74 steps (26%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 15:58:08 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/3.10.quad
+    jobid: 49
+    reason: Missing output files: quads/nystrom.8/3.10.quad
+    wildcards: order=8, r0_index=3, theta0_index=10
+    resources: tmpdir=/tmp
+
+[Thu May  2 16:03:53 2024]
+Finished job 14.
+20 of 74 steps (27%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 16:03:53 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/4.1.quad
+    jobid: 52
+    reason: Missing output files: quads/nystrom.8/4.1.quad
+    wildcards: order=8, r0_index=4, theta0_index=1
+    resources: tmpdir=/tmp
+
+[Thu May  2 16:04:34 2024]
+Finished job 52.
+21 of 74 steps (28%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 16:04:34 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/1.5.quad
+    jobid: 20
+    reason: Missing output files: quads/nystrom.8/1.5.quad
+    wildcards: order=8, r0_index=1, theta0_index=5
+    resources: tmpdir=/tmp
+
+[Thu May  2 16:04:39 2024]
+Finished job 50.
+22 of 74 steps (30%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 16:04:39 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/5.10.quad
+    jobid: 73
+    reason: Missing output files: quads/nystrom.8/5.10.quad
+    wildcards: order=8, r0_index=5, theta0_index=10
+    resources: tmpdir=/tmp
+
+[Thu May  2 16:08:31 2024]
+Finished job 20.
+23 of 74 steps (31%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 16:08:31 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/6.7.quad
+    jobid: 82
+    reason: Missing output files: quads/nystrom.8/6.7.quad
+    wildcards: order=8, r0_index=6, theta0_index=7
+    resources: tmpdir=/tmp
+
+[Thu May  2 16:09:32 2024]
+Finished job 82.
+24 of 74 steps (32%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 16:09:32 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/7.10.quad
+    jobid: 97
+    reason: Missing output files: quads/nystrom.8/7.10.quad
+    wildcards: order=8, r0_index=7, theta0_index=10
+    resources: tmpdir=/tmp
+
+[Thu May  2 16:20:46 2024]
+Finished job 109.
+25 of 74 steps (34%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 16:20:46 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/5.4.quad
+    jobid: 67
+    reason: Missing output files: quads/nystrom.8/5.4.quad
+    wildcards: order=8, r0_index=5, theta0_index=4
+    resources: tmpdir=/tmp
+
+[Thu May  2 16:21:10 2024]
+Finished job 67.
+26 of 74 steps (35%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 16:21:10 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/9.1.quad
+    jobid: 112
+    reason: Missing output files: quads/nystrom.8/9.1.quad
+    wildcards: order=8, r0_index=9, theta0_index=1
+    resources: tmpdir=/tmp
+
+[Thu May  2 16:21:18 2024]
+Finished job 112.
+27 of 74 steps (36%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 16:21:18 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/3.2.quad
+    jobid: 41
+    reason: Missing output files: quads/nystrom.8/3.2.quad
+    wildcards: order=8, r0_index=3, theta0_index=2
+    resources: tmpdir=/tmp
+
+[Thu May  2 16:22:46 2024]
+Finished job 41.
+28 of 74 steps (38%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 16:22:46 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/4.2.quad
+    jobid: 53
+    reason: Missing output files: quads/nystrom.8/4.2.quad
+    wildcards: order=8, r0_index=4, theta0_index=2
+    resources: tmpdir=/tmp
+
+[Thu May  2 16:23:41 2024]
+Finished job 53.
+29 of 74 steps (39%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 16:23:41 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/0.8.quad
+    jobid: 11
+    reason: Missing output files: quads/nystrom.8/0.8.quad
+    wildcards: order=8, r0_index=0, theta0_index=8
+    resources: tmpdir=/tmp
+
+[Thu May  2 16:24:31 2024]
+Finished job 49.
+30 of 74 steps (41%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 16:24:31 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/5.5.quad
+    jobid: 68
+    reason: Missing output files: quads/nystrom.8/5.5.quad
+    wildcards: order=8, r0_index=5, theta0_index=5
+    resources: tmpdir=/tmp
+
+[Thu May  2 16:25:04 2024]
+Finished job 68.
+31 of 74 steps (42%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 16:25:05 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/1.11.quad
+    jobid: 26
+    reason: Missing output files: quads/nystrom.8/1.11.quad
+    wildcards: order=8, r0_index=1, theta0_index=11
+    resources: tmpdir=/tmp
+
+[Thu May  2 16:25:17 2024]
+Finished job 73.
+32 of 74 steps (43%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 16:25:17 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/6.8.quad
+    jobid: 83
+    reason: Missing output files: quads/nystrom.8/6.8.quad
+    wildcards: order=8, r0_index=6, theta0_index=8
+    resources: tmpdir=/tmp
+
+[Thu May  2 16:26:22 2024]
+Finished job 83.
+33 of 74 steps (45%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 16:26:22 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/8.9.quad
+    jobid: 108
+    reason: Missing output files: quads/nystrom.8/8.9.quad
+    wildcards: order=8, r0_index=8, theta0_index=9
+    resources: tmpdir=/tmp
+
+[Thu May  2 16:29:00 2024]
+Finished job 11.
+34 of 74 steps (46%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 16:29:00 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/7.11.quad
+    jobid: 98
+    reason: Missing output files: quads/nystrom.8/7.11.quad
+    wildcards: order=8, r0_index=7, theta0_index=11
+    resources: tmpdir=/tmp
+
+[Thu May  2 16:36:04 2024]
+Finished job 108.
+35 of 74 steps (47%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 16:36:04 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/7.6.quad
+    jobid: 93
+    reason: Missing output files: quads/nystrom.8/7.6.quad
+    wildcards: order=8, r0_index=7, theta0_index=6
+    resources: tmpdir=/tmp
+
+[Thu May  2 16:36:29 2024]
+Finished job 93.
+36 of 74 steps (49%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 16:36:29 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/9.2.quad
+    jobid: 113
+    reason: Missing output files: quads/nystrom.8/9.2.quad
+    wildcards: order=8, r0_index=9, theta0_index=2
+    resources: tmpdir=/tmp
+
+[Thu May  2 16:36:38 2024]
+Finished job 113.
+37 of 74 steps (50%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 16:36:38 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/1.4.quad
+    jobid: 19
+    reason: Missing output files: quads/nystrom.8/1.4.quad
+    wildcards: order=8, r0_index=1, theta0_index=4
+    resources: tmpdir=/tmp
+
+[Thu May  2 16:40:08 2024]
+Finished job 19.
+38 of 74 steps (51%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 16:40:08 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/0.1.quad
+    jobid: 4
+    reason: Missing output files: quads/nystrom.8/0.1.quad
+    wildcards: order=8, r0_index=0, theta0_index=1
+    resources: tmpdir=/tmp
+
+[Thu May  2 16:42:42 2024]
+Finished job 4.
+39 of 74 steps (53%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 16:42:42 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/0.0.quad
+    jobid: 3
+    reason: Missing output files: quads/nystrom.8/0.0.quad
+    wildcards: order=8, r0_index=0, theta0_index=0
+    resources: tmpdir=/tmp
+
+[Thu May  2 16:42:49 2024]
+Finished job 97.
+40 of 74 steps (54%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 16:42:49 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/0.4.quad
+    jobid: 7
+    reason: Missing output files: quads/nystrom.8/0.4.quad
+    wildcards: order=8, r0_index=0, theta0_index=4
+    resources: tmpdir=/tmp
+
+[Thu May  2 16:44:23 2024]
+Finished job 26.
+41 of 74 steps (55%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 16:44:23 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/1.7.quad
+    jobid: 22
+    reason: Missing output files: quads/nystrom.8/1.7.quad
+    wildcards: order=8, r0_index=1, theta0_index=7
+    resources: tmpdir=/tmp
+
+[Thu May  2 16:44:40 2024]
+Finished job 3.
+42 of 74 steps (57%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 16:44:40 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/2.10.quad
+    jobid: 37
+    reason: Missing output files: quads/nystrom.8/2.10.quad
+    wildcards: order=8, r0_index=2, theta0_index=10
+    resources: tmpdir=/tmp
+
+[Thu May  2 16:47:13 2024]
+Finished job 7.
+43 of 74 steps (58%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 16:47:13 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/4.9.quad
+    jobid: 60
+    reason: Missing output files: quads/nystrom.8/4.9.quad
+    wildcards: order=8, r0_index=4, theta0_index=9
+    resources: tmpdir=/tmp
+
+[Thu May  2 16:48:32 2024]
+Finished job 22.
+44 of 74 steps (59%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 16:48:32 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/6.0.quad
+    jobid: 75
+    reason: Missing output files: quads/nystrom.8/6.0.quad
+    wildcards: order=8, r0_index=6, theta0_index=0
+    resources: tmpdir=/tmp
+
+[Thu May  2 16:48:41 2024]
+Finished job 75.
+45 of 74 steps (61%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 16:48:41 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/8.6.quad
+    jobid: 105
+    reason: Missing output files: quads/nystrom.8/8.6.quad
+    wildcards: order=8, r0_index=8, theta0_index=6
+    resources: tmpdir=/tmp
+
+[Thu May  2 16:48:55 2024]
+Finished job 105.
+46 of 74 steps (62%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 16:48:55 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/9.9.quad
+    jobid: 120
+    reason: Missing output files: quads/nystrom.8/9.9.quad
+    wildcards: order=8, r0_index=9, theta0_index=9
+    resources: tmpdir=/tmp
+
+[Thu May  2 16:56:15 2024]
+Finished job 120.
+47 of 74 steps (64%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 16:56:16 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/7.3.quad
+    jobid: 90
+    reason: Missing output files: quads/nystrom.8/7.3.quad
+    wildcards: order=8, r0_index=7, theta0_index=3
+    resources: tmpdir=/tmp
+
+[Thu May  2 16:56:26 2024]
+Finished job 90.
+48 of 74 steps (65%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 16:56:26 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/0.5.quad
+    jobid: 8
+    reason: Missing output files: quads/nystrom.8/0.5.quad
+    wildcards: order=8, r0_index=0, theta0_index=5
+    resources: tmpdir=/tmp
+
+[Thu May  2 17:00:53 2024]
+Finished job 8.
+49 of 74 steps (66%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 17:00:53 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/7.4.quad
+    jobid: 91
+    reason: Missing output files: quads/nystrom.8/7.4.quad
+    wildcards: order=8, r0_index=7, theta0_index=4
+    resources: tmpdir=/tmp
+
+[Thu May  2 17:01:07 2024]
+Finished job 91.
+50 of 74 steps (68%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 17:01:07 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/8.7.quad
+    jobid: 106
+    reason: Missing output files: quads/nystrom.8/8.7.quad
+    wildcards: order=8, r0_index=8, theta0_index=7
+    resources: tmpdir=/tmp
+
+[Thu May  2 17:01:37 2024]
+Finished job 106.
+51 of 74 steps (69%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 17:01:37 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/9.10.quad
+    jobid: 121
+    reason: Missing output files: quads/nystrom.8/9.10.quad
+    wildcards: order=8, r0_index=9, theta0_index=10
+    resources: tmpdir=/tmp
+
+[Thu May  2 17:04:18 2024]
+Finished job 60.
+52 of 74 steps (70%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 17:04:18 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/2.11.quad
+    jobid: 38
+    reason: Missing output files: quads/nystrom.8/2.11.quad
+    wildcards: order=8, r0_index=2, theta0_index=11
+    resources: tmpdir=/tmp
+
+[Thu May  2 17:08:59 2024]
+Finished job 37.
+53 of 74 steps (72%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 17:08:59 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/4.10.quad
+    jobid: 61
+    reason: Missing output files: quads/nystrom.8/4.10.quad
+    wildcards: order=8, r0_index=4, theta0_index=10
+    resources: tmpdir=/tmp
+
+[Thu May  2 17:23:03 2024]
+Finished job 38.
+54 of 74 steps (73%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 17:23:03 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/9.5.quad
+    jobid: 116
+    reason: Missing output files: quads/nystrom.8/9.5.quad
+    wildcards: order=8, r0_index=9, theta0_index=5
+    resources: tmpdir=/tmp
+
+[Thu May  2 17:23:13 2024]
+Finished job 116.
+55 of 74 steps (74%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 17:23:13 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/6.11.quad
+    jobid: 86
+    reason: Missing output files: quads/nystrom.8/6.11.quad
+    wildcards: order=8, r0_index=6, theta0_index=11
+    resources: tmpdir=/tmp
+
+[Thu May  2 17:33:01 2024]
+Finished job 121.
+56 of 74 steps (76%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 17:33:01 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/8.2.quad
+    jobid: 101
+    reason: Missing output files: quads/nystrom.8/8.2.quad
+    wildcards: order=8, r0_index=8, theta0_index=2
+    resources: tmpdir=/tmp
+
+[Thu May  2 17:33:09 2024]
+Finished job 101.
+57 of 74 steps (77%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 17:33:09 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/5.7.quad
+    jobid: 70
+    reason: Missing output files: quads/nystrom.8/5.7.quad
+    wildcards: order=8, r0_index=5, theta0_index=7
+    resources: tmpdir=/tmp
+
+[Thu May  2 17:33:18 2024]
+Finished job 98.
+58 of 74 steps (78%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 17:33:18 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/6.10.quad
+    jobid: 85
+    reason: Missing output files: quads/nystrom.8/6.10.quad
+    wildcards: order=8, r0_index=6, theta0_index=10
+    resources: tmpdir=/tmp
+
+[Thu May  2 17:34:06 2024]
+Finished job 70.
+59 of 74 steps (80%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 17:34:06 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/4.5.quad
+    jobid: 56
+    reason: Missing output files: quads/nystrom.8/4.5.quad
+    wildcards: order=8, r0_index=4, theta0_index=5
+    resources: tmpdir=/tmp
+
+[Thu May  2 17:35:25 2024]
+Finished job 56.
+60 of 74 steps (81%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 17:35:25 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/3.0.quad
+    jobid: 39
+    reason: Missing output files: quads/nystrom.8/3.0.quad
+    wildcards: order=8, r0_index=3, theta0_index=0
+    resources: tmpdir=/tmp
+
+[Thu May  2 17:36:17 2024]
+Finished job 39.
+61 of 74 steps (82%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 17:36:17 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/1.9.quad
+    jobid: 24
+    reason: Missing output files: quads/nystrom.8/1.9.quad
+    wildcards: order=8, r0_index=1, theta0_index=9
+    resources: tmpdir=/tmp
+
+[Thu May  2 17:38:22 2024]
+Finished job 61.
+62 of 74 steps (84%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 17:38:22 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/0.6.quad
+    jobid: 9
+    reason: Missing output files: quads/nystrom.8/0.6.quad
+    wildcards: order=8, r0_index=0, theta0_index=6
+    resources: tmpdir=/tmp
+
+[Thu May  2 17:43:04 2024]
+Finished job 9.
+63 of 74 steps (85%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 17:43:04 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/9.3.quad
+    jobid: 114
+    reason: Missing output files: quads/nystrom.8/9.3.quad
+    wildcards: order=8, r0_index=9, theta0_index=3
+    resources: tmpdir=/tmp
+
+[Thu May  2 17:43:12 2024]
+Finished job 114.
+64 of 74 steps (86%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 17:43:12 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/1.1.quad
+    jobid: 16
+    reason: Missing output files: quads/nystrom.8/1.1.quad
+    wildcards: order=8, r0_index=1, theta0_index=1
+    resources: tmpdir=/tmp
+
+[Thu May  2 17:45:24 2024]
+Finished job 16.
+65 of 74 steps (88%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 17:45:24 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/6.1.quad
+    jobid: 76
+    reason: Missing output files: quads/nystrom.8/6.1.quad
+    wildcards: order=8, r0_index=6, theta0_index=1
+    resources: tmpdir=/tmp
+
+[Thu May  2 17:45:33 2024]
+Finished job 76.
+66 of 74 steps (89%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 17:45:33 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/3.7.quad
+    jobid: 46
+    reason: Missing output files: quads/nystrom.8/3.7.quad
+    wildcards: order=8, r0_index=3, theta0_index=7
+    resources: tmpdir=/tmp
+
+[Thu May  2 17:47:46 2024]
+Finished job 24.
+67 of 74 steps (91%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 17:47:46 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/6.9.quad
+    jobid: 84
+    reason: Missing output files: quads/nystrom.8/6.9.quad
+    wildcards: order=8, r0_index=6, theta0_index=9
+    resources: tmpdir=/tmp
+
+[Thu May  2 17:48:10 2024]
+Finished job 46.
+68 of 74 steps (92%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 17:48:10 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/5.9.quad
+    jobid: 72
+    reason: Missing output files: quads/nystrom.8/5.9.quad
+    wildcards: order=8, r0_index=5, theta0_index=9
+    resources: tmpdir=/tmp
+
+[Thu May  2 17:58:01 2024]
+Finished job 72.
+69 of 74 steps (93%) done
+[Thu May  2 18:04:37 2024]
+Finished job 84.
+70 of 74 steps (95%) done
+[Thu May  2 18:05:08 2024]
+Finished job 85.
+71 of 74 steps (96%) done
+[Thu May  2 18:17:49 2024]
+Finished job 86.
+72 of 74 steps (97%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu May  2 18:17:49 2024]
+localrule experiment_droplet:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta, quads/nystrom.8/0.0.quad, quads/nystrom.8/0.1.quad, quads/nystrom.8/0.2.quad, quads/nystrom.8/0.3.quad, quads/nystrom.8/0.4.quad, quads/nystrom.8/0.5.quad, quads/nystrom.8/0.6.quad, quads/nystrom.8/0.7.quad, quads/nystrom.8/0.8.quad, quads/nystrom.8/0.9.quad, quads/nystrom.8/0.10.quad, quads/nystrom.8/0.11.quad, quads/nystrom.8/1.0.quad, quads/nystrom.8/1.1.quad, quads/nystrom.8/1.2.quad, quads/nystrom.8/1.3.quad, quads/nystrom.8/1.4.quad, quads/nystrom.8/1.5.quad, quads/nystrom.8/1.6.quad, quads/nystrom.8/1.7.quad, quads/nystrom.8/1.8.quad, quads/nystrom.8/1.9.quad, quads/nystrom.8/1.10.quad, quads/nystrom.8/1.11.quad, quads/nystrom.8/2.0.quad, quads/nystrom.8/2.1.quad, quads/nystrom.8/2.2.quad, quads/nystrom.8/2.3.quad, quads/nystrom.8/2.4.quad, quads/nystrom.8/2.5.quad, quads/nystrom.8/2.6.quad, quads/nystrom.8/2.7.quad, quads/nystrom.8/2.8.quad, quads/nystrom.8/2.9.quad, quads/nystrom.8/2.10.quad, quads/nystrom.8/2.11.quad, quads/nystrom.8/3.0.quad, quads/nystrom.8/3.1.quad, quads/nystrom.8/3.2.quad, quads/nystrom.8/3.3.quad, quads/nystrom.8/3.4.quad, quads/nystrom.8/3.5.quad, quads/nystrom.8/3.6.quad, quads/nystrom.8/3.7.quad, quads/nystrom.8/3.8.quad, quads/nystrom.8/3.9.quad, quads/nystrom.8/3.10.quad, quads/nystrom.8/3.11.quad, quads/nystrom.8/4.0.quad, quads/nystrom.8/4.1.quad, quads/nystrom.8/4.2.quad, quads/nystrom.8/4.3.quad, quads/nystrom.8/4.4.quad, quads/nystrom.8/4.5.quad, quads/nystrom.8/4.6.quad, quads/nystrom.8/4.7.quad, quads/nystrom.8/4.8.quad, quads/nystrom.8/4.9.quad, quads/nystrom.8/4.10.quad, quads/nystrom.8/4.11.quad, quads/nystrom.8/5.0.quad, quads/nystrom.8/5.1.quad, quads/nystrom.8/5.2.quad, quads/nystrom.8/5.3.quad, quads/nystrom.8/5.4.quad, quads/nystrom.8/5.5.quad, quads/nystrom.8/5.6.quad, quads/nystrom.8/5.7.quad, quads/nystrom.8/5.8.quad, quads/nystrom.8/5.9.quad, quads/nystrom.8/5.10.quad, quads/nystrom.8/5.11.quad, quads/nystrom.8/6.0.quad, quads/nystrom.8/6.1.quad, quads/nystrom.8/6.2.quad, quads/nystrom.8/6.3.quad, quads/nystrom.8/6.4.quad, quads/nystrom.8/6.5.quad, quads/nystrom.8/6.6.quad, quads/nystrom.8/6.7.quad, quads/nystrom.8/6.8.quad, quads/nystrom.8/6.9.quad, quads/nystrom.8/6.10.quad, quads/nystrom.8/6.11.quad, quads/nystrom.8/7.0.quad, quads/nystrom.8/7.1.quad, quads/nystrom.8/7.2.quad, quads/nystrom.8/7.3.quad, quads/nystrom.8/7.4.quad, quads/nystrom.8/7.5.quad, quads/nystrom.8/7.6.quad, quads/nystrom.8/7.7.quad, quads/nystrom.8/7.8.quad, quads/nystrom.8/7.9.quad, quads/nystrom.8/7.10.quad, quads/nystrom.8/7.11.quad, quads/nystrom.8/8.0.quad, quads/nystrom.8/8.1.quad, quads/nystrom.8/8.2.quad, quads/nystrom.8/8.3.quad, quads/nystrom.8/8.4.quad, quads/nystrom.8/8.5.quad, quads/nystrom.8/8.6.quad, quads/nystrom.8/8.7.quad, quads/nystrom.8/8.8.quad, quads/nystrom.8/8.9.quad, quads/nystrom.8/8.10.quad, quads/nystrom.8/8.11.quad, quads/nystrom.8/9.0.quad, quads/nystrom.8/9.1.quad, quads/nystrom.8/9.2.quad, quads/nystrom.8/9.3.quad, quads/nystrom.8/9.4.quad, quads/nystrom.8/9.5.quad, quads/nystrom.8/9.6.quad, quads/nystrom.8/9.7.quad, quads/nystrom.8/9.8.quad, quads/nystrom.8/9.9.quad, quads/nystrom.8/9.10.quad, quads/nystrom.8/9.11.quad
+    output: output/experiment_droplet.8.1.tex
+    jobid: 1
+    reason: Missing output files: output/experiment_droplet.8.1.tex; Input files updated by another job: quads/nystrom.8/9.9.quad, quads/nystrom.8/1.9.quad, quads/nystrom.8/9.2.quad, quads/nystrom.8/2.10.quad, quads/nystrom.8/5.0.quad, quads/nystrom.8/7.6.quad, quads/nystrom.8/0.11.quad, quads/nystrom.8/6.3.quad, quads/nystrom.8/0.4.quad, quads/nystrom.8/7.11.quad, quads/nystrom.8/8.10.quad, quads/nystrom.8/1.1.quad, quads/nystrom.8/0.0.quad, quads/nystrom.8/7.4.quad, quads/nystrom.8/5.8.quad, quads/nystrom.8/1.5.quad, quads/nystrom.8/1.11.quad, quads/nystrom.8/1.3.quad, quads/nystrom.8/3.10.quad, quads/nystrom.8/9.10.quad, quads/nystrom.8/5.4.quad, quads/nystrom.8/5.1.quad, quads/nystrom.8/5.5.quad, quads/nystrom.8/6.0.quad, quads/nystrom.8/1.4.quad, quads/nystrom.8/4.2.quad, quads/nystrom.8/4.9.quad, quads/nystrom.8/9.1.quad, quads/nystrom.8/6.11.quad, quads/nystrom.8/4.1.quad, quads/nystrom.8/3.6.quad, quads/nystrom.8/0.1.quad, quads/nystrom.8/2.6.quad, quads/nystrom.8/4.5.quad, quads/nystrom.8/2.3.quad, quads/nystrom.8/3.0.quad, quads/nystrom.8/5.7.quad, quads/nystrom.8/5.10.quad, quads/nystrom.8/1.7.quad, quads/nystrom.8/5.9.quad, quads/nystrom.8/6.7.quad, quads/nystrom.8/2.0.quad, quads/nystrom.8/7.3.quad, quads/nystrom.8/7.8.quad, quads/nystrom.8/0.5.quad, quads/nystrom.8/2.2.quad, quads/nystrom.8/8.9.quad, quads/nystrom.8/6.10.quad, quads/nystrom.8/0.6.quad, quads/nystrom.8/3.7.quad, quads/nystrom.8/6.1.quad, quads/nystrom.8/8.6.quad, quads/nystrom.8/2.11.quad, quads/nystrom.8/6.8.quad, quads/nystrom.8/1.0.quad, quads/nystrom.8/5.2.quad, quads/nystrom.8/9.5.quad, quads/nystrom.8/8.4.quad, quads/nystrom.8/0.8.quad, quads/nystrom.8/8.7.quad, quads/nystrom.8/7.7.quad, quads/nystrom.8/4.10.quad, quads/nystrom.8/9.3.quad, quads/nystrom.8/3.3.quad, quads/nystrom.8/6.4.quad, quads/nystrom.8/7.10.quad, quads/nystrom.8/6.9.quad, quads/nystrom.8/3.11.quad, quads/nystrom.8/3.2.quad, quads/nystrom.8/0.9.quad, quads/nystrom.8/8.2.quad, quads/nystrom.8/3.5.quad
+    wildcards: order=8, wavenumber=1
+    resources: tmpdir=/tmp
+
+[Thu May  2 18:18:00 2024]
+Error in rule experiment_droplet:
+    jobid: 1
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta, quads/nystrom.8/0.0.quad, quads/nystrom.8/0.1.quad, quads/nystrom.8/0.2.quad, quads/nystrom.8/0.3.quad, quads/nystrom.8/0.4.quad, quads/nystrom.8/0.5.quad, quads/nystrom.8/0.6.quad, quads/nystrom.8/0.7.quad, quads/nystrom.8/0.8.quad, quads/nystrom.8/0.9.quad, quads/nystrom.8/0.10.quad, quads/nystrom.8/0.11.quad, quads/nystrom.8/1.0.quad, quads/nystrom.8/1.1.quad, quads/nystrom.8/1.2.quad, quads/nystrom.8/1.3.quad, quads/nystrom.8/1.4.quad, quads/nystrom.8/1.5.quad, quads/nystrom.8/1.6.quad, quads/nystrom.8/1.7.quad, quads/nystrom.8/1.8.quad, quads/nystrom.8/1.9.quad, quads/nystrom.8/1.10.quad, quads/nystrom.8/1.11.quad, quads/nystrom.8/2.0.quad, quads/nystrom.8/2.1.quad, quads/nystrom.8/2.2.quad, quads/nystrom.8/2.3.quad, quads/nystrom.8/2.4.quad, quads/nystrom.8/2.5.quad, quads/nystrom.8/2.6.quad, quads/nystrom.8/2.7.quad, quads/nystrom.8/2.8.quad, quads/nystrom.8/2.9.quad, quads/nystrom.8/2.10.quad, quads/nystrom.8/2.11.quad, quads/nystrom.8/3.0.quad, quads/nystrom.8/3.1.quad, quads/nystrom.8/3.2.quad, quads/nystrom.8/3.3.quad, quads/nystrom.8/3.4.quad, quads/nystrom.8/3.5.quad, quads/nystrom.8/3.6.quad, quads/nystrom.8/3.7.quad, quads/nystrom.8/3.8.quad, quads/nystrom.8/3.9.quad, quads/nystrom.8/3.10.quad, quads/nystrom.8/3.11.quad, quads/nystrom.8/4.0.quad, quads/nystrom.8/4.1.quad, quads/nystrom.8/4.2.quad, quads/nystrom.8/4.3.quad, quads/nystrom.8/4.4.quad, quads/nystrom.8/4.5.quad, quads/nystrom.8/4.6.quad, quads/nystrom.8/4.7.quad, quads/nystrom.8/4.8.quad, quads/nystrom.8/4.9.quad, quads/nystrom.8/4.10.quad, quads/nystrom.8/4.11.quad, quads/nystrom.8/5.0.quad, quads/nystrom.8/5.1.quad, quads/nystrom.8/5.2.quad, quads/nystrom.8/5.3.quad, quads/nystrom.8/5.4.quad, quads/nystrom.8/5.5.quad, quads/nystrom.8/5.6.quad, quads/nystrom.8/5.7.quad, quads/nystrom.8/5.8.quad, quads/nystrom.8/5.9.quad, quads/nystrom.8/5.10.quad, quads/nystrom.8/5.11.quad, quads/nystrom.8/6.0.quad, quads/nystrom.8/6.1.quad, quads/nystrom.8/6.2.quad, quads/nystrom.8/6.3.quad, quads/nystrom.8/6.4.quad, quads/nystrom.8/6.5.quad, quads/nystrom.8/6.6.quad, quads/nystrom.8/6.7.quad, quads/nystrom.8/6.8.quad, quads/nystrom.8/6.9.quad, quads/nystrom.8/6.10.quad, quads/nystrom.8/6.11.quad, quads/nystrom.8/7.0.quad, quads/nystrom.8/7.1.quad, quads/nystrom.8/7.2.quad, quads/nystrom.8/7.3.quad, quads/nystrom.8/7.4.quad, quads/nystrom.8/7.5.quad, quads/nystrom.8/7.6.quad, quads/nystrom.8/7.7.quad, quads/nystrom.8/7.8.quad, quads/nystrom.8/7.9.quad, quads/nystrom.8/7.10.quad, quads/nystrom.8/7.11.quad, quads/nystrom.8/8.0.quad, quads/nystrom.8/8.1.quad, quads/nystrom.8/8.2.quad, quads/nystrom.8/8.3.quad, quads/nystrom.8/8.4.quad, quads/nystrom.8/8.5.quad, quads/nystrom.8/8.6.quad, quads/nystrom.8/8.7.quad, quads/nystrom.8/8.8.quad, quads/nystrom.8/8.9.quad, quads/nystrom.8/8.10.quad, quads/nystrom.8/8.11.quad, quads/nystrom.8/9.0.quad, quads/nystrom.8/9.1.quad, quads/nystrom.8/9.2.quad, quads/nystrom.8/9.3.quad, quads/nystrom.8/9.4.quad, quads/nystrom.8/9.5.quad, quads/nystrom.8/9.6.quad, quads/nystrom.8/9.7.quad, quads/nystrom.8/9.8.quad, quads/nystrom.8/9.9.quad, quads/nystrom.8/9.10.quad, quads/nystrom.8/9.11.quad
+    output: output/experiment_droplet.8.1.tex
+    shell:
+        python3 examples/experiment_droplet.py 8 1> output/experiment_droplet.8.1.tex
+        (one of the commands exited with non-zero exit code; note that snakemake uses bash strict mode!)
+
+Removing output files of failed job experiment_droplet since they might be corrupted:
+output/experiment_droplet.8.1.tex
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: .snakemake/log/2024-05-02T153448.768938.snakemake.log
+WorkflowError:
+At least one job did not complete successfully.

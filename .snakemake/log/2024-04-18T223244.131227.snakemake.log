@@ -1,0 +1,31 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 10
+Rules claiming more threads will be scaled down.
+Job stats:
+job                            count
+---------------------------  -------
+all                                1
+generate_nystrom_quadrature      120
+generate_table                     1
+make_config                        1
+total                            123
+
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu Apr 18 22:32:53 2024]
+localrule make_config:
+    output: quads/nystrom.4/breakpoints_r, quads/nystrom.4/breakpoints_theta
+    jobid: 3
+    reason: Missing output files: quads/nystrom.4/breakpoints_r, quads/nystrom.4/breakpoints_theta
+    resources: tmpdir=/tmp/pbs.396426.hnode41
+
+[Thu Apr 18 22:32:53 2024]
+Finished job 3.
+1 of 123 steps (1%) done
+Select jobs to execute...
+Terminating processes on user request, this might take some time.
+Complete log: .snakemake/log/2024-04-18T223244.131227.snakemake.log
+WorkflowError:
+At least one job did not complete successfully.

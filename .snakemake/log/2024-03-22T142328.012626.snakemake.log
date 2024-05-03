@@ -1,0 +1,39 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 6
+Rules claiming more threads will be scaled down.
+Job stats:
+job                    count
+-------------------  -------
+all                        1
+generate_quadrature        1
+total                      2
+
+Select jobs to execute...
+Execute 1 jobs...
+
+[Fri Mar 22 14:23:28 2024]
+localrule generate_quadrature:
+    output: quads/nystrom.16.4.quad
+    jobid: 4
+    reason: Missing output files: quads/nystrom.16.4.quad
+    wildcards: number_parameters=16, order=4
+    resources: tmpdir=/tmp
+
+[Fri Mar 22 14:53:22 2024]
+Finished job 4.
+1 of 2 steps (50%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Fri Mar 22 14:53:22 2024]
+localrule all:
+    input: quads/nystrom.2.4.quad, quads/nystrom.4.4.quad, quads/nystrom.8.4.quad, quads/nystrom.16.4.quad
+    jobid: 0
+    reason: Input files updated by another job: quads/nystrom.16.4.quad
+    resources: tmpdir=/tmp
+
+[Fri Mar 22 14:53:22 2024]
+Finished job 0.
+2 of 2 steps (100%) done
+Complete log: .snakemake/log/2024-03-22T142328.012626.snakemake.log

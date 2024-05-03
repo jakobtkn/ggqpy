@@ -1,0 +1,201 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 6
+Rules claiming more threads will be scaled down.
+Job stats:
+job                    count
+-------------------  -------
+all                        1
+generate_quadrature       17
+total                     18
+
+Select jobs to execute...
+Execute 6 jobs...
+
+[Thu Mar 28 22:28:55 2024]
+localrule generate_quadrature:
+    output: quads/nystrom.128.8.quad
+    jobid: 21
+    reason: Missing output files: quads/nystrom.128.8.quad
+    wildcards: number_parameters=128, order=8
+    resources: tmpdir=/tmp
+
+
+[Thu Mar 28 22:28:55 2024]
+localrule generate_quadrature:
+    output: quads/nystrom.4.8.quad
+    jobid: 6
+    reason: Missing output files: quads/nystrom.4.8.quad
+    wildcards: number_parameters=4, order=8
+    resources: tmpdir=/tmp
+
+
+[Thu Mar 28 22:28:55 2024]
+localrule generate_quadrature:
+    output: quads/nystrom.64.4.quad
+    jobid: 16
+    reason: Missing output files: quads/nystrom.64.4.quad
+    wildcards: number_parameters=64, order=4
+    resources: tmpdir=/tmp
+
+
+[Thu Mar 28 22:28:55 2024]
+localrule generate_quadrature:
+    output: quads/nystrom.16.8.quad
+    jobid: 12
+    reason: Missing output files: quads/nystrom.16.8.quad
+    wildcards: number_parameters=16, order=8
+    resources: tmpdir=/tmp
+
+
+[Thu Mar 28 22:28:55 2024]
+localrule generate_quadrature:
+    output: quads/nystrom.2.6.quad
+    jobid: 2
+    reason: Missing output files: quads/nystrom.2.6.quad
+    wildcards: number_parameters=2, order=6
+    resources: tmpdir=/tmp
+
+
+[Thu Mar 28 22:28:55 2024]
+localrule generate_quadrature:
+    output: quads/nystrom.32.6.quad
+    jobid: 14
+    reason: Missing output files: quads/nystrom.32.6.quad
+    wildcards: number_parameters=32, order=6
+    resources: tmpdir=/tmp
+
+[Thu Mar 28 22:29:04 2024]
+Finished job 2.
+1 of 18 steps (6%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu Mar 28 22:29:04 2024]
+localrule generate_quadrature:
+    output: quads/nystrom.32.4.quad
+    jobid: 13
+    reason: Missing output files: quads/nystrom.32.4.quad
+    wildcards: number_parameters=32, order=4
+    resources: tmpdir=/tmp
+
+[Thu Mar 28 22:30:19 2024]
+Finished job 6.
+2 of 18 steps (11%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu Mar 28 22:30:19 2024]
+localrule generate_quadrature:
+    output: quads/nystrom.8.8.quad
+    jobid: 9
+    reason: Missing output files: quads/nystrom.8.8.quad
+    wildcards: number_parameters=8, order=8
+    resources: tmpdir=/tmp
+
+[Thu Mar 28 22:45:16 2024]
+Finished job 9.
+3 of 18 steps (17%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu Mar 28 22:45:16 2024]
+localrule generate_quadrature:
+    output: quads/nystrom.128.4.quad
+    jobid: 19
+    reason: Missing output files: quads/nystrom.128.4.quad
+    wildcards: number_parameters=128, order=4
+    resources: tmpdir=/tmp
+
+[Thu Mar 28 23:17:57 2024]
+Finished job 12.
+4 of 18 steps (22%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu Mar 28 23:17:57 2024]
+localrule generate_quadrature:
+    output: quads/nystrom.2.8.quad
+    jobid: 3
+    reason: Missing output files: quads/nystrom.2.8.quad
+    wildcards: number_parameters=2, order=8
+    resources: tmpdir=/tmp
+
+[Thu Mar 28 23:18:04 2024]
+Finished job 3.
+5 of 18 steps (28%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu Mar 28 23:18:04 2024]
+localrule generate_quadrature:
+    output: quads/nystrom.64.8.quad
+    jobid: 18
+    reason: Missing output files: quads/nystrom.64.8.quad
+    wildcards: number_parameters=64, order=8
+    resources: tmpdir=/tmp
+
+[Thu Mar 28 23:29:09 2024]
+Error in rule generate_quadrature:
+    jobid: 13
+    output: quads/nystrom.32.4.quad
+    shell:
+        python3 examples/generate_quad.py 32 4 quads/nystrom.32.4.quad
+        (one of the commands exited with non-zero exit code; note that snakemake uses bash strict mode!)
+
+Traceback (most recent call last):
+
+  File "/zhome/ac/2/147013/miniforge3/envs/ggqpy/lib/python3.12/threading.py", line 355, in wait
+    waiter.acquire()
+
+KeyboardInterrupt
+
+
+During handling of the above exception, another exception occurred:
+
+
+Traceback (most recent call last):
+
+  File "/zhome/ac/2/147013/miniforge3/envs/ggqpy/lib/python3.12/threading.py", line 507, in acquire
+    self._cond.wait(timeout)
+
+  File "/zhome/ac/2/147013/miniforge3/envs/ggqpy/lib/python3.12/threading.py", line 364, in wait
+    self._acquire_restore(saved_state)
+
+  File "/zhome/ac/2/147013/miniforge3/envs/ggqpy/lib/python3.12/threading.py", line 311, in _acquire_restore
+    def _acquire_restore(self, x):
+    
+
+KeyboardInterrupt
+
+
+During handling of the above exception, another exception occurred:
+
+
+Traceback (most recent call last):
+
+  File "/zhome/ac/2/147013/miniforge3/envs/ggqpy/lib/python3.12/site-packages/snakemake/cli.py", line 2052, in args_to_api
+    dag_api.execute_workflow(
+
+  File "/zhome/ac/2/147013/miniforge3/envs/ggqpy/lib/python3.12/site-packages/snakemake/api.py", line 589, in execute_workflow
+    workflow.execute(
+
+  File "/zhome/ac/2/147013/miniforge3/envs/ggqpy/lib/python3.12/site-packages/snakemake/workflow.py", line 1247, in execute
+    raise e
+
+  File "/zhome/ac/2/147013/miniforge3/envs/ggqpy/lib/python3.12/site-packages/snakemake/workflow.py", line 1243, in execute
+    success = self.scheduler.schedule()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  File "/zhome/ac/2/147013/miniforge3/envs/ggqpy/lib/python3.12/site-packages/snakemake/scheduler.py", line 194, in schedule
+    self._open_jobs.acquire()
+
+  File "/zhome/ac/2/147013/miniforge3/envs/ggqpy/lib/python3.12/threading.py", line 496, in acquire
+    with self._cond:
+
+  File "/zhome/ac/2/147013/miniforge3/envs/ggqpy/lib/python3.12/threading.py", line 303, in __exit__
+    return self._lock.__exit__(*args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+RuntimeError: release unlocked lock
+

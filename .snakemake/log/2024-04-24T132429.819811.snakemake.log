@@ -1,0 +1,152 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 5
+Rules claiming more threads will be scaled down.
+Job stats:
+job                            count
+---------------------------  -------
+all                                1
+generate_nystrom_quadrature      169
+generate_table                     3
+total                            173
+
+Select jobs to execute...
+Execute 5 jobs...
+
+[Wed Apr 24 13:24:31 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.16/breakpoints_r, quads/nystrom.16/breakpoints_theta
+    output: quads/nystrom.16/5.8.quad
+    jobid: 315
+    reason: Missing output files: quads/nystrom.16/5.8.quad; Updated input files: quads/nystrom.16/breakpoints_theta, quads/nystrom.16/breakpoints_r
+    wildcards: order=16, r0_index=5, theta0_index=8
+    resources: tmpdir=/tmp
+
+
+[Wed Apr 24 13:24:31 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.16/breakpoints_r, quads/nystrom.16/breakpoints_theta
+    output: quads/nystrom.16/9.5.quad
+    jobid: 360
+    reason: Missing output files: quads/nystrom.16/9.5.quad; Updated input files: quads/nystrom.16/breakpoints_theta, quads/nystrom.16/breakpoints_r
+    wildcards: order=16, r0_index=9, theta0_index=5
+    resources: tmpdir=/tmp
+
+
+[Wed Apr 24 13:24:31 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.16/breakpoints_r, quads/nystrom.16/breakpoints_theta
+    output: quads/nystrom.16/4.5.quad
+    jobid: 300
+    reason: Missing output files: quads/nystrom.16/4.5.quad; Updated input files: quads/nystrom.16/breakpoints_theta, quads/nystrom.16/breakpoints_r
+    wildcards: order=16, r0_index=4, theta0_index=5
+    resources: tmpdir=/tmp
+
+
+[Wed Apr 24 13:24:31 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.16/breakpoints_r, quads/nystrom.16/breakpoints_theta
+    output: quads/nystrom.16/3.2.quad
+    jobid: 285
+    reason: Missing output files: quads/nystrom.16/3.2.quad; Updated input files: quads/nystrom.16/breakpoints_theta, quads/nystrom.16/breakpoints_r
+    wildcards: order=16, r0_index=3, theta0_index=2
+    resources: tmpdir=/tmp
+
+
+[Wed Apr 24 13:24:31 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/3.4.quad
+    jobid: 165
+    reason: Missing output files: quads/nystrom.8/3.4.quad; Updated input files: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    wildcards: order=8, r0_index=3, theta0_index=4
+    resources: tmpdir=/tmp
+
+[Wed Apr 24 13:25:16 2024]
+Finished job 360.
+1 of 173 steps (1%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Wed Apr 24 13:25:16 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/8.10.quad
+    jobid: 231
+    reason: Missing output files: quads/nystrom.8/8.10.quad; Updated input files: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    wildcards: order=8, r0_index=8, theta0_index=10
+    resources: tmpdir=/tmp
+
+[Wed Apr 24 13:27:19 2024]
+Finished job 165.
+2 of 173 steps (1%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Wed Apr 24 13:27:19 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/7.7.quad
+    jobid: 216
+    reason: Missing output files: quads/nystrom.8/7.7.quad; Updated input files: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    wildcards: order=8, r0_index=7, theta0_index=7
+    resources: tmpdir=/tmp
+
+[Wed Apr 24 13:28:15 2024]
+Finished job 216.
+3 of 173 steps (2%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Wed Apr 24 13:28:15 2024]
+localrule generate_nystrom_quadrature:
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/0.1.quad
+    jobid: 126
+    reason: Missing output files: quads/nystrom.8/0.1.quad; Updated input files: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    wildcards: order=8, r0_index=0, theta0_index=1
+    resources: tmpdir=/tmp
+
+[Wed Apr 24 13:28:54 2024]
+Error in rule generate_nystrom_quadrature:
+    jobid: 300
+    input: quads/nystrom.16/breakpoints_r, quads/nystrom.16/breakpoints_theta
+    output: quads/nystrom.16/4.5.quad
+    shell:
+        python3 examples/generate_nystrom_quad.py 16 4 5 quads/nystrom.16/4.5.quad
+        (one of the commands exited with non-zero exit code; note that snakemake uses bash strict mode!)
+
+[Wed Apr 24 13:29:01 2024]
+Finished job 315.
+4 of 173 steps (2%) done
+[Wed Apr 24 13:29:58 2024]
+Error in rule generate_nystrom_quadrature:
+    jobid: 231
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/8.10.quad
+    shell:
+        python3 examples/generate_nystrom_quad.py 8 8 10 quads/nystrom.8/8.10.quad
+        (one of the commands exited with non-zero exit code; note that snakemake uses bash strict mode!)
+
+Terminating processes on user request, this might take some time.
+[Wed Apr 24 13:30:02 2024]
+Error in rule generate_nystrom_quadrature:
+    jobid: 285
+    input: quads/nystrom.16/breakpoints_r, quads/nystrom.16/breakpoints_theta
+    output: quads/nystrom.16/3.2.quad
+    shell:
+        python3 examples/generate_nystrom_quad.py 16 3 2 quads/nystrom.16/3.2.quad
+        (one of the commands exited with non-zero exit code; note that snakemake uses bash strict mode!)
+
+[Wed Apr 24 13:30:02 2024]
+Error in rule generate_nystrom_quadrature:
+    jobid: 126
+    input: quads/nystrom.8/breakpoints_r, quads/nystrom.8/breakpoints_theta
+    output: quads/nystrom.8/0.1.quad
+    shell:
+        python3 examples/generate_nystrom_quad.py 8 0 1 quads/nystrom.8/0.1.quad
+        (one of the commands exited with non-zero exit code; note that snakemake uses bash strict mode!)
+
+Complete log: .snakemake/log/2024-04-24T132429.819811.snakemake.log
+WorkflowError:
+At least one job did not complete successfully.
