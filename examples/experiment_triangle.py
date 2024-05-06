@@ -43,16 +43,21 @@ if __name__ == "__main__":
 
     alpha = [0.5, 1e-4, 1e-5]
     error = list()
+    order = int(args.order)
     for a in alpha:
-        error.append(main(a, int(args.order)))
-    df = pd.DataFrame(dict(alpha=alpha, error=error))
-
-    latex_table = df.to_latex(
-        index=False,
-        header=["$\\alpha$", "Absolute error"],
-        caption="Results",
-        label="tab:triangle-test",
-        float_format="{:.2e}".format,
-        position="centering",
+        error.append(main(a, order))
+    
+    df = pd.DataFrame(np.column_stack([alpha, error]), columns = ["$\\alpha$", "Absolute error"])
+    styler = df.style
+    styler.format_index(escape="latex")
+    styler.format('{:.2e}', na_rep='MISS')
+    styler.hide(axis = "index")
+    latex_table = styler.to_latex(
+        position_float="centering",
+        position="ht",
+        caption=f"Results Triangle experiment of order {order}",
+        label=f"tab:triangle-test.{order}",
+        column_format="cc",
+        hrules = True,
     )
     print(latex_table)

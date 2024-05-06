@@ -12,6 +12,8 @@ rule all:
         "output/experiment_droplet.4.1.tex",
         "output/experiment_droplet.8.1.tex",
         "output/experiment_droplet.16.1.tex",
+    shell:
+        "cp -r output ../report"
 
 rule make_config:
     input:
@@ -49,7 +51,7 @@ rule experiment_droplet:
     output:
         "output/experiment_droplet.{order}.{wavenumber}.tex"
     shell:
-        "python3 examples/experiment_droplet.py {wildcards.order} {wildcards.wavenumber}> output/experiment_droplet.{wildcards.order}.{wildcards.wavenumber}.tex"
+        "python3 examples/experiment_droplet.py {wildcards.order} {wildcards.wavenumber} > output/experiment_droplet.{wildcards.order}.{wildcards.wavenumber}.tex"
 
 FILES = ["experiment_triangle.4.tex","output/experiment_droplet.8.1.tex"]
 rule tex:

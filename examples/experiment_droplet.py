@@ -16,6 +16,7 @@ param = Parametrization.droplet()
 rho, drho, jacobian, normal = param.get_lambdas()
 verbose = False
 
+
 def Phi(s, t, k=1.0, p0=np.array([10, 0, 0])):
     p = rho(s, t)
     dist = np.linalg.norm(p - p0[:, np.newaxis], axis=0)
@@ -77,21 +78,25 @@ if __name__ == "__main__":
     parser.add_argument("order", default=4)
     parser.add_argument("wavenumber", default=1.0)
     args = parser.parse_args()
+    order, k = int(args.order), float(args.wavenumber)
 
     N = [2, 3, 5, 7, 10, 15]
     M = [2 * n for n in N]
     error = list()
     for m, n in zip(M, N):
-        error.append(main(m, n, int(args.order), float(args.wavenumber)))
+        error.append(main(m, n, order, k))
 
-    df = pd.DataFrame(dict(M=M, N=N, error=error))
-
-    latex_table = df.to_latex(
-        index=False,
-        header=["$m$", "$n$", "Relative error"],
-        caption="Results",
-        label="tab:triangle-test",
-        float_format="{:.2e}".format,
-        position="centering",
+    df = pd.DataFrame(np.column_stack([M, N, error]), columns = ["$m$", "$n$", "Relative error"])
+    styler = df.style
+    styler.format_index(escape="latex")
+    styler.format({"$m$": '{:.0f}', "$n$": '{:.0f}', "Relative error": '{:.2e}'}, na_rep='MISS')
+    styler.hide(axis = "index")
+    latex_table = styler.to_latex(
+        position_float="centering",
+        position="ht",
+        caption=f"Results of droplet test with order {order} and $k={k}$",
+        label=f"tab:droplet-test.{order}.{args.wavenumber}",
+        column_format="ccc",
+        hrules = True,
     )
     print(latex_table)
