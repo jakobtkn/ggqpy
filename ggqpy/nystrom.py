@@ -20,8 +20,8 @@ def ensure_conformal_mapping(jacobian, x0):
 
     Returns
     -------
-    A: affinemapping matrix
-    transform: Mapping from reference triangle.
+    B
+    Binv
     """
     J = jacobian(x0[0], x0[1])
 
