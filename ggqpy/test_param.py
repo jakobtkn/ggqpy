@@ -1,10 +1,8 @@
 import numpy as np
-from numpy.polynomial.legendre import leggauss
-import sympy
-from pytest import approx
 from ggqpy import *
 from ggqpy.parametrization import *
 
+from pytest import approx
 np.seterr(all="raise")
 
 
