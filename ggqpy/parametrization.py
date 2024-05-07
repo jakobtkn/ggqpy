@@ -24,12 +24,12 @@ class Parametrization:
         self.drho = self.rho.jacobian(self.variables)
 
         cross_product = self.drho[:, 0].cross(self.drho[:, 1])
-        self.jacobian = sp.simplify(cross_product.norm())
-
+        
+        self.jacobian = cross_product.norm()
         if flip_normal:
-            self.normal = sp.simplify(cross_product.normalized())
+            self.normal = cross_product.normalized()
         else:
-            self.normal = sp.simplify(-cross_product.normalized())
+            self.normal = -cross_product.normalized()
 
     def get_lambdas(self):
         s, t = self.s, self.t
@@ -69,7 +69,7 @@ class Parametrization:
             sp.exp(sp.I * k * (sp.Matrix([x, y, z]) - p0).norm())
             / (sp.Matrix([x, y, z]) - p0).norm()
         )
-        h_grad = sp.simplify(sp.Matrix([h.diff(var) for var in [x, y, z]]))
+        h_grad = sp.Matrix([h.diff(var) for var in [x, y, z]])
 
         _h = sp.lambdify((x, y, z), h, modules="numpy")
         _h_grad = sp.lambdify((x, y, z), h_grad, modules="numpy")
@@ -78,21 +78,8 @@ class Parametrization:
 
     def print(self):
         print("drho:")
-        print(drho)
+        print(self.drho)
         print("Jacobian:")
-        print(jacobian)
+        print(self.jacobian)
         print("normal:")
-        print(normal)
-
-
-if __name__ == "__main__":
-    param = Parametrization.droplet()
-    rho, drho, jacobian, normal = param.get_lambdas()
-    h, h_grad = param.h_and_hgrad()
-    # print(h_grad(1,1,1))
-    # print(h(1,1,1))
-    s = np.arange(10)
-    t = np.arange(10)
-    x, y, z = rho(s, t)
-    print(normal(0, 1))
-    print(h_grad(*rho(0, 1)))
+        print(self.normal)
