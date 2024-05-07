@@ -46,13 +46,15 @@ class SingularTriangleQuadrature:
     def __init__(self, order=4):
         self.order = order
         quad_folder = f"quads/nystrom.{order}/"
-        self.breakpoints = {
-            "r0": np.loadtxt(quad_folder + "breakpoints_r"),
-            "theta0": np.loadtxt(quad_folder + "breakpoints_theta"),
-        }
+        self.breakpoints_r0 = np.loadtxt(quad_folder + "breakpoints_r", dtype=float)
+        self.breakpoints_theta0 = np.loadtxt(quad_folder + "breakpoints_theta", dtype=float)
+
+        self.number_r0 = len(self.breakpoints_r0) - 1
+        self.number_theta0 = len(self.breakpoints_theta0) - 1
+
         self.intervals = {
-            "r0": pairwise(self.breakpoints["r0"]),
-            "theta0": pairwise(self.breakpoints["theta0"]),
+            "r0": pairwise(self.breakpoints_r0),
+            "theta0": pairwise(self.breakpoints_theta0),
         }
 
         self.quadratures = dict()
@@ -69,12 +71,13 @@ class SingularTriangleQuadrature:
             )
 
     def get_quad(self, r0, theta0):
-        r0_index = bisect.bisect(self.breakpoints["r0"], r0) - 1
-        r0_index = np.clip(r0_index, 0, len([*self.intervals["r0"]]) - 1)
+        r0 = float(r0)
+        theta0 = float(theta0)
+        r0_index = bisect.bisect(self.breakpoints_r0, r0) - 1
+        r0_index = np.clip(r0_index, 0, self.number_r0 - 1)
 
-        theta0_index = bisect.bisect(self.breakpoints["theta0"], theta0) - 1
-        theta0_index = np.clip(theta0_index, 0, len([*self.intervals["theta0"]]) - 1)
-
+        theta0_index = bisect.bisect(self.breakpoints_theta0, theta0) - 1
+        theta0_index = np.clip(theta0_index, 0, self.number_theta0 - 1)
         assert (r0_index, theta0_index) in self.quadratures
-
+            
         return self.quadratures[(r0_index, theta0_index)]

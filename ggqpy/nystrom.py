@@ -7,6 +7,8 @@ from ggqpy.utils import *
 from numpy.polynomial.legendre import leggauss, legvander2d
 
 
+quad_generator = SingularTriangleQuadrature(4)
+
 def ensure_conformal_mapping(jacobian, x0):
     """
     Returns B such that
@@ -182,7 +184,6 @@ def quad_on_standard_triangle(order, r0, theta0):
         * np.sin(theta0)
         / (r0 * np.sin(theta0 - theta0 * u) + np.sin(theta0 * u))
     )
-    quad_generator = SingularTriangleQuadrature(order)
     ggq = quad_generator.get_quad(r0, theta0)
     w_global = list()
     theta_global = list()
@@ -244,9 +245,9 @@ def gl_nodes2d(
     glt = Quadrature.gauss_legendre_on_interval(N, J)
     ss, tt = np.meshgrid(gls.x, glt.x)
     ss, tt = ss.flatten(), tt.flatten()
-    wws, wwt = np.meshgrid(gls.w, glt.w)
-    ww = (wws * wwt).flatten()
-    return ss, tt, ww
+    wins, wint = np.meshgrid(gls.w, glt.w)
+    win = (wins * wint).flatten()
+    return ss, tt, win
 
 
 def construct_discretization_matrix(
@@ -260,7 +261,8 @@ def construct_discretization_matrix(
     jacobian: Callable,
     order=4,
 ):
-    ss, tt, ww = gl_nodes2d(I, J, M, N)
+    ss, tt, win = gl_nodes2d(I, J, M, N)
+    wout = win*jacobian(ss,tt)
     simplex = Rectangle(I, J)
 
     Vin = np.linalg.inv(legvander2d(I.itranslate(ss), J.itranslate(tt), [M - 1, N - 1]))
@@ -274,6 +276,6 @@ def construct_discretization_matrix(
         Vout = legvander2d(I.itranslate(xs), J.itranslate(yt), [M - 1, N - 1])
         interpolation_matrix = Vout @ Vin
 
-        A[idx, :] = np.sqrt(ww[idx]) * (K @ interpolation_matrix) / np.sqrt(ww)
+        A[idx, :] = np.sqrt(wout[idx]) * ((K @ interpolation_matrix) @ np.diag(np.sqrt(win)**(-1)))
 
-    return A, ss, tt, ww
+    return A, ss, tt, win, wout
