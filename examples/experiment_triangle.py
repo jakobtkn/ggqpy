@@ -31,7 +31,9 @@ def main(alpha, order):
     r0 = alpha
     theta0 = np.pi / 2
     f = lambda r, theta: np.cos(2 * theta) / r
-    r, theta, w = quad_on_standard_triangle(order, r0, theta0)
+
+    solver = IntegralOperator(order)
+    r, theta, w = solver.quad_on_standard_triangle(r0, theta0)
 
     return abs(f(r, theta) @ w - analytic_integral(alpha))
 

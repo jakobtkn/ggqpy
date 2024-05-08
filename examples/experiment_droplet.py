@@ -34,7 +34,9 @@ def kernel(x0, y0, s, t, k=1.0):
 
 
 def main(M, N, order, k, dh):
-    A, ss, tt, win, wout = construct_discretization_matrix(
+    system = IntegralOperator(order)
+
+    A, ss, tt, win, wout = system.construct_discretization_matrix(
         Interval(0, 2 * np.pi),
         Interval(0, np.pi),
         M,
@@ -42,12 +44,10 @@ def main(M, N, order, k, dh):
         rho,
         drho,
         kernel,
-        jacobian,
-        order=order,
+        jacobian
     )
 
     f = dh(ss, tt) * np.sqrt(wout)
-    print(np.linalg.cond(A))
     A = -0.5 * np.identity(M * N) * np.sqrt(jacobian(ss,tt))[:, np.newaxis] + (4.0 * np.pi) ** (-1) * A
     q = np.linalg.solve(A, f)
 
@@ -58,11 +58,12 @@ def main(M, N, order, k, dh):
     )
     relative_error = abs(result - target) / abs(target)
     condition_number = np.linalg.cond(A)
+    condition_number = 1.0
     if verbose:
         print("Relative error:", relative_error)
         print("Result:", result)
         print("Target:", target)
-        print(np.linalg.cond(A))
+        print(condition_number)
     return relative_error, condition_number
 
 
@@ -77,7 +78,7 @@ if __name__ == "__main__":
         x, y, z = rho(s, t)
         return np.sum(normal(s, t) * h_grad(x, y, z), axis=0)
     
-    N = [2, 3, 10, 20]
+    N = [2, 3, 5, 10, 15, 30]
     M = [2 * n for n in N]
     error = list()
     condition = list()

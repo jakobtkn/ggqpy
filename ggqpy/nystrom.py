@@ -6,9 +6,6 @@ from ggqpy.quad import *
 from ggqpy.utils import *
 from numpy.polynomial.legendre import leggauss, legvander2d
 
-
-quad_generator = SingularTriangleQuadrature(4)
-
 def ensure_conformal_mapping(jacobian, x0):
     """
     Returns B such that
@@ -178,61 +175,6 @@ class Triangle:
         return a >= 0 and b >= 0 and c >= 0
 
 
-def quad_on_standard_triangle(order, r0, theta0):
-    gamma = (
-        lambda u: r0
-        * np.sin(theta0)
-        / (r0 * np.sin(theta0 - theta0 * u) + np.sin(theta0 * u))
-    )
-    ggq = quad_generator.get_quad(r0, theta0)
-    w_global = list()
-    theta_global = list()
-    r_global = list()
-
-    for u, w in [*ggq]:
-        gammau = gamma(u)
-        gl = Quadrature.gauss_legendre_on_interval(
-            quad_generator.order, Interval(0, gammau)
-        )
-
-        w_global.append(w * gl.w * theta0 * gl.x)
-        r_global.append(gl.x)
-        theta_global.append(np.full_like(gl.x, u * theta0))
-
-    r = np.concatenate(r_global)
-    theta = np.concatenate(theta_global)
-    w = np.concatenate(w_global)
-    return r, theta, w
-
-
-def singular_integral_quad(drho, x0, simplex, order=4):
-    B, Binv = ensure_conformal_mapping(drho, x0)
-    R = Quadrilateral(*[Binv @ (np.array(v) - x0) for v in iter(simplex)])
-    x_list = list()
-    y_list = list()
-    w_list = list()
-
-    detB = abs(np.linalg.det(B))
-    for T in [*R.split_into_triangles_around_point((0, 0))]:
-        scale, angle, A, Ainv, detA = standard_radial_triangle_transform(
-            T.vertices[1], T.vertices[2]
-        )
-        r, theta, w = quad_on_standard_triangle(order, scale, angle)
-        x_local = np.cos(theta) * r
-        y_local = np.sin(theta) * r
-
-        v = np.row_stack([x_local, y_local])
-        v = B @ (Ainv @ v) + x0[:, np.newaxis]
-
-        x_list.append(v[0, :])
-        y_list.append(v[1, :])
-        w_list.append((w / detA) * detB)
-
-    x = np.concatenate(x_list)
-    y = np.concatenate(y_list)
-    w = np.concatenate(w_list)
-
-    return x, y, w
 
 
 def gl_nodes2d(
@@ -249,33 +191,96 @@ def gl_nodes2d(
     win = (wins * wint).flatten()
     return ss, tt, win
 
+class IntegralOperator:
+    def __init__(self,order):
+        self.order = order
+        self.quad_generator = SingularTriangleQuadrature(order)
+        self.x_gl, self.w_gl = leggauss(order)
+    
+    def _adapt_gen_quad(self, interval: Interval):
+        x = interval.translate(self.x_gl)
+        w = (self.w_gl / 2.0) * interval.length()
+        return Quadrature(x,w)
 
-def construct_discretization_matrix(
-    I: Interval,
-    J: Interval,
-    M: int,
-    N: int,
-    rho: Callable,
-    drho: Callable,
-    kernel: Callable,
-    jacobian: Callable,
-    order=4,
-):
-    ss, tt, win = gl_nodes2d(I, J, M, N)
-    wout = win*jacobian(ss,tt)
-    simplex = Rectangle(I, J)
-
-    Vin = np.linalg.inv(legvander2d(I.itranslate(ss), J.itranslate(tt), [M - 1, N - 1]))
-    A = np.zeros(shape=(N * M, N * M), dtype=complex)
-    for idx, singularity in enumerate(zip(ss, tt)):
-        xs, yt, w = singular_integral_quad(
-            drho, np.array([*singularity]), simplex, order
+    def quad_on_standard_triangle(self, r0, theta0):
+        gamma = (
+            lambda u: r0
+            * np.sin(theta0)
+            / (r0 * np.sin(theta0 - theta0 * u) + np.sin(theta0 * u))
         )
+        ggq = self.quad_generator.get_quad(r0, theta0)
+        w_global = list()
+        theta_global = list()
+        r_global = list()
 
-        K = w * kernel(*singularity, xs, yt) * jacobian(xs, yt)
-        Vout = legvander2d(I.itranslate(xs), J.itranslate(yt), [M - 1, N - 1])
-        interpolation_matrix = Vout @ Vin
+        for u, w in [*ggq]:
+            gammau = gamma(u)
+            gl = self._adapt_gen_quad(Interval(0, gammau))
 
-        A[idx, :] = np.sqrt(wout[idx]) * ((K @ interpolation_matrix) @ np.diag(np.sqrt(win)**(-1)))
+            w_global.append(w * gl.w * theta0 * gl.x)
+            r_global.append(gl.x)
+            theta_global.append(np.full_like(gl.x, u * theta0))
 
-    return A, ss, tt, win, wout
+        r = np.concatenate(r_global)
+        theta = np.concatenate(theta_global)
+        w = np.concatenate(w_global)
+        return r, theta, w
+
+    def singular_integral_quad(self, drho, x0, simplex):
+        B, Binv = ensure_conformal_mapping(drho, x0)
+        R = Quadrilateral(*[Binv @ (np.array(v) - x0) for v in iter(simplex)])
+        x_list = list()
+        y_list = list()
+        w_list = list()
+
+        detB = abs(np.linalg.det(B))
+        for T in [*R.split_into_triangles_around_point((0, 0))]:
+            scale, angle, A, Ainv, detA = standard_radial_triangle_transform(
+                T.vertices[1], T.vertices[2]
+            )
+            r, theta, w = self.quad_on_standard_triangle(scale, angle)
+            x_local = np.cos(theta) * r
+            y_local = np.sin(theta) * r
+
+            v = np.row_stack([x_local, y_local])
+            v = B @ (Ainv @ v) + x0[:, np.newaxis]
+
+            x_list.append(v[0, :])
+            y_list.append(v[1, :])
+            w_list.append((w / detA) * detB)
+
+        x = np.concatenate(x_list)
+        y = np.concatenate(y_list)
+        w = np.concatenate(w_list)
+
+        return x, y, w
+
+    def construct_discretization_matrix(
+        self,
+        I: Interval,
+        J: Interval,
+        M: int,
+        N: int,
+        rho: Callable,
+        drho: Callable,
+        kernel: Callable,
+        jacobian: Callable,
+    ):
+        ss, tt, win = gl_nodes2d(I, J, M, N)
+        wout = win*jacobian(ss,tt)
+        simplex = Rectangle(I, J)
+
+        Vin = np.linalg.inv(legvander2d(I.itranslate(ss), J.itranslate(tt), [M - 1, N - 1]))
+        A = np.zeros(shape=(N * M, N * M), dtype=complex)
+        for idx, singularity in enumerate(zip(ss, tt)):
+            xs, yt, w = self.singular_integral_quad(
+                drho, np.array([*singularity]), simplex
+            )
+
+            K = w * kernel(*singularity, xs, yt) * jacobian(xs, yt)
+            Vout = legvander2d(I.itranslate(xs), J.itranslate(yt), [M - 1, N - 1])
+            interpolation_matrix = Vout @ Vin
+
+            A[idx, :] = np.sqrt(wout[idx]) * ((K @ interpolation_matrix) / np.sqrt(win))
+
+        return A, ss, tt, win, wout
