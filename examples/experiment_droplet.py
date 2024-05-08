@@ -4,7 +4,7 @@ import os
 import sympy
 import argparse
 from numpy.polynomial.legendre import leggauss, legvander2d
-
+import matplotlib.pyplot as plt
 sys.path.append(os.path.abspath("."))
 from ggqpy import *
 from ggqpy.nystrom import *
@@ -36,7 +36,7 @@ def kernel(x0, y0, s, t, k=1.0):
 def main(M, N, order, k, dh):
     system = IntegralOperator(order)
 
-    A, ss, tt, win, wout = system.construct_discretization_matrix(
+    A, ss, tt, ww = system.construct_discretization_matrix(
         Interval(0, 2 * np.pi),
         Interval(0, np.pi),
         M,
@@ -47,18 +47,24 @@ def main(M, N, order, k, dh):
         jacobian
     )
 
-    f = dh(ss, tt) * np.sqrt(wout)
-    A = -0.5 * np.identity(M * N) * np.sqrt(jacobian(ss,tt))[:, np.newaxis] + (4.0 * np.pi) ** (-1) * A
+    f = dh(ss, tt) * np.sqrt(ww)
+    A = -0.5 * np.identity(M * N) + (4.0 * np.pi) ** (-1) * A
     q = np.linalg.solve(A, f)
+    
+    # fig = plt.figure()
+    # ax = fig.add_subplot(111, projection='3d')
+    # ax.plot_trisurf(abs(q/np.sqrt(ww)), ss, tt, lw=0.2, edgecolor="black", color="grey",
+    #             alpha=0.5)
 
-    p0 = np.array([-10, 5, 0])
+    # plt.show()
+
+    p0 = np.array([-10, 0, 0])
     target = np.array(h(*p0))
     result = (4.0 * np.pi) ** (-1) * np.sum(
-        Phi(ss, tt, k, p0) * q * np.sqrt(win) * jacobian(ss,tt)
+        Phi(ss, tt, k, p0) * q * np.sqrt(ww)
     )
     relative_error = abs(result - target) / abs(target)
     condition_number = np.linalg.cond(A)
-    condition_number = 1.0
     if verbose:
         print("Relative error:", relative_error)
         print("Result:", result)
@@ -78,7 +84,7 @@ if __name__ == "__main__":
         x, y, z = rho(s, t)
         return np.sum(normal(s, t) * h_grad(x, y, z), axis=0)
     
-    N = [2, 3, 5, 10, 15, 30]
+    N = [2, 3, 5, 10, 20]
     M = [2 * n for n in N]
     error = list()
     condition = list()

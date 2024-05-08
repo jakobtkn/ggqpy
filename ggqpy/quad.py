@@ -70,7 +70,7 @@ class SingularTriangleQuadrature:
                 filepath
             )
 
-    def get_quad(self, r0, theta0):
+    def get_quad(self, r0, theta0) -> Quadrature:
         r0 = float(r0)
         theta0 = float(theta0)
         r0_index = bisect.bisect(self.breakpoints_r0, r0) - 1

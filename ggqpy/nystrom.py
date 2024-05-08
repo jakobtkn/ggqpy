@@ -6,6 +6,7 @@ from ggqpy.quad import *
 from ggqpy.utils import *
 from numpy.polynomial.legendre import leggauss, legvander2d
 
+
 def ensure_conformal_mapping(jacobian, x0):
     """
     Returns B such that
@@ -175,8 +176,6 @@ class Triangle:
         return a >= 0 and b >= 0 and c >= 0
 
 
-
-
 def gl_nodes2d(
     I: Interval,
     J: Interval,
@@ -187,20 +186,21 @@ def gl_nodes2d(
     glt = Quadrature.gauss_legendre_on_interval(N, J)
     ss, tt = np.meshgrid(gls.x, glt.x)
     ss, tt = ss.flatten(), tt.flatten()
-    wins, wint = np.meshgrid(gls.w, glt.w)
-    win = (wins * wint).flatten()
-    return ss, tt, win
+    wws, wwt = np.meshgrid(gls.w, glt.w)
+    ww = (wws * wwt).flatten()
+    return ss, tt, ww
+
 
 class IntegralOperator:
-    def __init__(self,order):
+    def __init__(self, order):
         self.order = order
         self.quad_generator = SingularTriangleQuadrature(order)
         self.x_gl, self.w_gl = leggauss(order)
-    
+
     def _adapt_gen_quad(self, interval: Interval):
         x = interval.translate(self.x_gl)
         w = (self.w_gl / 2.0) * interval.length()
-        return Quadrature(x,w)
+        return Quadrature(x, w)
 
     def quad_on_standard_triangle(self, r0, theta0):
         gamma = (
@@ -213,13 +213,14 @@ class IntegralOperator:
         theta_global = list()
         r_global = list()
 
-        for u, w in [*ggq]:
-            gammau = gamma(u)
-            gl = self._adapt_gen_quad(Interval(0, gammau))
+        gammau = gamma(ggq.x)
+        for u, w, R in zip(ggq.x, ggq.w, gammau):
+            glx = R * (self.x_gl + 1) / 2.0
+            glw = R * self.w_gl / 2.0
 
-            w_global.append(w * gl.w * theta0 * gl.x)
-            r_global.append(gl.x)
-            theta_global.append(np.full_like(gl.x, u * theta0))
+            w_global.append(w * glw * theta0 * glx)
+            r_global.append(glx)
+            theta_global.append(np.full_like(glx, u * theta0))
 
         r = np.concatenate(r_global)
         theta = np.concatenate(theta_global)
@@ -266,11 +267,13 @@ class IntegralOperator:
         kernel: Callable,
         jacobian: Callable,
     ):
-        ss, tt, win = gl_nodes2d(I, J, M, N)
-        wout = win*jacobian(ss,tt)
+        ss, tt, ww = gl_nodes2d(I, J, M, N)
+        ww = ww * jacobian(ss, tt)
         simplex = Rectangle(I, J)
 
-        Vin = np.linalg.inv(legvander2d(I.itranslate(ss), J.itranslate(tt), [M - 1, N - 1]))
+        Vin = np.linalg.inv(
+            legvander2d(I.itranslate(ss), J.itranslate(tt), [M - 1, N - 1])
+        )
         A = np.zeros(shape=(N * M, N * M), dtype=complex)
         for idx, singularity in enumerate(zip(ss, tt)):
             xs, yt, w = self.singular_integral_quad(
@@ -281,6 +284,8 @@ class IntegralOperator:
             Vout = legvander2d(I.itranslate(xs), J.itranslate(yt), [M - 1, N - 1])
             interpolation_matrix = Vout @ Vin
 
-            A[idx, :] = np.sqrt(wout[idx]) * ((K @ interpolation_matrix) / np.sqrt(win))
+            A[idx, :] = K @ interpolation_matrix
 
-        return A, ss, tt, win, wout
+        A = np.sqrt(ww)[:, np.newaxis] * A / np.sqrt(ww)[np.newaxis, :]
+
+        return A, ss, tt, ww
