@@ -80,10 +80,10 @@ def test_geometry():
 
 
 from examples.experiment_triangle import analytic_integral
-
+solver = IntegralOperator(order = 4)
 
 def test_quad_on_standard_triangle():
-    r, theta, w = quad_on_standard_triangle(4, 0.5, np.pi / 2)
+    r, theta, w = solver.quad_on_standard_triangle(0.5, np.pi / 2)
     assert len(r) == len(theta) == len(w)
     f = lambda r, theta: np.cos(2 * theta) / r
     assert f(r, theta) @ w == approx(analytic_integral(0.5))
@@ -93,7 +93,7 @@ def test_singular_integral_0(plt):
     drho = lambda s, t: np.array([[1, 0], [0, 1], [0, 0]])
     x0 = np.array([0.5, 0.0])
     simplex = Quadrilateral((-1, -1), (-1, 1), (1, 1), (1, -1))
-    x, y, w = singular_integral_quad(drho, x0, simplex)
+    x, y, w = solver.singular_integral_quad(drho, x0, simplex)
 
     plt.figure()
     plt.title(f"Nodes = {len(x)}")
@@ -107,7 +107,7 @@ def test_singular_integral_1(plt):
     drho = lambda s, t: np.array([[0, 0], [1, 0], [0, 3 * t]])
     x0 = np.array([0.5, 0.5])
     simplex = Quadrilateral((-1, -1), (1, -1), (1, 1), (-1, 1))
-    x, y, w = singular_integral_quad(drho, x0, simplex)
+    x, y, w = solver.singular_integral_quad(drho, x0, simplex)
     plt.figure()
     plt.title(f"Nodes = {len(x)}")
     plt.scatter(x, y, marker="x")
@@ -120,7 +120,7 @@ def test_singular_integral_2(plt):
     drho = lambda s, t: np.array([[0, 0], [1, 0 + s], [0, 2 * t + s]])
     x0 = np.array([-0.1, 0.5])
     simplex = Quadrilateral((-1, -1), (-1, 1), (1, 1), (1, -1))
-    x, y, w = singular_integral_quad(drho, x0, simplex)
+    x, y, w = solver.singular_integral_quad(drho, x0, simplex)
     plt.figure()
     plt.title(f"Nodes = {len(x)}")
     plt.scatter(x, y, marker="x")
@@ -155,7 +155,7 @@ def test_singular_integral_3(plt):
 
     B, Binv = ensure_conformal_mapping(drho, x0)
     simplex = Quadrilateral((-1, -1), (-1, 1), (1, 1), (1, -1))
-    x, y, w = singular_integral_quad(drho, x0, simplex)
+    x, y, w = solver.singular_integral_quad(drho, x0, simplex)
     assert np.sum(w * jacobian(x, y)) == approx(4.0 * a * b)
     assert np.sum(
         (w * jacobian(x, y))[
@@ -185,7 +185,7 @@ def test_node_placement(plt):
         T.vertices[1], T.vertices[2]
     )
     T0 = Triangle((0, 0), (1, 0), (scale * np.cos(angle), scale * np.sin(angle)))
-    r, theta, w = quad_on_standard_triangle(4, scale, angle)
+    r, theta, w = solver.quad_on_standard_triangle(scale, angle)
     x_local = np.cos(theta) * r
     y_local = np.sin(theta) * r
 
@@ -246,7 +246,7 @@ def test_area_sphere():
     ss, tt = np.meshgrid(s, t)
     ss, tt = ss.flatten(), tt.flatten()
 
-    xs, yt, w = singular_integral_quad(drho, np.array([2.0, 2.0]), simplex)
+    xs, yt, w = solver.singular_integral_quad(drho, np.array([2.0, 2.0]), simplex)
 
     assert np.sum(w * jacobian(xs, yt)) == approx(4 * np.pi)
 
