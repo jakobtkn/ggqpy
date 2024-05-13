@@ -55,8 +55,14 @@ def main(M, N, order, k, dh):
     
     # fig = plt.figure()
     # ax = fig.add_subplot(111, projection='3d')
-    # ax.plot_trisurf(abs(q/np.sqrt(ww)), ss, tt, lw=0.2, edgecolor="black", color="grey",
+    # ax.plot_trisurf(ss, tt, abs(q/np.sqrt(ww)), lw=0.2, edgecolor="black", color="grey",
     #             alpha=0.5)
+
+    # plt.show()
+
+    # fig = plt.figure()
+    # ax = fig.add_subplot(111, projection='3d')
+    # ax.scatter(*rho(ss,tt))
 
     # plt.show()
 
@@ -88,8 +94,8 @@ if __name__ == "__main__":
     
     # N = [2, 3, 6]
     # M = [2 * n for n in N]
-    N = [1]
-    M = [1]
+    N = [1, 2, 4]
+    M = [1, 2, 4]
     error = list()
     condition = list()
     for m, n in zip(M, N):

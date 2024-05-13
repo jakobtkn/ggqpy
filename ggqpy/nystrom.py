@@ -5,6 +5,7 @@ from itertools import pairwise, product
 from ggqpy.quad import *
 from ggqpy.utils import *
 from numpy.polynomial.legendre import leggauss, legvander2d
+from typing import List
 
 
 def ensure_conformal_mapping(jacobian, x0):
@@ -204,6 +205,7 @@ class Patch:
         weights,
         jacobian,
         id,
+        rho,
     ):
         self.I = Interval(I.a + (I.b - I.a) * m / M, (I.b - I.a) * (m + 1) / M)
         self.J = Interval(J.a + (J.b - J.a) * n / N, (J.b - J.a) * (n + 1) / N)
@@ -225,6 +227,11 @@ class Patch:
         disc_nodes = len(nodes)
         self.start = id * disc_nodes**2
         self.end = (id + 1) * disc_nodes**2
+        self.center = rho(I.mid(), J.mid())
+        corners = rho(np.array([I.a, I.a, I.b, I.b]), np.array([J.a, J.b, J.a, J.b]))
+        self.bounding_distance = np.max(
+            np.linalg.norm(corners - self.center[:, np.newaxis])
+        )
 
 
 class IntegralOperator:
@@ -232,11 +239,6 @@ class IntegralOperator:
         self.order = order
         self.quad_generator = SingularTriangleQuadrature(order)
         self.x_gl, self.w_gl = leggauss(order + 1)
-
-    def _adapt_gen_quad(self, interval: Interval):
-        x = interval.translate(self.x_gl)
-        w = (self.w_gl / 2.0) * interval.length()
-        return Quadrature(x, w)
 
     def quad_on_standard_triangle(self, r0, theta0):
         gamma = (
@@ -292,7 +294,7 @@ class IntegralOperator:
 
         return x, y, w
 
-    def submatrix_far(
+    def submatrix_row_far(
         self,
         target: Patch,
         source: Patch,
@@ -309,8 +311,13 @@ class IntegralOperator:
         np.sqrt(target.ww)[:, np.newaxis] * A / np.sqrt(source.ww)[np.newaxis, :]
         return A
 
-    def submatrix_near():
-        pass
+    def submatrix_near(self, target, s,t, source):
+        # Vin = np.linalg.inv(
+        #     legvander2d(I.itranslate(ss), J.itranslate(tt), [self.order,self.order])
+        # )
+        # source.subdivide()
+
+        return
 
     def submatrix_self(
         self,
@@ -321,29 +328,25 @@ class IntegralOperator:
         kernel: Callable,
         jacobian: Callable,
     ):
-        M = disc_nodes
-        N = disc_nodes
         I, J = patch.I, patch.J
         ss, tt = patch.ss, patch.tt
         ww = patch.ww
         simplex = Rectangle(I, J)
 
         Vin = np.linalg.inv(
-            legvander2d(I.itranslate(ss), J.itranslate(tt), [M - 1, N - 1])
+            legvander2d(I.itranslate(ss), J.itranslate(tt), [self.order, self.order])
         )
-        A = np.zeros(shape=(N * M, N * M), dtype=complex)
+        A = np.zeros(shape=(disc_nodes**2, disc_nodes**2), dtype=complex)
         for idx, singularity in enumerate(zip(ss, tt)):
             xs, yt, w = self.singular_integral_quad(
                 drho, np.array([*singularity]), simplex
             )
 
             K = w * kernel(*singularity, xs, yt) * jacobian(xs, yt)
-            Vout = legvander2d(I.itranslate(xs), J.itranslate(yt), [M - 1, N - 1])
+            Vout = legvander2d(I.itranslate(xs), J.itranslate(yt), [self.order, self.order])
             interpolation_matrix = Vout @ Vin
 
             A[idx, :] = K @ interpolation_matrix
-
-        A = np.sqrt(ww)[:, np.newaxis] * A / np.sqrt(ww)[np.newaxis, :]
 
         return A
 
@@ -361,17 +364,20 @@ class IntegralOperator:
     ):
         mm = np.arange(M)
         nn = np.arange(N)
-        A = np.zeros(shape=(disc_nodes**2 * N * M, disc_nodes**2 * N * M), dtype=complex)
+        A = np.zeros(
+            shape=(disc_nodes**2 * N * M, disc_nodes**2 * N * M), dtype=complex
+        )
 
         ss_global, tt_global, ww_global = list(), list(), list()
-        patches = list()
+        patches = list[Patch]()
         for id, (m, n) in enumerate(product(mm, nn)):
-            patch = Patch(m, n, M, N, I, J, self.x_gl, self.w_gl, jacobian, id)
+            patch = Patch(m, n, M, N, I, J, self.x_gl, self.w_gl, jacobian, id, rho)
             patches.append(patch)
             ss_global.append(patch.ss)
             tt_global.append(patch.tt)
             ww_global.append(patch.ww)
 
+        near_interactions = 0
         for target in patches:
             for source in patches:
                 if target.id == source.id:
@@ -381,10 +387,21 @@ class IntegralOperator:
                         )
                     )
                 else:
-                    A[target.start : target.end, source.start : source.end] = (
-                        self.submatrix_far(target,source,disc_nodes,rho,drho,kernel,jacobian)
-                    )
+                    for idx, (s, t) in enumerate(target.nodes):
+                        if (
+                            np.linalg.norm(rho(s, t) - source.center)
+                            > 2 * source.bounding_distance
+                        ):
+                            A[target.start + idx, source.start : source.end] = kernel(
+                                s, t, source.ss, source.tt
+                            )
+                        else:
+                            A[target.start + idx, source.start : source.end] = self.submatrix_near()
+        
+
         ss = np.concatenate(ss_global)
         tt = np.concatenate(tt_global)
         ww = np.concatenate(ww_global)
+        A = np.sqrt(ww)[:, np.newaxis] * A / np.sqrt(ww)[np.newaxis, :]
+        print(f"Near interactions {near_interactions}")
         return A, ss, tt, ww

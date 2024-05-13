@@ -37,6 +37,9 @@ class Interval:
 
     def itranslate(self, x):
         return 2 * (x - self.a) / ((self.b - self.a)) - 1.0
+    
+    def mid(self):
+        return (self.a + self.b)/2.0
 
 
 class FunctionFamily:
