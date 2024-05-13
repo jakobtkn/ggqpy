@@ -1,7 +1,7 @@
 from __future__ import annotations
 import numpy as np
 from numpy.typing import NDArray
-from itertools import pairwise
+from itertools import pairwise, product
 from ggqpy.quad import *
 from ggqpy.utils import *
 from numpy.polynomial.legendre import leggauss, legvander2d
@@ -191,11 +191,47 @@ def gl_nodes2d(
     return ss, tt, ww
 
 
+class Patch:
+    def __init__(
+        self,
+        m,
+        n,
+        M,
+        N,
+        I: Interval,
+        J: Interval,
+        nodes,
+        weights,
+        jacobian,
+        id,
+    ):
+        self.I = Interval(I.a + (I.b - I.a) * m / M, (I.b - I.a) * (m + 1) / M)
+        self.J = Interval(J.a + (J.b - J.a) * n / N, (J.b - J.a) * (n + 1) / N)
+
+        s = self.I.translate(nodes)
+        t = self.J.translate(nodes)
+
+        ss, tt = np.meshgrid(s, t)
+        self.ss, self.tt = ss.flatten(), tt.flatten()
+        self.nodes = zip(self.ss, self.tt)
+
+        ws, wt = (I.length() / 2.0) * weights / M, (J.length() / 2.0) * weights / N
+        wws, wwt = np.meshgrid(ws, wt)
+
+        ww = (wws * wwt).flatten()
+        self.ww = ww * jacobian(self.ss, self.tt)
+
+        self.id = id
+        disc_nodes = len(nodes)
+        self.start = id * disc_nodes**2
+        self.end = (id + 1) * disc_nodes**2
+
+
 class IntegralOperator:
     def __init__(self, order):
         self.order = order
         self.quad_generator = SingularTriangleQuadrature(order)
-        self.x_gl, self.w_gl = leggauss(order)
+        self.x_gl, self.w_gl = leggauss(order + 1)
 
     def _adapt_gen_quad(self, interval: Interval):
         x = interval.translate(self.x_gl)
@@ -256,19 +292,40 @@ class IntegralOperator:
 
         return x, y, w
 
-    def construct_discretization_matrix(
+    def submatrix_far(
         self,
-        I: Interval,
-        J: Interval,
-        M: int,
-        N: int,
+        target: Patch,
+        source: Patch,
+        disc_nodes,
         rho: Callable,
         drho: Callable,
         kernel: Callable,
         jacobian: Callable,
     ):
-        ss, tt, ww = gl_nodes2d(I, J, M, N)
-        ww = ww * jacobian(ss, tt)
+        A = np.zeros(shape=(disc_nodes**2, disc_nodes**2), dtype=complex)
+        for idx, (s, t) in enumerate(target.nodes):
+            A[idx, :] = kernel(s, t, source.ss, source.tt)
+
+        np.sqrt(target.ww)[:, np.newaxis] * A / np.sqrt(source.ww)[np.newaxis, :]
+        return A
+
+    def submatrix_near():
+        pass
+
+    def submatrix_self(
+        self,
+        patch: Patch,
+        disc_nodes,
+        rho: Callable,
+        drho: Callable,
+        kernel: Callable,
+        jacobian: Callable,
+    ):
+        M = disc_nodes
+        N = disc_nodes
+        I, J = patch.I, patch.J
+        ss, tt = patch.ss, patch.tt
+        ww = patch.ww
         simplex = Rectangle(I, J)
 
         Vin = np.linalg.inv(
@@ -288,4 +345,46 @@ class IntegralOperator:
 
         A = np.sqrt(ww)[:, np.newaxis] * A / np.sqrt(ww)[np.newaxis, :]
 
+        return A
+
+    def construct_discretization_matrix(
+        self,
+        disc_nodes,
+        M,
+        N,
+        I: Interval,
+        J: Interval,
+        rho: Callable,
+        drho: Callable,
+        kernel: Callable,
+        jacobian: Callable,
+    ):
+        mm = np.arange(M)
+        nn = np.arange(N)
+        A = np.zeros(shape=(disc_nodes**2 * N * M, disc_nodes**2 * N * M), dtype=complex)
+
+        ss_global, tt_global, ww_global = list(), list(), list()
+        patches = list()
+        for id, (m, n) in enumerate(product(mm, nn)):
+            patch = Patch(m, n, M, N, I, J, self.x_gl, self.w_gl, jacobian, id)
+            patches.append(patch)
+            ss_global.append(patch.ss)
+            tt_global.append(patch.tt)
+            ww_global.append(patch.ww)
+
+        for target in patches:
+            for source in patches:
+                if target.id == source.id:
+                    A[target.start : target.end, source.start : source.end] = (
+                        self.submatrix_self(
+                            target, disc_nodes, rho, drho, kernel, jacobian
+                        )
+                    )
+                else:
+                    A[target.start : target.end, source.start : source.end] = (
+                        self.submatrix_far(target,source,disc_nodes,rho,drho,kernel,jacobian)
+                    )
+        ss = np.concatenate(ss_global)
+        tt = np.concatenate(tt_global)
+        ww = np.concatenate(ww_global)
         return A, ss, tt, ww

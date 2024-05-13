@@ -36,11 +36,13 @@ def kernel(x0, y0, s, t, k=1.0):
 def main(M, N, order, k, dh):
     system = IntegralOperator(order)
 
+    disc_nodes = order + 1
     A, ss, tt, ww = system.construct_discretization_matrix(
-        Interval(0, 2 * np.pi),
-        Interval(0, np.pi),
+        disc_nodes,
         M,
         N,
+        Interval(0, 2 * np.pi),
+        Interval(0, np.pi),
         rho,
         drho,
         kernel,
@@ -48,7 +50,7 @@ def main(M, N, order, k, dh):
     )
 
     f = dh(ss, tt) * np.sqrt(ww)
-    A = -0.5 * np.identity(M * N) + (4.0 * np.pi) ** (-1) * A
+    A = -0.5 * np.identity(M * N * disc_nodes**2) + (4.0 * np.pi) ** (-1) * A
     q = np.linalg.solve(A, f)
     
     # fig = plt.figure()
@@ -84,8 +86,10 @@ if __name__ == "__main__":
         x, y, z = rho(s, t)
         return np.sum(normal(s, t) * h_grad(x, y, z), axis=0)
     
-    N = [2, 3, 5, 10]
-    M = [2 * n for n in N]
+    # N = [2, 3, 6]
+    # M = [2 * n for n in N]
+    N = [1]
+    M = [1]
     error = list()
     condition = list()
     for m, n in zip(M, N):
