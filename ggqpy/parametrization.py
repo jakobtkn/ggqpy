@@ -1,6 +1,6 @@
 import sympy as sp
 import numpy as np
-
+from ggqpy.utils import Interval
 verbose = False
 
 
@@ -12,12 +12,14 @@ def _de_dimension(_f):  ## Correct for fixed 2d arrays in sympy
 
 
 class Parametrization:
-    def __init__(self, s, t, x, y, z, flip_normal=False):
+    def __init__(self, s, t, x, y, z, flip_normal=False, I: Interval = None, J: Interval = None):
         self.s = s
         self.t = t
         self.x = x
         self.y = y
         self.z = z
+        self.I = I
+        self.J = J
 
         self.rho = sp.Matrix([x, y, z])
         self.variables = sp.Matrix([s, t])
@@ -32,6 +34,9 @@ class Parametrization:
             self.normal = -cross_product.normalized()
 
     def get_lambdas(self):
+        """
+        Returns rho,drho,jacobian,normal
+        """
         s, t = self.s, self.t
         _rho = sp.lambdify((s, t), self.rho, modules="numpy")
         _drho = sp.lambdify((s, t), self.drho, modules="numpy")
@@ -48,7 +53,7 @@ class Parametrization:
         x = sp.cos(s) * sp.sin(t)
         y = sp.sin(s) * sp.sin(t)
         z = sp.cos(t)
-        return cls(s, t, x, y, z, flip_normal=False)
+        return cls(s, t, x, y, z, flip_normal=False, I = Interval(0,2*np.pi), J = Interval(0,np.pi))
 
     @classmethod
     def droplet(cls):
@@ -59,7 +64,7 @@ class Parametrization:
         y = sp.cos(s) * sp.sin(t)
         z = sp.sin(s) * sp.sin(t)
 
-        return cls(s, t, x, y, z, flip_normal=True)
+        return cls(s, t, x, y, z, flip_normal=True, I = Interval(0,2*np.pi), J = Interval(0,np.pi))
 
     def h_and_hgrad(self, k=1.0, p0=[1, 0, 0]):
         p0 = sp.Matrix(p0)

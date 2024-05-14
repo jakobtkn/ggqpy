@@ -220,10 +220,11 @@ class Patch:
         ws, wt = (I.length() / 2.0) * weights / M, (J.length() / 2.0) * weights / N
         wws, wwt = np.meshgrid(ws, wt)
 
-        ww = (wws * wwt).flatten()
-        self.ww = ww * jacobian(self.ss, self.tt)
+        self.ww_no_jacobian = (wws * wwt).flatten()
+        self.ww = self.ww_no_jacobian * jacobian(self.ss, self.tt)
 
         self.id = id
+        self.scale = I.length() * J.length() / 4.0
         disc_nodes = len(nodes)
         self.start = id * disc_nodes**2
         self.end = (id + 1) * disc_nodes**2
@@ -233,12 +234,42 @@ class Patch:
             np.linalg.norm(corners - self.center[:, np.newaxis])
         )
 
+    def subdivide(self):
+        yield Patch()
+        yield Patch()
+        yield Patch()
+        yield Patch()
+
 
 class IntegralOperator:
     def __init__(self, order):
         self.order = order
         self.quad_generator = SingularTriangleQuadrature(order)
         self.x_gl, self.w_gl = leggauss(order + 1)
+        xx, yy = np.meshgrid(self.x_gl, self.x_gl)
+        self.xx, self.yy = xx.flatten(), yy.flatten()
+        w1, w2 = np.meshgrid(self.w_gl, self.w_gl)
+        w = w1.flatten() * w2.flatten()
+
+        ## Prepare interpolation matrices for near interactions
+        Vin = np.linalg.inv(legvander2d(self.xx, self.yy, [self.order, self.order]))
+
+        x = [
+            Interval(-1.0, 0.0).translate(self.xx),
+            Interval(0.0, 1.0).translate(self.xx),
+        ]
+        y = [
+            Interval(-1.0, 0.0).translate(self.yy),
+            Interval(0.0, 1.0).translate(self.yy),
+        ]
+        V = [
+            legvander2d(u, v, [self.order, self.order])
+            for u, v in [(x[0], y[0]), (x[1], y[0]), (x[1], y[1]), (x[0], y[1])]
+        ]
+        self.interpolation_matrix = np.vstack(V) @ Vin
+        self.sub_xx = np.concatenate([x[0], x[1], x[1], x[0]])
+        self.sub_yy = np.concatenate([y[0], y[0], y[1], y[1]])
+        self.sub_ww = np.concatenate([w, w, w, w]) / 4.0
 
     def quad_on_standard_triangle(self, r0, theta0):
         gamma = (
@@ -294,30 +325,22 @@ class IntegralOperator:
 
         return x, y, w
 
-    def submatrix_row_far(
-        self,
-        target: Patch,
-        source: Patch,
-        disc_nodes,
-        rho: Callable,
-        drho: Callable,
-        kernel: Callable,
-        jacobian: Callable,
-    ):
-        A = np.zeros(shape=(disc_nodes**2, disc_nodes**2), dtype=complex)
-        for idx, (s, t) in enumerate(target.nodes):
-            A[idx, :] = kernel(s, t, source.ss, source.tt)
+    
+    def submatrix_far(self, s, t, kernel, source: Patch):
+        return kernel(s, t, source.ss, source.tt) * source.ww
 
-        np.sqrt(target.ww)[:, np.newaxis] * A / np.sqrt(source.ww)[np.newaxis, :]
-        return A
+    def submatrix_near(self, s, t, kernel, source: Patch, jacobian, subdivisions):
+        sub_length = 2/subdivisions
+        x = Interval(-1, -1 + sub_length).translate(self.x_gl)
+        xx = np.concatenate([x + offset for offset in sub_length*np.arange(subdivisions)])
+        # TODO
 
-    def submatrix_near(self, target, s,t, source):
-        # Vin = np.linalg.inv(
-        #     legvander2d(I.itranslate(ss), J.itranslate(tt), [self.order,self.order])
-        # )
-        # source.subdivide()
-
-        return
+        ss = source.I.translate(self.sub_xx)
+        tt = source.J.translate(self.sub_yy)
+        ww = np.tile(source.ww_no_jacobian, 4)/4.0
+        return (
+            kernel(s, t, ss, tt) * ww * jacobian(ss, tt)
+        ) @ self.interpolation_matrix
 
     def submatrix_self(
         self,
@@ -330,7 +353,6 @@ class IntegralOperator:
     ):
         I, J = patch.I, patch.J
         ss, tt = patch.ss, patch.tt
-        ww = patch.ww
         simplex = Rectangle(I, J)
 
         Vin = np.linalg.inv(
@@ -343,7 +365,9 @@ class IntegralOperator:
             )
 
             K = w * kernel(*singularity, xs, yt) * jacobian(xs, yt)
-            Vout = legvander2d(I.itranslate(xs), J.itranslate(yt), [self.order, self.order])
+            Vout = legvander2d(
+                I.itranslate(xs), J.itranslate(yt), [self.order, self.order]
+            )
             interpolation_matrix = Vout @ Vin
 
             A[idx, :] = K @ interpolation_matrix
@@ -388,20 +412,20 @@ class IntegralOperator:
                     )
                 else:
                     for idx, (s, t) in enumerate(target.nodes):
-                        if (
-                            np.linalg.norm(rho(s, t) - source.center)
-                            > 2 * source.bounding_distance
-                        ):
-                            A[target.start + idx, source.start : source.end] = kernel(
-                                s, t, source.ss, source.tt
-                            )
+
+                        dist = np.linalg.norm(rho(s, t) - source.center)
+                        if dist > 2.0 * source.bounding_distance:
+                            subdivisions_needed = np.ceil(np.log2(2*source.bounding_distance/dist))
+                            A[target.start + idx, source.start : source.end] = self.submatrix_far(s, t, kernel, source, subdivisions_needed)
                         else:
-                            A[target.start + idx, source.start : source.end] = self.submatrix_near()
-        
+                            A[target.start + idx, source.start : source.end] = (
+                                self.submatrix_near(s, t, kernel, source, jacobian)
+                            )
+                            near_interactions = near_interactions + 1
 
         ss = np.concatenate(ss_global)
         tt = np.concatenate(tt_global)
         ww = np.concatenate(ww_global)
         A = np.sqrt(ww)[:, np.newaxis] * A / np.sqrt(ww)[np.newaxis, :]
-        print(f"Near interactions {near_interactions}")
+        print(f"(M,N) = {(M,N)}, Near interactions {near_interactions}")
         return A, ss, tt, ww
