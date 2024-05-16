@@ -5,6 +5,7 @@ import sympy
 import argparse
 from numpy.polynomial.legendre import leggauss, legvander2d
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 sys.path.append(os.path.abspath("."))
 from ggqpy import *
 from ggqpy.nystrom import *
@@ -66,6 +67,24 @@ def main(M, N, order, k, dh):
 
     # plt.show()
 
+    from pylab import cm
+
+    fig = plt.figure(figsize=(8,6))
+    ax = fig.add_subplot(111,projection='3d')
+
+    f = abs(q/np.sqrt(ww))
+    colmap = cm.ScalarMappable(cmap=cm.plasma)
+    colmap.set_array(f)
+    colors = cm.plasma(f/max(f))
+    
+    yg = ax.scatter(*rho(ss,tt), c=colors, marker='o')
+    source = ax.scatter(1,0,0, c='r', s=30 ,marker='x')
+    cb = fig.colorbar(colmap, ax=plt.gca())
+    plt.show()
+
+
+
+
     p0 = np.array([-10, 0, 0])
     target = np.array(h(*p0))
     result = (4.0 * np.pi) ** (-1) * np.sum(
@@ -94,8 +113,10 @@ if __name__ == "__main__":
     
     # N = [2, 3, 6]
     # M = [2 * n for n in N]
-    N = [1, 2, 4]
-    M = [1, 2, 4]
+    # N = [1, 2, 4]
+    # M = [1, 2, 4]
+    M = [1,2,6]
+    N = [1,2,6]
     error = list()
     condition = list()
     for m, n in zip(M, N):
