@@ -34,8 +34,12 @@ def main(alpha, order):
 
     solver = IntegralOperator(order)
     r, theta, w = solver.quad_on_standard_triangle(r0, theta0)
+    sol = analytic_integral(alpha)
 
-    return abs(f(r, theta) @ w - analytic_integral(alpha))
+    error = abs(f(r, theta) @ w - analytic_integral(alpha))
+    rel_error = error/abs(sol)
+
+    return error, rel_error
 
 
 if __name__ == "__main__":
@@ -45,11 +49,14 @@ if __name__ == "__main__":
 
     alpha = [0.5, 1e-4, 1e-5]
     error = list()
+    rel_error = list()
     order = int(args.order)
     for a in alpha:
-        error.append(main(a, order))
+        err, rel_err = main(a, order)
+        error.append(err)
+        rel_error.append(rel_err)
     
-    df = pd.DataFrame(np.column_stack([alpha, error]), columns = ["$\\alpha$", "Absolute error"])
+    df = pd.DataFrame(np.column_stack([alpha, error, rel_error]), columns = ["$\\alpha$", "Absolute error", "Relative error"])
     styler = df.style
     styler.format_index(escape="latex")
     styler.format('{:.2e}', na_rep='MISS')
