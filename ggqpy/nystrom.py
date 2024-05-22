@@ -1,5 +1,6 @@
 from __future__ import annotations
 import numpy as np
+from math import isclose
 from ggqpy.geometry import Quadrilateral, Rectangle, standard_radial_triangle_transform
 from ggqpy.quad import *
 from ggqpy.utils import *
@@ -86,22 +87,15 @@ def gl_nodes2d(
 
 
 class QuadratureLoader:
-    def __init__(self, order, compute_exact = False):
+    def __init__(self, order, quad_generator = None):
         self.order = order
-        self.quad_generator = SingularTriangleQuadrature(order)
-        self.x_gl, self.w_gl = leggauss(order)
-        self.compute_exact = compute_exact
 
-    def _generate_exact_quad(self, r0, theta0):
-        count = 1
-        min_length = 1e-10
-        eps_disc = 1e-7
-        eps_comp = 1e-6
-        eps_quad = 1e-6
-        F = FunctionFamily.nystrom_integral_functions(count, self.order, r0, r0, theta0, theta0)
-        x, w = generalized_gaussian_quadrature(F, min_length, eps_disc, eps_comp, eps_quad)
-        quad = Quadrature(x, w)
-        return quad
+        if quad_generator == None:
+            self.quad_generator = SingularTriangleQuadrature(order)
+        else:
+            self.quad_generator = quad_generator
+
+        self.x_gl, self.w_gl = leggauss(order)
 
     def _adapt_gen_quad(self, interval: Interval):
         x = interval.translate(self.x_gl)
@@ -115,11 +109,7 @@ class QuadratureLoader:
             / (r0 * np.sin(theta0 - theta0 * u) + np.sin(theta0 * u))
         )
 
-        if self.compute_exact:
-            ggq = self._generate_exact_quad(r0, theta0)
-        else:
-            ggq = self.quad_generator.get_quad(r0, theta0)
-        
+        ggq = self.quad_generator.get_quad(r0, theta0)
         
         w_global = list()
         theta_global = list()
@@ -168,4 +158,41 @@ class QuadratureLoader:
 
         return x, y, w
 
+
+class TriangleQuadKey():
+    def __init__(self, a, b):
+        self.a = a
+        self.b = b
+
+    def __eq__(self, y: TriangleQuadKey):
+        return isclose(self.a, y.a) and isclose(self.b, y.b)
     
+    def __hash__(self):
+        return hash(tuple(round(x, 10) for x in [self.a, self.b]))
+class SingularTriangleQuadFinder:
+    def __init__(self, order):
+        self.order = order
+        self.computedquads = dict[TriangleQuadKey,Quadrature]()
+
+    def _generate_exact_quad(self, r0, theta0):
+        count = 1
+        min_length = 1e-10
+        eps_disc = 1e-7
+        eps_comp = 1e-6
+        eps_quad = 1e-6
+        F = FunctionFamily.nystrom_integral_functions(count, self.order, r0, r0, theta0, theta0)
+        x, w = generalized_gaussian_quadrature(F, min_length, eps_disc, eps_comp, eps_quad)
+        quad = Quadrature(x, w)
+        return quad
+
+    def get_quad(self, r0, theta0):
+        
+        key = TriangleQuadKey(r0, theta0)
+        if key in self.computedquads:
+            quad = self.computedquads[key]
+            print("Succesfully reused quadrature")
+        else:
+            quad = self._generate_exact_quad(r0, theta0)
+            self.computedquads[key] = quad
+
+        return quad
