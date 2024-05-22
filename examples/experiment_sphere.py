@@ -5,6 +5,8 @@ import sympy
 import argparse
 from numpy.polynomial.legendre import leggauss, legvander2d
 
+from ggqpy.geometry import Quadrilateral
+
 sys.path.append(os.path.abspath("."))
 from ggqpy import *
 from ggqpy.nystrom import *

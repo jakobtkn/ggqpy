@@ -4,7 +4,6 @@ from ggqpy.discretize import *
 from ggqpy.optimize import *
 from ggqpy.quad import Quadrature
 from ggqpy.utils import *
-from ggqpy.nystrom import *
 
 
 verbose = True

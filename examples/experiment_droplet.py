@@ -34,7 +34,7 @@ def kernel(x0, y0, s, t, k=1.0):
 
 
 def main(M, N, order, k, dh):
-    system = IntegralOperator(order)
+    system = QuadratureLoader(order)
 
     A, ss, tt, ww = system.construct_discretization_matrix(
         Interval(0, 2 * np.pi),

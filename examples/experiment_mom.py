@@ -6,6 +6,8 @@ import argparse
 import numpy.polynomial.legendre as legendre
 import matplotlib.pyplot as plt
 
+from ggqpy.geometry import Rectangle
+
 
 sys.path.append(os.path.abspath("."))
 from ggqpy import *
@@ -52,7 +54,7 @@ def naive(uu, vv, rr, N):
     nodes = len(uu)*len(ss)
     return z, nodes
 
-solver = IntegralOperator(4)
+solver = QuadratureLoader(4, compute_exact=False)
 simplex = Rectangle(Interval(-1, 1), Interval(-1, 1))
 def ggq(uu, vv, rr):
     z = 0.0
@@ -92,8 +94,8 @@ if __name__ == "__main__":
     error_trick = list()
     z_trick = list()
     NN = [2,3,4,5,6,7,8,9,10,11,12,14, 15, 16]
+    # NN = [2]
     
-
     for N in NN:
         uu, vv, rr = make_2d_quad(N + 1)
         
@@ -127,6 +129,6 @@ if __name__ == "__main__":
     plt.semilogy(num_nodes_ggq, error_ggq, "-*", label="ggq")
     plt.semilogy(num_nodes_duffy, error_duffy, "-*", label="duffy")
     plt.semilogy(num_nodes_trick, error_trick, "-*", label="trick")
-    plt.xlim((0,5e4))
+    # plt.xlim((0,5e4))
     plt.legend()
     plt.show()
