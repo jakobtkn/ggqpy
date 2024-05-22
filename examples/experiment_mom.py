@@ -106,7 +106,7 @@ def duffy(uu, vv, rr, N):
     return z, nodes
 
 if __name__ == "__main__":
-    N = 120
+    N = 130
     uu, vv, rr = make_2d_quad(N + 1)
     target,_ = secret_trick(uu, vv, rr, N, kernel0)
 
@@ -136,7 +136,7 @@ if __name__ == "__main__":
         tester_duffy.perform_test(uu,vv,rr,N)
         tester_trick.perform_test(uu,vv,rr,N, kernel0)
 
-    for N in [2,4,6,8,12]:
+    for N in [2,4,6,8,12,16]:
         uu, vv, rr = make_2d_quad(N + 1)
         tester_ggq_compute.perform_test(uu,vv,rr)
 
@@ -148,7 +148,7 @@ if __name__ == "__main__":
     for tester in [tester_naive, tester_ggq,tester_duffy,tester_trick,tester_ggq_compute]:
         tester.compute_abs_error(target)
         plt.semilogy(tester.num_nodes, tester.error, "-*", label=tester.name)
-    plt.xlim((100,50000))
+    plt.xlim((1000,50000))
     plt.legend()
     plt.savefig("output/mom.png")
     plt.show()
