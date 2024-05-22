@@ -8,12 +8,21 @@ rule all:
     input:
         "output/experiment_triangle.4.tex",
         "output/experiment_triangle.8.tex",
-        "output/experiment_triangle.16.tex",
         "output/experiment_droplet.4.1.tex",
         "output/experiment_droplet.8.1.tex",
         "output/experiment_droplet.16.1.tex",
     shell:
         "cp -r output ../report"
+
+rule gen4:
+    input:
+        "output/experiment_droplet.4.1.tex",
+rule gen8:
+    input:
+        "output/experiment_droplet.8.1.tex",
+rule gen16:
+    input:
+        "output/experiment_droplet.16.1.tex",
 
 rule make_config:
     input:
