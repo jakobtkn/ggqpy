@@ -85,8 +85,8 @@ if __name__ == "__main__":
         x, y, z = rho(s, t)
         return np.sum(normal(s, t) * h_grad(x, y, z), axis=0)
     
-    N = [2, 3, 5, 10]
-    M = [2 * n for n in N]
+    N = [2, 3, 5, 10, 30, 100]
+    M = [1 for x in N]
     error = list()
     condition = list()
     for m, n in zip(M, N):
