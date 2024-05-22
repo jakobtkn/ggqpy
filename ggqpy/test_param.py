@@ -1,7 +1,8 @@
 import numpy as np
 from ggqpy import *
 from ggqpy.parametrization import *
-
+from ggqpy.geometry import *
+from ggqpy.nystrom import *
 from pytest import approx
 np.seterr(all="raise")
 

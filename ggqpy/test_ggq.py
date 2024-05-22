@@ -86,7 +86,7 @@ def test_discretize():
     eps_disc = 1e-7
     eps_comp = 1e-5
     eps_quad = 1e-3
-    interpolation_degree = 30
+    interpolation_degree = 15
 
     discretizer = Discretizer(eps_disc, min_length, interpolation_degree)
     x_disc, w_disc = discretizer.adaptive_discretization(function_family, priority=True)
@@ -102,7 +102,7 @@ def test_end_to_end_nystrom(plt):
     eps_disc = 1e-7
     eps_comp = 1e-5
     eps_quad = 1e-3
-    interpolation_degree = 30
+    interpolation_degree = 15
 
     discretizer = Discretizer(eps_disc, min_length, interpolation_degree)
     x_disc, w_disc = discretizer.adaptive_discretization(function_family, priority=False)
