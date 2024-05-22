@@ -15,6 +15,22 @@ from ggqpy.geometry import Rectangle
 from ggqpy.duffy import *
 from ggqpy.secret import secret_trick
 
+class Tester():
+    def __init__(self, method):
+        self.num_nodes = list()
+        self.z = list()
+        self.method = method
+        self.error = None
+        self.name = str(method)
+
+    def perform_test(self, *args):
+        value, nodes = self.method(* args)
+        self.num_nodes.append(nodes)
+        self.z.append(value)
+
+    def compute_abs_error(self, target):
+        self.error = abs(np.array(self.z) - target)
+
 
 def make_2d_quad(n):
     x_gl, w_gl = legendre.leggauss(n)
@@ -54,17 +70,30 @@ def naive(uu, vv, rr, N):
     nodes = len(uu)*len(ss)
     return z, nodes
 
-solver = QuadratureLoader(4, compute_exact=False)
+quadrature_precomputed = QuadratureLoader(4)
 simplex = Rectangle(Interval(-1, 1), Interval(-1, 1))
 def ggq(uu, vv, rr):
     z = 0.0
     nodes = 0
     for u, v, r in zip(uu, vv, rr):
-        ss, tt, ww = solver.singular_integral_quad(drho, np.array([u, v]), simplex)
+        ss, tt, ww = quadrature_precomputed.singular_integral_quad(drho, np.array([u, v]), simplex)
         nodes += len(ss)
         z += r*(kernel0(u, v, ss, tt) @ ww)
     
     return z, nodes
+
+quad_genarator = SingularTriangleQuadFinder(4)
+quadrature_compute = QuadratureLoader(4, quad_genarator)
+def ggq_compute(uu, vv, rr):
+    z = 0.0
+    nodes = 0
+    for u, v, r in zip(uu, vv, rr):
+        ss, tt, ww = quadrature_compute.singular_integral_quad(drho, np.array([u, v]), simplex)
+        nodes += len(ss)
+        z += r*(kernel0(u, v, ss, tt) @ ww)
+    
+    return z, nodes
+
 
 def duffy(uu, vv, rr, N):
     z = 0
@@ -77,7 +106,7 @@ def duffy(uu, vv, rr, N):
     return z, nodes
 
 if __name__ == "__main__":
-    N = 60
+    N = 100
     uu, vv, rr = make_2d_quad(N + 1)
     target,_ = secret_trick(uu, vv, rr, N, kernel0)
 
@@ -94,41 +123,33 @@ if __name__ == "__main__":
     error_trick = list()
     z_trick = list()
     NN = [2,3,4,5,6,7,8,9,10,11,12,14, 15, 16]
-    # NN = [2]
-    
+    NN = [2,3,4,5,6,7]
+    tester_naive = Tester(naive)
+    tester_ggq = Tester(ggq)
+    tester_duffy = Tester(duffy)
+    tester_trick = Tester(secret_trick)
+    tester_ggq_compute = Tester(ggq_compute)
+
     for N in NN:
         uu, vv, rr = make_2d_quad(N + 1)
-        
-        ## NAIVE
-        z, nodes = naive(uu, vv, rr, N)
-        num_nodes_naive.append(nodes)
-        z_naive.append(z)
-        
-        ## GGQP
-        z, nodes = ggq(uu, vv, rr)
-        num_nodes_ggq.append(nodes)
-        z_ggq.append(z)
+        tester_naive.perform_test(uu,vv,rr,N)
+        tester_ggq.perform_test(uu,vv,rr)
+        tester_duffy.perform_test(uu,vv,rr,N)
+        tester_trick.perform_test(uu,vv,rr,N, kernel0)
 
-        ## DUFFY
-        z, nodes = duffy(uu, vv, rr, N)
-        num_nodes_duffy.append(nodes)
-        z_duffy.append(z)
-        
-        ## TRICK
-        z, nodes = secret_trick(uu, vv, rr, N, kernel0)
-        num_nodes_trick.append(nodes)
-        z_trick.append(z)
+    for N in [1,2,3,4,5,6]:
+        uu, vv, rr = make_2d_quad(N + 1)
+        tester_ggq_compute.perform_test(uu,vv,rr)
 
-    error_naive = abs(np.array(z_naive) - target)
-    error_ggq = abs(np.array(z_ggq) - target)
-    error_duffy = abs(np.array(z_duffy) - target)
-    error_trick = abs(np.array(z_trick) - target)
+    tester_naive.compute_abs_error(target)
+    tester_ggq.compute_abs_error(target)
+    error_duffy = tester_duffy.compute_abs_error(target)
+    error_trick = tester_trick.compute_abs_error(target)
     
-    print(z_naive[-1],z_ggq[-1],z_duffy[-1])
-    plt.semilogy(num_nodes_naive, error_naive, "-*", label="naive")
-    plt.semilogy(num_nodes_ggq, error_ggq, "-*", label="ggq")
-    plt.semilogy(num_nodes_duffy, error_duffy, "-*", label="duffy")
-    plt.semilogy(num_nodes_trick, error_trick, "-*", label="trick")
-    # plt.xlim((0,5e4))
+    for tester in [tester_naive, tester_ggq,tester_duffy,tester_trick,tester_ggq_compute]:
+        tester.compute_abs_error(target)
+        plt.semilogy(tester.num_nodes, tester.error, "-*", label=tester.name)
+    plt.xlim((0,12000))
     plt.legend()
+    plt.savefig("output/mom.png")
     plt.show()
