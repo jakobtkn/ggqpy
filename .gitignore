@@ -167,3 +167,4 @@ cython_debug/
 deprecatedexamples/
 plots/
 output/
+ggqpy/secret.py
