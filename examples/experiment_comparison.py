@@ -8,8 +8,10 @@ import matplotlib.pyplot as plt
 sys.path.append(os.path.abspath("."))
 from ggqpy import *
 from ggqpy.quad import Quadrature
+from ggqpy.nystrom import QuadratureLoader
 from ggqpy.duffy import duffy_quad
 from ggqpy.secret import mysterious_substitution
+from ggqpy.geometry import Rectangle
 from experiment_mom import make_2d_quad, grid
 
 if __name__ == "__main__":
@@ -26,7 +28,7 @@ if __name__ == "__main__":
     plt.title(f"naive {len(ss)}")
 
     plt.subplot(2,2,2)
-    solver = IntegralOperator(4)
+    solver = QuadratureLoader(4)
     def drho(s, t):
         return np.array([[1, 0], [0, 1], [0, 0]])
     simplex = Rectangle(Interval(-1, 1), Interval(-1, 1))

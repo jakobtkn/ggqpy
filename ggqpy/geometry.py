@@ -1,5 +1,5 @@
+from __future__ import annotations
 from itertools import pairwise
-from numpy.typing import NDArray
 import numpy as np
 
 from ggqpy.utils import Interval

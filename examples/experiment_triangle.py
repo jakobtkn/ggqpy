@@ -7,6 +7,7 @@ import argparse
 sys.path.append(os.path.abspath("."))
 from ggqpy import *
 from ggqpy.quad import Quadrature
+from ggqpy.nystrom import QuadratureLoader
 
 
 def analytic_integral(alpha):
@@ -32,8 +33,9 @@ def main(alpha, order):
     theta0 = np.pi / 2
     f = lambda r, theta: np.cos(2 * theta) / r
 
-    solver = IntegralOperator(order)
-    r, theta, w = solver.quad_on_standard_triangle(r0, theta0)
+
+    quad_loader = QuadratureLoader(order)
+    r, theta, w = quad_loader.quad_on_standard_triangle(r0, theta0)
     sol = analytic_integral(alpha)
 
     error = abs(f(r, theta) @ w - analytic_integral(alpha))

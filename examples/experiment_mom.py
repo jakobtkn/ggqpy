@@ -6,14 +6,14 @@ import argparse
 import numpy.polynomial.legendre as legendre
 import matplotlib.pyplot as plt
 
-from ggqpy.geometry import Rectangle
 
 
 sys.path.append(os.path.abspath("."))
 from ggqpy import *
 from itertools import product
+from ggqpy.geometry import Rectangle
 from ggqpy.duffy import *
-from ggqpy.secret import mysterious_substitution, secret_trick
+from ggqpy.secret import secret_trick
 
 
 def make_2d_quad(n):

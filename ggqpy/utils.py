@@ -215,3 +215,11 @@ class PiecewiseLegendreFamily:
     def deriv(self):
         deriv_poly_list = [p.deriv() for p in self.poly_list]
         return PiecewiseLegendre(deriv_poly_list, self.endpoints)
+
+def grid(x,y,wx,wy):
+    x, y = np.meshgrid(x, y)
+    xx = x.flatten()
+    yy = y.flatten()
+    wx, wy = np.meshgrid(wx, wy)
+    ww = (wx * wy).flatten()
+    return xx, yy, ww

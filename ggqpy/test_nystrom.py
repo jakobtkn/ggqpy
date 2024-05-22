@@ -3,6 +3,8 @@ from numpy.polynomial.legendre import leggauss
 import sympy
 from pytest import approx
 from ggqpy import *
+from ggqpy.geometry import *
+from ggqpy.nystrom import *
 
 np.seterr(all="raise")
 
@@ -80,7 +82,7 @@ def test_geometry():
 
 
 from examples.experiment_triangle import analytic_integral
-solver = IntegralOperator(order = 4)
+solver = QuadratureLoader(order = 4)
 
 def test_quad_on_standard_triangle():
     r, theta, w = solver.quad_on_standard_triangle(0.5, np.pi / 2)
@@ -256,3 +258,15 @@ def test_rectangle():
     J = Interval(2, 4)
     R = Rectangle(I, J)
     assert [*R] == [(0, 2), (3, 2), (3, 4), (0, 4)]
+
+from ggqpy.parametrization import *
+import sympy
+def test_conformal2():
+    s,t = sympy.Symbol('s'), sympy.Symbol('t')
+    param = Parametrization(s,t,s,s*t**10,s*t + 10)
+    param = Parametrization.droplet()
+    rho,drho,jacobian,normal = param.get_lambdas()
+    x0 = np.array([np.pi,0.7])
+    A, Ainv = ensure_conformal_mapping(drho,x0)
+    for x in [np.array([0,0]),np.array([2*np.pi,0]),np.array([2*np.pi,np.pi]),np.array([0,np.pi])]:
+        print(Ainv @ (x - x0))
