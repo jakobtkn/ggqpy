@@ -2,9 +2,6 @@ import numpy as np
 import dill as pickle
 
 class Tester():
-    name = None
-
-
     def __init__(self, method, name = None):
         self.num_nodes = list()
         self.z = list()
@@ -27,6 +24,7 @@ class Tester():
         self.rel_error = abs((np.array(self.z) - target)/target)
 
     def save(self, folder):
+        self.method = None
         with open(f"data/{folder}/{self.name}.pkl", "wb") as output:
             pickle.dump(self, output)
 

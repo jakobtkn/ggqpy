@@ -22,11 +22,14 @@ def plot_data(folder):
     plt.savefig(f"output/mom.{folder}.pdf")
     plt.xlabel("Number of quadrature nodes")
     plt.ylabel("Relative error")
-    plt.show()
 
 
 if __name__ == "__main__":
+    plt.subplot(1,2,1)
     plot_data("simple_patch")
+    plt.subplot(1,2,2)
+    plot_data("high_order")
+    plt.show()
 
 
     

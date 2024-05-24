@@ -1,22 +1,16 @@
 from tester import Tester
 import sys
-import pandas as pd
 import os
-import sympy
-import argparse
 import numpy.polynomial.legendre as legendre
-import matplotlib.pyplot as plt
 import numpy as np
 
-
 sys.path.append(os.path.abspath("."))
-from itertools import product
 from ggqpy.geometry import Rectangle
 from ggqpy.duffy import duffy_on_standard_triangle, duffy_quad
 from ggqpy.secret import secret_trick
 from ggqpy.utils import Interval
-from ggqpy.quad import SingularTriangleQuadrature
 from ggqpy.nystrom import SingularTriangleQuadFinder, QuadratureLoader
+from ggqpy.parametrization import Parametrization
 
 
 def make_2d_quad(n):
@@ -29,87 +23,71 @@ def make_2d_quad(n):
     return xx, yy, ww
 
 
-def rho(s, t):
-    return np.row_stack([s, t])
-
-
-def drho(s, t):
-    return np.array([[1, 0], [0, 1], [0, 0]])
-
-
-def kernel(s0, t0, s, t, k=1.0):
-    q = rho(s0, t0)
-    p = rho(s, t)
-    dist = np.linalg.norm(q[:, np.newaxis, :] - p[:, :, np.newaxis], axis=0)
-    return np.exp(1j * k * dist) / dist
-
-
-def kernel0(s0, t0, s, t, k=1.0):
-    q = rho(s0, t0)
-    p = rho(s, t)
-    dist = np.linalg.norm(q - p, axis=0)
-    return np.exp(1j * k * dist) / dist
-
-
-def naive(uu, vv, rr, N):
-    ss, tt, ww = make_2d_quad(N)
-    z = np.sum(
-        kernel(uu, vv, ss, tt) * (rr[np.newaxis, :] * ww[:, np.newaxis]),
-        axis=(0, 1),
-    )
-    nodes = len(uu) * len(ss)
-    return z, nodes
-
-
 quadrature_precomputed = QuadratureLoader(4)
 simplex = Rectangle(Interval(-1, 1), Interval(-1, 1))
-
-
-def ggq(uu, vv, rr):
-    z = 0.0
-    nodes = 0
-    for u, v, r in zip(uu, vv, rr):
-        ss, tt, ww = quadrature_precomputed.singular_integral_quad(
-            drho, np.array([u, v]), simplex
-        )
-        nodes += len(ss)
-        z += r * (kernel0(u, v, ss, tt) @ ww)
-
-    return z, nodes
-
-
 quad_genarator = SingularTriangleQuadFinder(4)
 quadrature_compute = QuadratureLoader(4, quad_genarator)
 
 
-def ggq_compute(uu, vv, rr):
-    z = 0.0
-    nodes = 0
-    for u, v, r in zip(uu, vv, rr):
-        ss, tt, ww = quadrature_compute.singular_integral_quad(
-            drho, np.array([u, v]), simplex
-        )
-        nodes += len(ss)
-        z += r * (kernel0(u, v, ss, tt) @ ww)
+def run_experiment(N_test, folder, param: Parametrization, f, g):
+    rho, drho, jacobian, normal = param.get_lambdas()
 
-    return z, nodes
+    def kernel(s0, t0, s, t, k=1.0):
+        q = rho(s0, t0)
+        p = rho(s, t)
+        dist = np.linalg.norm(q[:, np.newaxis] - p, axis=0)
+        return np.exp(1j * k * dist) / dist
 
+    def integrand(s0, t0, s, t):
+        return f(s0, t0) * (jacobian(s, t) * g(s, t)) * kernel(s0, t0, s, t)
 
-def duffy(uu, vv, rr, N):
-    z = 0
-    nodes = 0
-    for u, v, r in zip(uu, vv, rr):
-        ss, tt, ww = duffy_quad(drho, np.array([u, v]), simplex, int(N // 2))
-        nodes += len(ss)
-        z += r * (kernel0(u, v, ss, tt) @ ww)
+    def naive(uu, vv, rr, N):
+        ss, tt, ww = make_2d_quad(N)
+        z = 0.0
+        nodes = 0
+        for u, v, r in zip(uu, vv, rr):
+            nodes += len(ss)
+            z += r * integrand(u, v, ss, tt) @ ww
 
-    return z, nodes
+        return z, nodes
 
+    def ggq(uu, vv, rr):
+        z = 0.0
+        nodes = 0
+        for u, v, r in zip(uu, vv, rr):
+            ss, tt, ww = quadrature_precomputed.singular_integral_quad(
+                drho, np.array([u, v]), simplex
+            )
+            nodes += len(ss)
+            z += r * (integrand(u, v, ss, tt) @ ww)
 
-if __name__ == "__main__":
-    N = 150
-    uu, vv, rr = make_2d_quad(N + 1)
-    target, _ = secret_trick(uu, vv, rr, N, kernel0)
+        return z, nodes
+
+    def ggq_compute(uu, vv, rr):
+        z = 0.0
+        nodes = 0
+        for u, v, r in zip(uu, vv, rr):
+            ss, tt, ww = quadrature_compute.singular_integral_quad(
+                drho, np.array([u, v]), simplex
+            )
+            nodes += len(ss)
+            z += r * (integrand(u, v, ss, tt) @ ww)
+
+        return z, nodes
+
+    def duffy(uu, vv, rr, N):
+        z = 0
+        nodes = 0
+        for u, v, r in zip(uu, vv, rr):
+            ss, tt, ww = duffy_quad(drho, np.array([u, v]), simplex, int(N // 2))
+            nodes += len(ss)
+            z += r * (integrand(u, v, ss, tt) @ ww)
+
+        return z, nodes
+
+    uu, vv, rr = make_2d_quad(N_test + 1)
+    rr = rr * jacobian(uu, vv)
+    target, _ = secret_trick(uu, vv, rr, N_test, integrand)
 
     NN = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
     tester_naive = Tester(naive, "naive")
@@ -127,10 +105,12 @@ if __name__ == "__main__":
 
     for N in NN:
         uu, vv, rr = make_2d_quad(N + 1)
+        rr = rr * jacobian(uu, vv)
+
         tester_naive.perform_test(uu, vv, rr, N)
         tester_ggq.perform_test(uu, vv, rr)
         tester_duffy.perform_test(uu, vv, rr, N)
-        tester_trick.perform_test(uu, vv, rr, N, kernel0)
+        tester_trick.perform_test(uu, vv, rr, N, integrand)
 
     for N in [2, 4, 6, 8, 12, 16]:
         uu, vv, rr = make_2d_quad(N + 1)
@@ -138,4 +118,40 @@ if __name__ == "__main__":
 
     for tester in testers:
         tester.compute_error(target)
-        tester.save("simple_patch")
+        tester.save(folder)
+
+
+if __name__ == "__main__":
+    N_test = 150
+
+    param = Parametrization.plane()
+
+    rho, drho, jacobian, normal = param.get_lambdas()
+
+    def f(s, t):
+        cs = [0,0,0,1,0]
+        ct = [0,0,0,1,0]
+        return legendre.legval(s, cs)*legendre.legval(t, ct)
+
+    def g(s, t):
+        cs = [0,0,0,1,0]
+        ct = [0,1,0,0,0]
+        return legendre.legval(s, cs)*legendre.legval(t, ct)
+
+    run_experiment(N_test, "simple_patch", param, f, g)
+
+    param = Parametrization.complicated_patch()
+
+    rho, drho, jacobian, normal = param.get_lambdas()
+
+    def f(s, t):
+        cs = [0,0,0,1,0]
+        ct = [0,0,0,1,0]
+        return legendre.legval(s, cs)*legendre.legval(t, ct)
+
+    def g(s, t):
+        cs = [0,0,0,1,0]
+        ct = [0,1,0,0,0]
+        return legendre.legval(s, cs)*legendre.legval(t, ct)
+
+    run_experiment(N_test, "high_order", param, f, g)

@@ -60,6 +60,28 @@ class Parametrization:
         z = sp.sin(s) * sp.sin(t)
 
         return cls(s, t, x, y, z, flip_normal=True)
+    
+    @classmethod
+    def plane(cls):
+        s = sp.symbols("s", real=True, domain=(-1, 1))
+        t = sp.symbols("t", real=True, domain=(-1, 1))
+
+        x = s
+        y = t
+        z = t
+
+        return cls(s, t, x, y, z, flip_normal=True)
+    
+    @classmethod
+    def complicated_patch(cls):
+        s = sp.symbols("s", real=True, domain=(-1, 1))
+        t = sp.symbols("t", real=True, domain=(-1, 1))
+
+        x = s*2
+        y = t + s
+        z = 2*s
+
+        return cls(s, t, x, y, z, flip_normal=True)
 
     def h_and_hgrad(self, k=1.0, p0=[1, 0, 0]):
         p0 = sp.Matrix(p0)
