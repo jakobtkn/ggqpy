@@ -52,11 +52,36 @@ def main(M, N, order, k, dh):
     A = -0.5 * np.identity(M * N) + (4.0 * np.pi) ** (-1) * A
     q = np.linalg.solve(A, f)
     
+    fig = plt.figure()
+    ax = fig.add_subplot(121, projection='3d')
+    ax.plot_trisurf(ss, tt, np.real(q/np.sqrt(ww)), lw=0.2, edgecolor="black", color="grey",
+                alpha=0.5)
+    ax.set_title("Real")
+    ax = fig.add_subplot(122, projection='3d')
+    ax.plot_trisurf(ss, tt, np.imag(q/np.sqrt(ww)), lw=0.2, edgecolor="black", color="grey",
+                alpha=0.5)
+    ax.set_title("Imag")
+
+
     # fig = plt.figure()
     # ax = fig.add_subplot(111, projection='3d')
-    # ax.plot_trisurf(abs(q/np.sqrt(ww)), ss, tt, lw=0.2, edgecolor="black", color="grey",
-    #             alpha=0.5)
+    # ax.scatter(*rho(ss,tt))
 
+    plt.show()
+
+    # from pylab import cm
+
+    # fig = plt.figure(figsize=(8,6))
+    # ax = fig.add_subplot(111,projection='3d')
+
+    # f = abs(q/np.sqrt(ww))
+    # colmap = cm.ScalarMappable(cmap=cm.plasma)
+    # colmap.set_array(f)
+    # colors = cm.plasma(f/max(f))
+    
+    # yg = ax.scatter(*rho(ss,tt), c=colors, marker='o')
+    # source = ax.scatter(1,0,0, c='r', s=30 ,marker='x')
+    # cb = fig.colorbar(colmap, ax=plt.gca())
     # plt.show()
 
     p0 = np.array([-10, 0, 0])
@@ -85,8 +110,8 @@ if __name__ == "__main__":
         x, y, z = rho(s, t)
         return np.sum(normal(s, t) * h_grad(x, y, z), axis=0)
     
-    N = [2, 3, 5, 10, 30, 100]
-    M = [1 for x in N]
+    N = [20, 80]
+    M = [2 for x in N]
     error = list()
     condition = list()
     for m, n in zip(M, N):
@@ -108,3 +133,4 @@ if __name__ == "__main__":
         hrules = True,
     )
     print(latex_table)
+    plt.savefig("output/droplet_density.png")
