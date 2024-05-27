@@ -14,6 +14,7 @@ def plot_data(folder):
         tester = load_tester(folder, name)
         testers.append(tester)
 
+    plt.figure()
     for tester in testers:
         plt.semilogy(tester.num_nodes, tester.rel_error, "-*", label=tester.name)
 
@@ -25,11 +26,8 @@ def plot_data(folder):
 
 
 if __name__ == "__main__":
-    plt.subplot(1,2,1)
     plot_data("simple_patch")
-    plt.subplot(1,2,2)
     plot_data("high_order")
-    plt.show()
 
 
     

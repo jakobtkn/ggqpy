@@ -114,6 +114,7 @@ def run_experiment(N_test, folder, param: Parametrization, f, g):
 
     for N in [2, 4, 6, 8, 12, 16]:
         uu, vv, rr = make_2d_quad(N + 1)
+        rr = rr * jacobian(uu, vv)
         tester_ggq_compute.perform_test(uu, vv, rr)
 
     for tester in testers:
