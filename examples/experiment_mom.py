@@ -123,21 +123,17 @@ def run_experiment(N_test, folder, param: Parametrization, f, g):
 
 
 if __name__ == "__main__":
-    N_test = 150
+    N_test = 130
 
     param = Parametrization.plane()
 
     rho, drho, jacobian, normal = param.get_lambdas()
 
     def f(s, t):
-        cs = [0,0,0,1,0]
-        ct = [0,0,0,1,0]
-        return legendre.legval(s, cs)*legendre.legval(t, ct)
+        return np.full_like(s, 1.0)
 
     def g(s, t):
-        cs = [0,0,0,1,0]
-        ct = [0,1,0,0,0]
-        return legendre.legval(s, cs)*legendre.legval(t, ct)
+        return np.full_like(s, 1.0)
 
     run_experiment(N_test, "simple_patch", param, f, g)
 
