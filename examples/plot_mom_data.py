@@ -6,7 +6,7 @@ sys.path.append(os.path.abspath("."))
 
 
 
-tester_names = ["naive","duffy","ggq_exact_triangle","ggq_precomputed","ticra"]
+tester_names = ["naive","duffy","ggq_precomputed_4","ggq_precomputed_8","ggq_precomputed_16","ggq_exact_triangle","ticra"]
 def plot_data(folder):
     testers = list[Tester]()
     
@@ -16,13 +16,13 @@ def plot_data(folder):
 
     plt.figure()
     for tester in testers:
-        plt.semilogy(tester.num_nodes, tester.rel_error, "-*", label=tester.name)
+        plt.loglog(tester.num_nodes, tester.rel_error, "-*", label=tester.name)
 
-    plt.xlim((1000,50000))
     plt.legend()
-    plt.savefig(f"output/mom.{folder}.pdf")
     plt.xlabel("Number of quadrature nodes")
+    plt.xlim(1e3,1e6)
     plt.ylabel("Relative error")
+    plt.savefig(f"output/mom.{folder}.pdf")
 
 
 if __name__ == "__main__":

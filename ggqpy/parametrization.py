@@ -77,7 +77,7 @@ class Parametrization:
         s = sp.symbols("s", real=True, domain=(-1, 1))
         t = sp.symbols("t", real=True, domain=(-1, 1))
 
-        x = s*2
+        x = 3*s**2
         y = t + s
         z = 2*s
 
