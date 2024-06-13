@@ -44,7 +44,7 @@ def main(alpha, order):
 
 
 if __name__ == "__main__":
-    alpha = [0.9, 0.5, 0.5e-4, 0.5e-5]
+    alpha = [0.9, 0.5, 0.03, 0.2e-2, 0.2e-5]
     error = list()
     rel_error_4 = list()
     length_4 = list()

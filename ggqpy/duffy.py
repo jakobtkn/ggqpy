@@ -14,9 +14,12 @@ def make_2d_qaud_unit_square(n):
     return xx, yy, ww
 
 def duffy_on_standard_triangle(scale, angle, uu, vv, ww):
-    x = uu + vv*(scale*np.cos(angle) - uu)
-    y = vv*scale*np.sin(angle)
-    w = ww*(1-vv)*scale*np.sin(angle)
+    x = uu
+    y = vv*uu
+    X = np.array([[1,scale*np.cos(angle)-1],[0,scale*np.sin(angle)]]) @ np.row_stack([x,y])
+    x = X[0,:]
+    y = X[1,:]
+    w = ww*uu*scale*np.sin(angle)
     return x,y,w
 
 def duffy_quad(drho, x0, simplex, n):
