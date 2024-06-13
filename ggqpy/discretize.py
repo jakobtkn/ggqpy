@@ -151,7 +151,7 @@ class Discretizer:
         ## Stage 3.
         x_global = list()
         w_global = list()
-        x, w = legendre.leggauss(2 * self.interpolation_degree)
+        x, w = legendre.leggauss(self.interpolation_degree)
         for I in self.intervals:
             x_local = I.translate(x)
             w_local = w * I.length() / 2

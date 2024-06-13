@@ -103,10 +103,11 @@ class FunctionFamilySymbolic(FunctionFamily):
     @classmethod
     def polynomials_and_singularity(
         cls,
-        I: Interval = Interval(1e-8, 1),
+        I: Interval = Interval(0, 1),
         order: int = 9,
         number_of_polynomials: int = 20,
         rng_gen: np.random.Generator = np.random.default_rng(0),
+        perturbed=False,
     ):
         x = sympy.Symbol("x", real=True)
 
@@ -118,7 +119,13 @@ class FunctionFamilySymbolic(FunctionFamily):
 
         functions_symbolic.append(sympy.ln(x))
 
-        return cls(I, functions_symbolic)
+        if perturbed:
+            perturbed = sympy.ln(x+0.01)
+            perturbed_lambda = sympy.lambdify(x, perturbed, "numpy")
+
+            return cls(I, functions_symbolic), perturbed_lambda, perturbed
+        else:
+            return cls(I, functions_symbolic)
 
     def generate_example_function(self):
         n = len(self.functions_symbolic)
@@ -216,7 +223,8 @@ class PiecewiseLegendreFamily:
         deriv_poly_list = [p.deriv() for p in self.poly_list]
         return PiecewiseLegendre(deriv_poly_list, self.endpoints)
 
-def grid(x,y,wx,wy):
+
+def grid(x, y, wx, wy):
     x, y = np.meshgrid(x, y)
     xx = x.flatten()
     yy = y.flatten()
