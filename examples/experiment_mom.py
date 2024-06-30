@@ -93,7 +93,8 @@ def run_experiment(N_test, folder, param: Parametrization, f, g):
         return z, nodes
 
     uu, vv, rr = make_2d_quad(N_test + 1, jacobian)
-    target, _ = secret_trick(uu, vv, rr, N_test, integrand, jacobian)
+    target, test_nodes = secret_trick(uu, vv, rr, N_test, integrand)
+    print(test_nodes)
 
     NN = [6, 8, 10, 12, 14, 16, 18, 20, 22]
     tester_naive = Tester(naive, "naive")
@@ -121,7 +122,7 @@ def run_experiment(N_test, folder, param: Parametrization, f, g):
         tester_ggq8.perform_test(uu, vv, rr, quadrature_precomputed_order_8)
         tester_ggq16.perform_test(uu, vv, rr, quadrature_precomputed_order_16)
         tester_duffy.perform_test(uu, vv, rr, N)
-        tester_trick.perform_test(uu, vv, rr, N, integrand, jacobian)
+        tester_trick.perform_test(uu, vv, rr, N, integrand)
 
     for N in [2, 4, 6, 8, 12, 16]:
         uu, vv, rr = make_2d_quad(N + 1, jacobian)

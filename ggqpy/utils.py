@@ -120,7 +120,7 @@ class FunctionFamilySymbolic(FunctionFamily):
         functions_symbolic.append(sympy.ln(x))
 
         if perturbed:
-            perturbed = sympy.ln(x+0.01)
+            perturbed = sympy.ln(x) + x**8
             perturbed_lambda = sympy.lambdify(x, perturbed, "numpy")
 
             return cls(I, functions_symbolic), perturbed_lambda, perturbed

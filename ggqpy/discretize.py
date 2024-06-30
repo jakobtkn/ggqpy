@@ -38,15 +38,6 @@ class Discretizer:
         return
 
     def interval_error(self, I: Interval, function_family: FunctionFamily, scale=True):
-        """
-
-        Parameters
-        ----------
-        :
-        Returns
-        -------
-        :
-        """
         x = (I.b - I.a) * (self.x_gl + 1.0) / 2.0 + I.a
         A = np.column_stack([phi(x) for phi in function_family.functions_lambdas])
 
@@ -67,15 +58,7 @@ class Discretizer:
 
 
     def interval_compatible(self, I: Interval, function_family: FunctionFamily):
-        """
-
-        Parameters
-        ----------
-        :
-        Returns
-        -------
-        :
-        """
+    
         high_freq_residuals = np.sqrt(self.interval_error(I, function_family, scale=False))
         is_compatible = np.all(
             high_freq_residuals < self.precision
@@ -101,7 +84,6 @@ class Discretizer:
             P.put((1/np.linalg.norm(xi1), xi1, I1))
             P.put((1/np.linalg.norm(xi2), xi2, I2))
             total_error = total_error - xi + xi1 + xi2
-            print(max(np.sqrt(abs(total_error))))
 
         self.intervals = sorted([I for (_,_,I) in P.queue])
 
@@ -125,13 +107,6 @@ class Discretizer:
         """
         Adaptive disrectization using nested Gaussian Legendre polynomial interpolation.
         Procedure described in "A nonlinear optimization procedure for generalized Gaussian quadratures" p.12-13
-
-        Parameters
-        ----------
-        :
-        Returns
-        -------
-        :
         """
 
         ## Stage 1.
@@ -165,15 +140,7 @@ class Discretizer:
         return x_global, w_global
 
     def naive_discretize2d(self, N, M, Ix, Iy):  ## So far only -1 to 1
-        """
-
-        Parameters
-        ----------
-        :
-        Returns
-        -------
-        :
-        """
+    
         x, wx = legendre.leggauss(N)
         wx = wx * (Ix.b - Ix.a) / 2
         tx = sp.interpolate.interp1d([-1.0, 1.0], [*Ix])
@@ -193,12 +160,6 @@ class Discretizer:
         """
         int_[0,2pi] int_[-1,1] dt dphi
 
-        Parameters
-        ----------
-        :
-        Returns
-        -------
-        :
         """
 
         theta, w_theta = legendre.leggauss(N)
@@ -238,15 +199,7 @@ class Discretizer:
 
 
 def construct_A_matrix(eval_points, weights, functions):
-    """
 
-    Parameters
-    ----------
-    :
-    Returns
-    -------
-    :
-    """
     if type(eval_points) is not tuple:
         eval_points = (eval_points,)
 
@@ -257,12 +210,6 @@ def construct_A_matrix(eval_points, weights, functions):
 def compress_sequence_of_functions(functions, eval_points, weights, precision):
     """
     Construct rank revealing QR s.t. sp.linalg.norm(A[:,perm] - Q[:,:k]@R[:k,:]) <= precision]
-    Parameters
-    ----------
-    :
-    Returns
-    -------
-    :
     """
     A = construct_A_matrix(eval_points, weights, functions)
     Q, R, perm = sp.linalg.qr(A, pivoting=True, mode="economic")

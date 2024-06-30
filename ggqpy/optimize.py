@@ -31,15 +31,7 @@ def levenberg_marquadt(residual, jacobian, x0, maxiter=1000, tol=1e-6):
 
 
 def dampened_gauss_newton(r, jac, x0, step_size=0.3, maxiter=1000, tol=1e-6):
-    """
 
-    Parameters
-    ----------
-    :
-    Returns
-    -------
-    :
-    """
     x = x0
     for _ in range(maxiter):
         J = jac(x)
@@ -86,44 +78,20 @@ class QuadOptimizer:
         return
 
     def jacobian(self, y):
-        """
-
-        Parameters
-        ----------
-        :
-        Returns
-        -------
-        :
-        """
+    
         n = len(y) // 2
         J = self.legendre_family.eval_block(y[:n])
         J[:, :n] = J[:, :n] * y[n:]
         return J
 
     def residual(self, y):
-        """
-
-        Parameters
-        ----------
-        :
-        Returns
-        -------
-        :
-        """
+    
         n = len(y) // 2
         U = self.legendre_family(y[:n])
         return U @ y[n:] - self.r
 
     def naive_optimization(self, n, I, step_size, maxiter, ftol):
-        """
-
-        Parameters
-        ----------
-        :
-        Returns
-        -------
-        :
-        """
+    
         x_gl, w_gl = np.polynomial.legendre.leggauss(n)
         w_gl = w_gl * 0.5 * I.length()
         x_gl = I.translate(x_gl)
@@ -135,15 +103,7 @@ class QuadOptimizer:
         return x, w
 
     def rank_remaining_nodes(self, x, w):
-        """
-
-        Parameters
-        ----------
-        :
-        Returns
-        -------
-        :
-        """
+    
         y0 = np.concatenate([x, w])
         J = self.jacobian(y0)
         A = np.linalg.inv(J @ np.transpose(J))
@@ -168,15 +128,7 @@ class QuadOptimizer:
         return idx_sorted
 
     def attempt_to_remove_node(self, x, w, eps_quad):
-        """
-
-        Parameters
-        ----------
-        :
-        Returns
-        -------
-        :
-        """
+    
         n = len(x)
 
         def res_lm(y):
@@ -218,15 +170,7 @@ class QuadOptimizer:
         return x, w, False
 
     def reduce_quadrature(self, x0, w0, eps_quad):
-        """
-
-        Parameters
-        ----------
-        :
-        Returns
-        -------
-        :
-        """
+    
         x = x0
         w = w0
 

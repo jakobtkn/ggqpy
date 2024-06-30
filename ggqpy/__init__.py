@@ -22,15 +22,6 @@ else:
 
 
 def construct_Chebyshev_quadratures(eval_points: tuple, w, U):
-    """
-
-    Parameters
-    ----------
-    :
-    Returns
-    -------
-    :
-    """
     r = U.T @ w
     k = len(r)
 
@@ -56,16 +47,6 @@ def generalized_gaussian_quadrature(
     interpolation_degree: int = 30,
     full: bool = None,
 ):
-    """
-
-    Parameters
-    ----------
-    :
-    Returns
-    -------
-    :
-    """
-
     vprint(
         f"Function family consists of {len(function_family.functions_lambdas)} functions"
     )

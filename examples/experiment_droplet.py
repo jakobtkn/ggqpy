@@ -33,7 +33,7 @@ def kernel(x0, y0, s, t, k=1.0):
     )
 
 
-def main(M, N, order, k, dh):
+def main(M, N, order, k, dh, h):
     system = QuadratureLoader(order)
 
     A, ss, tt, ww = construct_discretization_matrix(
@@ -47,42 +47,10 @@ def main(M, N, order, k, dh):
         jacobian,
         system
     )
-
+    
     f = dh(ss, tt) * np.sqrt(ww)
     A = -0.5 * np.identity(M * N) + (4.0 * np.pi) ** (-1) * A
     q = np.linalg.solve(A, f)
-    
-    fig = plt.figure()
-    ax = fig.add_subplot(121, projection='3d')
-    ax.plot_trisurf(ss, tt, np.real(q/np.sqrt(ww)), lw=0.2, edgecolor="black", color="grey",
-                alpha=0.5)
-    ax.set_title("Real")
-    ax = fig.add_subplot(122, projection='3d')
-    ax.plot_trisurf(ss, tt, np.imag(q/np.sqrt(ww)), lw=0.2, edgecolor="black", color="grey",
-                alpha=0.5)
-    ax.set_title("Imag")
-
-
-    # fig = plt.figure()
-    # ax = fig.add_subplot(111, projection='3d')
-    # ax.scatter(*rho(ss,tt))
-
-    plt.show()
-
-    # from pylab import cm
-
-    # fig = plt.figure(figsize=(8,6))
-    # ax = fig.add_subplot(111,projection='3d')
-
-    # f = abs(q/np.sqrt(ww))
-    # colmap = cm.ScalarMappable(cmap=cm.plasma)
-    # colmap.set_array(f)
-    # colors = cm.plasma(f/max(f))
-    
-    # yg = ax.scatter(*rho(ss,tt), c=colors, marker='o')
-    # source = ax.scatter(1,0,0, c='r', s=30 ,marker='x')
-    # cb = fig.colorbar(colmap, ax=plt.gca())
-    # plt.show()
 
     p0 = np.array([-10, 0, 0])
     target = np.array(h(*p0))
@@ -98,39 +66,57 @@ def main(M, N, order, k, dh):
         print(condition_number)
     return relative_error, condition_number
 
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("order", default=4)
-    parser.add_argument("wavenumber", default=1.0)
-    args = parser.parse_args()
-    order, k = int(args.order), float(args.wavenumber)
+def compute_droplet(order, wavenumber, M, N):
+    order, k = int(order), float(wavenumber)
     h, h_grad = param.h_and_hgrad(k)
+
     def dh(s, t):
         x, y, z = rho(s, t)
         return np.sum(normal(s, t) * h_grad(x, y, z), axis=0)
     
-    N = [20, 80]
-    M = [2 for x in N]
+   
     error = list()
     condition = list()
     for m, n in zip(M, N):
-        err, cond = main(m, n, order, k, dh)
+        err, cond = main(m, n, order, k, dh, h)
         error.append(err)
         condition.append(cond)
+    return error, condition
 
-    df = pd.DataFrame(np.column_stack([M, N, error, condition]), columns = ["$m$", "$n$", "Relative error", "Condition Number"])
+if __name__ == "__main__":
+    N = [2,3,5,8]
+    M = [2*x for x in N]
+    error4, condition4 = compute_droplet(4, 1, M, N)
+    error16, condition16 = compute_droplet(16, 1, M, N)
+    
+    columns_ = [
+    [
+        f"\\makecell{{Relative error \\\\ $n={n}$}}",
+        f"\\makecell{{Condition Number \\\\ $n={n}$}}",
+    ]
+    for n in [4, 16]
+    ]
+    columns = ["$n_x$", "$n_y$"]
+    for col in columns_:
+        columns = columns + col
+
+    df = pd.DataFrame(np.column_stack([M, N, error4, condition4, error16, condition16]), columns = columns)
     styler = df.style
     styler.format_index(escape="latex")
-    styler.format({"$m$": '{:.0f}', "$n$": '{:.0f}', "Relative error": '{:.2e}', "Condition Number": '{:.2e}'}, na_rep='MISS')
-    styler.hide(axis = "index")
+    format = dict(
+    zip(
+        columns,
+        ["{:.0f}", "{:.0f}", "{:.2e}", "{:.2e}", "{:.2e}", "{:.2e}"],
+    )
+    )
+    styler.format(format)
+    styler.hide(axis="index")
     latex_table = styler.to_latex(
         position_float="centering",
         position="ht",
-        caption=f"Results of droplet test with order {order} and $k={k}$",
-        label=f"tab:droplet-test.{order}.{args.wavenumber}",
-        column_format="cccc",
+        caption=f"\\capdroplet",
+        label=f"tab:droplet-test",
+        column_format="cccccc",
         hrules = True,
     )
     print(latex_table)
-    plt.savefig("output/droplet_density.png")

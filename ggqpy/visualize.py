@@ -37,15 +37,7 @@ def plot_points(theta, phi):
 
 
 def visualise_diagonal_dropoff(A, eps_comp):
-    """
 
-    Parameters
-    ----------
-    :
-    Returns
-    -------
-    :
-    """
     _, R, _ = sp.linalg.qr(A, mode="economic", pivoting=True)
     plt.xlabel(r"$i$")
     plt.semilogy(np.abs(np.diag(R)), "-xr", label=r"$|R_{ii}|$")
